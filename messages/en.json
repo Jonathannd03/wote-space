@@ -1,0 +1,120 @@
+{
+  "nav": {
+    "home": "Home",
+    "spaces": "Spaces",
+    "booking": "Booking",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "home": {
+    "hero": {
+      "title": "Your ideal workspace",
+      "subtitle": "Modern co-working spaces and meeting rooms in the heart of the city",
+      "cta": "Book now"
+    },
+    "features": {
+      "title": "Why choose Wote Space?",
+      "wifi": {
+        "title": "High-speed Wi-Fi",
+        "description": "Reliable and fast internet connection"
+      },
+      "flexible": {
+        "title": "Flexible hours",
+        "description": "Book by the hour or by the day"
+      },
+      "modern": {
+        "title": "Modern amenities",
+        "description": "Fully equipped and comfortable spaces"
+      },
+      "location": {
+        "title": "Central location",
+        "description": "Easily accessible by public transport"
+      }
+    }
+  },
+  "spaces": {
+    "title": "Our spaces",
+    "subtitle": "Choose the space that fits your needs",
+    "capacity": "Capacity",
+    "people": "people",
+    "pricePerHour": "per hour",
+    "pricePerDay": "per day",
+    "bookNow": "Book now",
+    "amenities": "Amenities"
+  },
+  "booking": {
+    "title": "Book a space",
+    "step1": "Booking details",
+    "step2": "Personal information",
+    "step3": "Confirmation",
+    "selectSpace": "Select a space",
+    "selectDate": "Select a date",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "numberOfPeople": "Number of people",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phone": "Phone",
+    "company": "Company (optional)",
+    "notes": "Additional notes",
+    "totalPrice": "Total price",
+    "submit": "Confirm booking",
+    "success": "Booking confirmed!",
+    "successMessage": "Your booking has been confirmed. A confirmation email has been sent to",
+    "reference": "Reference number",
+    "error": "An error occurred",
+    "errorMessage": "Unable to process your booking. Please try again.",
+    "validation": {
+      "required": "This field is required",
+      "email": "Invalid email",
+      "minPeople": "At least 1 person",
+      "dateInPast": "Date cannot be in the past",
+      "endBeforeStart": "End date must be after start date"
+    }
+  },
+  "about": {
+    "title": "About Wote Space",
+    "subtitle": "Your partner for productive work",
+    "mission": {
+      "title": "Our mission",
+      "description": "To provide flexible and modern workspaces that foster productivity and collaboration."
+    },
+    "story": {
+      "title": "Our story",
+      "description": "Founded in 2024, Wote Space was born from the desire to create workspaces adapted to the needs of freelancers, startups, and modern teams."
+    }
+  },
+  "contact": {
+    "title": "Contact us",
+    "subtitle": "We're here to answer your questions",
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send",
+    "success": "Message sent successfully!",
+    "info": {
+      "title": "Contact information",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Opening hours"
+    }
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "privacy": "Privacy policy",
+    "terms": "Terms of use"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close"
+  }
+}

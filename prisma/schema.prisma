@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Space {
+  id          String    @id @default(cuid())
+  name        String
+  nameEn      String    @map("name_en")
+  nameFr      String    @map("name_fr")
+  description String
+  descriptionEn String  @map("description_en")
+  descriptionFr String  @map("description_fr")
+  capacity    Int
+  pricePerHour Decimal  @map("price_per_hour")
+  pricePerDay  Decimal  @map("price_per_day")
+  amenities   String    // JSON string of amenities
+  imageUrl    String?   @map("image_url")
+  available   Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  bookings    Booking[]
+
+  @@map("spaces")
+}
+
+model Booking {
+  id              String   @id @default(cuid())
+  referenceId     String   @unique @map("reference_id")
+  spaceId         String   @map("space_id")
+  space           Space    @relation(fields: [spaceId], references: [id])
+
+  // Customer information
+  firstName       String   @map("first_name")
+  lastName        String   @map("last_name")
+  email           String
+  phone           String?
+  company         String?
+
+  // Booking details
+  startDate       DateTime @map("start_date")
+  endDate         DateTime @map("end_date")
+  numberOfPeople  Int      @map("number_of_people")
+  totalPrice      Decimal  @map("total_price")
+
+  // Status
+  status          BookingStatus @default(PENDING)
+  notes           String?
+
+  // Timestamps
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([spaceId])
+  @@index([startDate, endDate])
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
