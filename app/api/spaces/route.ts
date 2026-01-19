@@ -1,20 +1,20 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { MOCK_SPACES } from '@/lib/mock-data';
 
 export async function GET() {
   try {
-    const spaces = await prisma.space.findMany({
-      where: { available: true },
-      orderBy: { capacity: 'asc' },
-      select: {
-        id: true,
-        nameEn: true,
-        nameFr: true,
-        capacity: true,
-        pricePerHour: true,
-        pricePerDay: true,
-      },
-    });
+    // Using mock data - replace with database query when DATABASE_URL is configured
+    const spaces = MOCK_SPACES
+      .filter(space => space.available)
+      .sort((a, b) => a.capacity - b.capacity)
+      .map(space => ({
+        id: space.id,
+        nameEn: space.nameEn,
+        nameFr: space.nameFr,
+        capacity: space.capacity,
+        pricePerHour: space.pricePerHour,
+        pricePerDay: space.pricePerDay,
+      }));
 
     return NextResponse.json(spaces);
   } catch (error) {

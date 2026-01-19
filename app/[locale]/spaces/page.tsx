@@ -1,18 +1,16 @@
 import { getTranslations, getLocale } from 'next-intl/server';
-import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 import SpacesGallery from '@/components/SpacesGallery';
+import { MOCK_SPACES } from '@/lib/mock-data';
 
 export default async function SpacesPage() {
   const t = await getTranslations('spaces');
   const locale = await getLocale();
 
-  const spaces = await prisma.space.findMany({
-    where: { available: true },
-    orderBy: { capacity: 'asc' },
-  });
+  // Using mock data - replace with database query when DATABASE_URL is configured
+  const spaces = MOCK_SPACES.filter(space => space.available).sort((a, b) => a.capacity - b.capacity);
 
   const premisesImages = [
     '/premises/IMG_2776.jpg',

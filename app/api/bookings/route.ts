@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import { generateBookingReference } from '@/lib/utils';
-import { sendBookingConfirmation } from '@/lib/email';
 import { z } from 'zod';
+import { MOCK_SPACES } from '@/lib/mock-data';
 
 const bookingSchema = z.object({
   spaceId: z.string(),
@@ -43,10 +42,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if space exists
-    const space = await prisma.space.findUnique({
-      where: { id: data.spaceId },
-    });
+    // Check if space exists (using mock data)
+    const space = MOCK_SPACES.find(s => s.id === data.spaceId);
 
     if (!space) {
       return NextResponse.json(
@@ -70,95 +67,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for conflicting bookings (double booking prevention)
-    const conflictingBookings = await prisma.booking.findMany({
-      where: {
-        spaceId: data.spaceId,
-        status: {
-          in: ['PENDING', 'CONFIRMED'],
-        },
-        OR: [
-          {
-            // New booking starts during existing booking
-            AND: [
-              { startDate: { lte: startDate } },
-              { endDate: { gt: startDate } },
-            ],
-          },
-          {
-            // New booking ends during existing booking
-            AND: [
-              { startDate: { lt: endDate } },
-              { endDate: { gte: endDate } },
-            ],
-          },
-          {
-            // New booking completely contains existing booking
-            AND: [
-              { startDate: { gte: startDate } },
-              { endDate: { lte: endDate } },
-            ],
-          },
-          {
-            // Existing booking completely contains new booking
-            AND: [
-              { startDate: { lte: startDate } },
-              { endDate: { gte: endDate } },
-            ],
-          },
-        ],
-      },
-    });
-
-    if (conflictingBookings.length > 0) {
-      return NextResponse.json(
-        { error: 'This space is not available for the selected time period' },
-        { status: 409 }
-      );
-    }
-
     // Generate unique reference ID
     const referenceId = generateBookingReference();
 
-    // Create booking
-    const booking = await prisma.booking.create({
-      data: {
-        referenceId,
-        spaceId: data.spaceId,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phone: data.phone || null,
-        company: data.company || null,
-        startDate,
-        endDate,
-        numberOfPeople: data.numberOfPeople,
-        totalPrice: data.totalPrice,
-        notes: data.notes || null,
-        status: 'CONFIRMED',
-      },
-      include: {
-        space: true,
-      },
+    // DEMO MODE: Booking data is not saved (database not configured)
+    // In production, this would save to database and send confirmation email
+    console.log('DEMO BOOKING:', {
+      referenceId,
+      space: space.nameEn,
+      customer: `${data.firstName} ${data.lastName}`,
+      email: data.email,
+      startDate,
+      endDate,
+      totalPrice: data.totalPrice,
     });
 
-    // Send confirmation email
-    try {
-      await sendBookingConfirmation(booking, data.locale);
-    } catch (emailError) {
-      console.error('Error sending confirmation email:', emailError);
-      // Don't fail the booking if email fails
-    }
-
+    // Return success response for preview/demo
     return NextResponse.json({
       success: true,
-      referenceId: booking.referenceId,
+      referenceId,
+      message: 'Booking preview successful! In production, this will save to database and send confirmation email.',
       booking: {
-        id: booking.id,
-        referenceId: booking.referenceId,
-        startDate: booking.startDate,
-        endDate: booking.endDate,
-        totalPrice: booking.totalPrice,
+        id: `demo-${Date.now()}`,
+        referenceId,
+        startDate,
+        endDate,
+        totalPrice: data.totalPrice,
+        spaceName: data.locale === 'fr' ? space.nameFr : space.nameEn,
       },
     });
   } catch (error) {
@@ -180,16 +115,8 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const bookings = await prisma.booking.findMany({
-      include: {
-        space: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    return NextResponse.json(bookings);
+    // DEMO MODE: No bookings saved yet (database not configured)
+    return NextResponse.json([]);
   } catch (error) {
     console.error('Error fetching bookings:', error);
     return NextResponse.json(
