@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 
@@ -38,8 +38,38 @@ const itemVariants: Variants = {
 };
 
 export default function Gallery({ images }: GalleryProps) {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const handlePrevious = () => {
+    if (selectedIndex !== null) {
+      setSelectedIndex((selectedIndex - 1 + images.length) % images.length);
+    }
+  };
+
+  const handleNext = () => {
+    if (selectedIndex !== null) {
+      setSelectedIndex((selectedIndex + 1) % images.length);
+    }
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedIndex === null) return;
+
+      if (e.key === 'Escape') {
+        setSelectedIndex(null);
+      } else if (e.key === 'ArrowLeft') {
+        handlePrevious();
+      } else if (e.key === 'ArrowRight') {
+        handleNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedIndex]);
 
   return (
     <>
@@ -55,7 +85,7 @@ export default function Gallery({ images }: GalleryProps) {
             key={image}
             variants={itemVariants}
             className="relative aspect-square cursor-pointer group overflow-hidden rounded-sm"
-            onClick={() => setSelectedImage(image)}
+            onClick={() => setSelectedIndex(index)}
             onHoverStart={() => setHoveredIndex(index)}
             onHoverEnd={() => setHoveredIndex(null)}
             whileHover={{ scale: 1.02 }}
@@ -142,83 +172,87 @@ export default function Gallery({ images }: GalleryProps) {
         ))}
       </motion.div>
 
-      {/* Enhanced Lightbox */}
-      <AnimatePresence>
-        {selectedImage && (
+      {/* Enhanced Lightbox with Navigation */}
+      <AnimatePresence mode="wait">
+        {selectedIndex !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-brand-black/98 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setSelectedImage(null)}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-brand-black/95 backdrop-blur-sm z-50 flex items-center justify-center"
+            onClick={() => setSelectedIndex(null)}
           >
             {/* Close Button */}
-            <motion.button
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ delay: 0.1 }}
-              className="absolute top-8 right-8 text-white hover:text-brand-red transition-colors z-10 bg-brand-black-light/50 p-3 rounded-full hover:bg-brand-red/20"
-              onClick={() => setSelectedImage(null)}
+            <button
+              className="absolute top-4 right-4 md:top-8 md:right-8 text-white hover:text-brand-red transition-colors z-10 bg-brand-black-light/80 p-2 md:p-3 rounded-full hover:bg-brand-red"
+              onClick={() => setSelectedIndex(null)}
+              aria-label="Close"
             >
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </motion.button>
+            </button>
 
             {/* Image Counter */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ delay: 0.1 }}
-              className="absolute top-8 left-8 bg-brand-red px-4 py-2 rounded-sm text-white font-bold"
+            <div className="absolute top-4 left-4 md:top-8 md:left-8 bg-brand-red px-3 py-1 md:px-4 md:py-2 rounded-sm text-white text-sm md:text-base font-bold z-10">
+              {selectedIndex + 1} / {images.length}
+            </div>
+
+            {/* Previous Button */}
+            <button
+              className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 bg-brand-red hover:bg-brand-red-dark text-white p-3 md:p-4 rounded-full transition-all hover:scale-110 z-10"
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrevious();
+              }}
+              aria-label="Previous image"
             >
-              {images.indexOf(selectedImage) + 1} / {images.length}
-            </motion.div>
+              <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Next Button */}
+            <button
+              className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 bg-brand-red hover:bg-brand-red-dark text-white p-3 md:p-4 rounded-full transition-all hover:scale-110 z-10"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNext();
+              }}
+              aria-label="Next image"
+            >
+              <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
 
             {/* Image Container */}
             <motion.div
-              initial={{ scale: 0.8, opacity: 0, rotateY: -15 }}
-              animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-              exit={{ scale: 0.8, opacity: 0, rotateY: 15 }}
-              transition={{
-                type: 'spring',
-                stiffness: 100,
-                damping: 20,
-              }}
-              className="relative w-full h-full max-w-7xl max-h-[85vh]"
+              key={selectedIndex}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-[90vw] h-[70vh] md:w-[80vw] md:h-[80vh] max-w-6xl"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Red Border Frame */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="absolute inset-0 border-4 border-brand-red rounded-sm pointer-events-none"
-              />
-
               <Image
-                src={selectedImage}
-                alt="Wote Space"
+                src={images[selectedIndex]}
+                alt={`Wote Space ${selectedIndex + 1}`}
                 fill
-                className="object-contain rounded-sm"
-                sizes="100vw"
+                className="object-contain"
+                sizes="90vw"
                 priority
+                quality={100}
               />
             </motion.div>
 
             {/* Navigation Hint */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 0.5 }}
-              className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm"
-            >
-              Click outside to close
-            </motion.div>
+            <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 text-gray-400 text-xs md:text-sm text-center px-4">
+              <p className="hidden md:block">Use arrow keys or click buttons to navigate • Press ESC or click outside to close</p>
+              <p className="md:hidden">Swipe or tap buttons to navigate • Tap outside to close</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 
@@ -11,26 +11,39 @@ interface AnimatedGalleryProps {
 }
 
 export default function AnimatedGallery({ images, title, subtitle }: AnimatedGalleryProps) {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });
 
-  const nextImage = () => {
-    if (selectedImage) {
-      const currentIdx = images.indexOf(selectedImage);
-      const nextIdx = (currentIdx + 1) % images.length;
-      setSelectedImage(images[nextIdx]);
+  const handlePrevious = () => {
+    if (selectedIndex !== null) {
+      setSelectedIndex((selectedIndex - 1 + images.length) % images.length);
     }
   };
 
-  const prevImage = () => {
-    if (selectedImage) {
-      const currentIdx = images.indexOf(selectedImage);
-      const prevIdx = (currentIdx - 1 + images.length) % images.length;
-      setSelectedImage(images[prevIdx]);
+  const handleNext = () => {
+    if (selectedIndex !== null) {
+      setSelectedIndex((selectedIndex + 1) % images.length);
     }
   };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedIndex === null) return;
+
+      if (e.key === 'Escape') {
+        setSelectedIndex(null);
+      } else if (e.key === 'ArrowLeft') {
+        handlePrevious();
+      } else if (e.key === 'ArrowRight') {
+        handleNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedIndex]);
 
   return (
     <div ref={containerRef} className="w-full">
@@ -87,7 +100,7 @@ export default function AnimatedGallery({ images, title, subtitle }: AnimatedGal
                 stiffness: 100,
               }}
               className={`relative ${colSpan} ${rowSpan} aspect-square group cursor-pointer overflow-hidden rounded-sm`}
-              onClick={() => setSelectedImage(image)}
+              onClick={() => setSelectedIndex(index)}
               whileHover={{ scale: 1.05, zIndex: 10 }}
             >
               {/* Image */}
@@ -100,171 +113,107 @@ export default function AnimatedGallery({ images, title, subtitle }: AnimatedGal
               />
 
               {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/50 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-black/80 via-brand-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-              {/* Animated Border */}
-              <motion.div
-                className="absolute inset-0 border-4 border-brand-red"
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              />
-
-              {/* Content Overlay */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <motion.div
-                  initial={{ scale: 0, rotate: -180 }}
-                  whileHover={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 200 }}
-                  className="bg-brand-red/90 p-4 rounded-full mb-4"
-                >
-                  <svg
-                    className="w-8 h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
+              {/* Hover Icon */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="bg-brand-red p-3 rounded-full">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                   </svg>
-                </motion.div>
-
-                <motion.span
-                  initial={{ opacity: 0, y: 20 }}
-                  whileHover={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="text-white font-bold text-sm"
-                >
-                  {index + 1} / {images.length}
-                </motion.span>
+                </div>
               </div>
 
-              {/* Index Badge */}
-              <div className="absolute top-4 left-4 bg-brand-black/80 text-white px-3 py-1 rounded-sm text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                #{index + 1}
+              {/* Image Number */}
+              <div className="absolute bottom-2 left-2 bg-brand-black/80 text-white px-2 py-1 rounded-sm text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {index + 1}
               </div>
             </motion.div>
           );
         })}
       </div>
 
-      {/* Lightbox with Navigation */}
+      {/* Enhanced Lightbox with Navigation */}
       <AnimatePresence mode="wait">
-        {selectedImage && (
+        {selectedIndex !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-brand-black/98 z-50 flex items-center justify-center"
-            onClick={() => setSelectedImage(null)}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-brand-black/95 backdrop-blur-sm z-50 flex items-center justify-center"
+            onClick={() => setSelectedIndex(null)}
           >
             {/* Close Button */}
-            <motion.button
-              initial={{ opacity: 0, rotate: -90 }}
-              animate={{ opacity: 1, rotate: 0 }}
-              exit={{ opacity: 0, rotate: 90 }}
-              transition={{ delay: 0.2 }}
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-8 right-8 z-10 bg-brand-red hover:bg-brand-red-dark p-4 rounded-full transition-colors"
+            <button
+              className="absolute top-4 right-4 md:top-8 md:right-8 text-white hover:text-brand-red transition-colors z-10 bg-brand-black-light/80 p-2 md:p-3 rounded-full hover:bg-brand-red"
+              onClick={() => setSelectedIndex(null)}
+              aria-label="Close"
             >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </motion.button>
+            </button>
 
-            {/* Counter */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="absolute top-8 left-8 bg-brand-red px-6 py-3 rounded-sm"
-            >
-              <span className="text-white font-bold text-lg">
-                {images.indexOf(selectedImage) + 1} / {images.length}
-              </span>
-            </motion.div>
+            {/* Image Counter */}
+            <div className="absolute top-4 left-4 md:top-8 md:left-8 bg-brand-red px-3 py-1 md:px-4 md:py-2 rounded-sm text-white text-sm md:text-base font-bold z-10">
+              {selectedIndex + 1} / {images.length}
+            </div>
 
-            {/* Navigation Buttons */}
-            <motion.button
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
+            {/* Previous Button */}
+            <button
+              className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 bg-brand-red hover:bg-brand-red-dark text-white p-3 md:p-4 rounded-full transition-all hover:scale-110 z-10"
               onClick={(e) => {
                 e.stopPropagation();
-                prevImage();
+                handlePrevious();
               }}
-              className="absolute left-8 top-1/2 -translate-y-1/2 bg-brand-red/80 hover:bg-brand-red p-4 rounded-full transition-colors z-10"
+              aria-label="Previous image"
             >
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
               </svg>
-            </motion.button>
+            </button>
 
-            <motion.button
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
+            {/* Next Button */}
+            <button
+              className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 bg-brand-red hover:bg-brand-red-dark text-white p-3 md:p-4 rounded-full transition-all hover:scale-110 z-10"
               onClick={(e) => {
                 e.stopPropagation();
-                nextImage();
+                handleNext();
               }}
-              className="absolute right-8 top-1/2 -translate-y-1/2 bg-brand-red/80 hover:bg-brand-red p-4 rounded-full transition-colors z-10"
+              aria-label="Next image"
             >
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
               </svg>
-            </motion.button>
+            </button>
 
-            {/* Image Container with 3D Effect */}
+            {/* Image Container */}
             <motion.div
-              key={selectedImage}
-              initial={{ scale: 0.7, opacity: 0, rotateY: 90 }}
-              animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-              exit={{ scale: 0.7, opacity: 0, rotateY: -90 }}
-              transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-              className="relative w-full h-full max-w-7xl max-h-[80vh] mx-16"
+              key={selectedIndex}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-[90vw] h-[70vh] md:w-[80vw] md:h-[80vh] max-w-6xl"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Animated Frame */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="absolute inset-0 border-4 border-brand-red shadow-2xl shadow-brand-red/50"
-              />
-
               <Image
-                src={selectedImage}
-                alt="Full size"
+                src={images[selectedIndex]}
+                alt={`Wote Space ${selectedIndex + 1}`}
                 fill
-                className="object-contain p-2"
-                sizes="100vw"
+                className="object-contain"
+                sizes="90vw"
                 priority
+                quality={100}
               />
             </motion.div>
 
             {/* Navigation Hint */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ delay: 0.5 }}
-              className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-6 text-gray-400 text-sm"
-            >
-              <span className="flex items-center gap-2">
-                <kbd className="px-2 py-1 bg-brand-black-light rounded">←</kbd> Précédent
-              </span>
-              <span className="flex items-center gap-2">
-                <kbd className="px-2 py-1 bg-brand-black-light rounded">→</kbd> Suivant
-              </span>
-              <span className="flex items-center gap-2">
-                <kbd className="px-2 py-1 bg-brand-black-light rounded">ESC</kbd> Fermer
-              </span>
-            </motion.div>
+            <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 text-gray-400 text-xs md:text-sm text-center px-4">
+              <p className="hidden md:block">Use arrow keys or click buttons to navigate • Press ESC or click outside to close</p>
+              <p className="md:hidden">Swipe or tap buttons to navigate • Tap outside to close</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
