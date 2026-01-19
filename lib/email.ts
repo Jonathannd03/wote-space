@@ -83,7 +83,7 @@ export async function sendBookingConfirmation(
              ${t.to} ${endDate}
           </p>
           <p><strong>${t.people}:</strong> ${booking.numberOfPeople}</p>
-          <p><strong>${t.total}:</strong> ${booking.totalPrice} €</p>
+          <p><strong>${t.total}:</strong> $${booking.totalPrice}</p>
         </div>
 
         <p>${t.thanks}</p>

@@ -195,8 +195,8 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-white mb-1">{t('info.phone')}</h3>
-                      <a href="tel:+243980244432" className="text-gray-300 hover:text-brand-red transition-colors">
-                        +243 980 244 432
+                      <a href="tel:+243980244431" className="text-gray-300 hover:text-brand-red transition-colors">
+                        +243 980 244 431
                       </a>
                     </div>
                   </div>

@@ -13,8 +13,8 @@ export function generateBookingReference(): string {
 
 export function formatPrice(price: number | string): string {
   const numPrice = typeof price === 'string' ? parseFloat(price) : price;
-  return new Intl.NumberFormat('fr-FR', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'EUR',
+    currency: 'USD',
   }).format(numPrice);
 }
