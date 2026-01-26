@@ -9,7 +9,7 @@
   "home": {
     "hero": {
       "title": "Your ideal workspace",
-      "subtitle": "Modern co-working spaces and meeting rooms in the heart of the city",
+      "subtitle": "A versatile space that adapts to your needs in the heart of the city",
       "cta": "Book now"
     },
     "features": {
@@ -33,8 +33,8 @@
     }
   },
   "spaces": {
-    "title": "Our spaces",
-    "subtitle": "Choose the space that fits your needs",
+    "title": "Room Configurations",
+    "subtitle": "Choose the setup that fits your needs",
     "capacity": "Capacity",
     "people": "people",
     "pricePerHour": "per hour",
@@ -43,11 +43,11 @@
     "amenities": "Amenities"
   },
   "booking": {
-    "title": "Book a space",
+    "title": "Book the space",
     "step1": "Booking details",
     "step2": "Personal information",
     "step3": "Confirmation",
-    "selectSpace": "Select a space",
+    "selectSpace": "Select a setup",
     "selectDate": "Select a date",
     "startDate": "Start date",
     "endDate": "End date",

@@ -10,6 +10,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Represents different configurations/setups of the same physical room
+// Each "Space" is actually a setup configuration (e.g., Setup S, Setup M, Setup L, Setup XL)
+// allowing the single room to be booked with different capacities and amenities
 model Space {
   id          String    @id @default(cuid())
   name        String

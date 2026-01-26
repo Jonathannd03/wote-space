@@ -70,10 +70,10 @@ Choose the best fit and explain briefly:
   - Clear value proposition
   - Primary booking CTA
 
-- `/spaces`  
-  - Co-working spaces
-  - Meeting rooms
-  - Capacity, amenities, pricing
+- `/spaces`
+  - Room configurations/setups (single room with different setups)
+  - Co-working option
+  - Capacity, amenities, pricing for each setup
 
 - `/booking` (Critical)  
   - Step-by-step booking flow

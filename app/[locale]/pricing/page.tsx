@@ -25,7 +25,7 @@ export default function PricingPage() {
         locale === 'fr' ? 'Coworking partagé' : 'Shared coworking',
         'Wi-Fi',
         locale === 'fr' ? 'Café' : 'Coffee',
-        locale === 'fr' ? '1 heure de salle de réunion incluse' : '1 hour meeting room included',
+        locale === 'fr' ? '1 heure de salle incluse' : '1 hour room included',
       ],
     },
     {
@@ -38,7 +38,7 @@ export default function PricingPage() {
         'Wi-Fi',
         locale === 'fr' ? 'Café' : 'Coffee',
         locale === 'fr' ? 'Événements communautaires' : 'Community events',
-        locale === 'fr' ? '3 heures de salle de réunion / mois' : '3 hours meeting room / month',
+        locale === 'fr' ? '3 heures de salle / mois' : '3 hours room / month',
       ],
     },
     {
@@ -49,7 +49,7 @@ export default function PricingPage() {
         locale === 'fr' ? 'Accès 7j / 7j' : 'Access 7 days / week',
         locale === 'fr' ? 'Wi-Fi haut débit' : 'High-speed Wi-Fi',
         locale === 'fr' ? 'Café + impression légère' : 'Coffee + light printing',
-        locale === 'fr' ? '6 heures de salle de réunion / mois' : '6 hours meeting room / month',
+        locale === 'fr' ? '6 heures de salle / mois' : '6 hours room / month',
       ],
     },
     {
@@ -60,7 +60,7 @@ export default function PricingPage() {
         locale === 'fr' ? 'Accès illimité au coworking' : 'Unlimited coworking access',
         locale === 'fr' ? 'Wi-Fi premium' : 'Premium Wi-Fi',
         locale === 'fr' ? 'Café' : 'Coffee',
-        locale === 'fr' ? '10 heures de salle de réunion / mois' : '10 hours meeting room / month',
+        locale === 'fr' ? '10 heures de salle / mois' : '10 hours room / month',
         locale === 'fr' ? 'Adresse professionnelle' : 'Professional address',
       ],
     },
@@ -257,10 +257,10 @@ export default function PricingPage() {
       <section className="py-20 bg-brand-black-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold text-white mb-4 text-center">
-            {locale === 'fr' ? 'Salle de Réunion' : 'Meeting Room'}
+            {locale === 'fr' ? 'La Salle' : 'The Room'}
           </h2>
           <p className="text-center text-gray-400 mb-8">
-            {locale === 'fr' ? 'Jusqu\'à 60 personnes' : 'Up to 60 people'}
+            {locale === 'fr' ? 'Configurations disponibles jusqu\'à 60 personnes' : 'Setups available for up to 60 people'}
           </p>
           <div className="h-1 w-24 bg-brand-red mb-12 mx-auto"></div>
 
