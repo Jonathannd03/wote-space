@@ -41,8 +41,8 @@ export default function AboutPage() {
     {
       title: locale === 'fr' ? 'Espaces flexibles' : 'Flexible spaces',
       description: locale === 'fr'
-        ? 'Bureaux privés, espaces partagés, salles de réunion adaptées à tous vos besoins'
-        : 'Private offices, shared spaces, meeting rooms adapted to all your needs',
+        ? 'Une salle polyvalente avec différentes configurations adaptées à tous vos besoins'
+        : 'A versatile room with different configurations adapted to all your needs',
     },
     {
       title: locale === 'fr' ? 'Équipements premium' : 'Premium equipment',
@@ -188,7 +188,7 @@ export default function AboutPage() {
             <div>
               <div className="text-5xl font-black text-brand-red mb-2">5</div>
               <p className="text-gray-300">
-                {locale === 'fr' ? 'Espaces disponibles' : 'Available spaces'}
+                {locale === 'fr' ? 'Configurations disponibles' : 'Available setups'}
               </p>
             </div>
             <div>
@@ -216,15 +216,15 @@ export default function AboutPage() {
           <div className="h-1 w-24 bg-brand-red mb-8 mx-auto"></div>
           <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
             {locale === 'fr'
-              ? 'Découvrez nos espaces et réservez votre visite dès aujourd\'hui'
-              : 'Discover our spaces and book your visit today'}
+              ? 'Découvrez notre espace et réservez votre visite dès aujourd\'hui'
+              : 'Discover our space and book your visit today'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href={`/${locale}/spaces`}
               className="inline-block bg-brand-red text-white px-10 py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-all transform hover:scale-105 uppercase tracking-wider"
             >
-              {locale === 'fr' ? 'Voir les espaces' : 'View spaces'}
+              {locale === 'fr' ? 'Voir les configurations' : 'View setups'}
             </Link>
             <Link
               href={`/${locale}/contact`}

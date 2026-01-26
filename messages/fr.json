@@ -9,7 +9,7 @@
   "home": {
     "hero": {
       "title": "Votre espace de travail idéal",
-      "subtitle": "Espaces de coworking et salles de réunion modernes au cœur de la ville",
+      "subtitle": "Un espace polyvalent qui s'adapte à vos besoins au cœur de la ville",
       "cta": "Réserver maintenant"
     },
     "features": {
@@ -33,8 +33,8 @@
     }
   },
   "spaces": {
-    "title": "Nos espaces",
-    "subtitle": "Choisissez l'espace qui correspond à vos besoins",
+    "title": "Configurations de la salle",
+    "subtitle": "Choisissez la configuration qui correspond à vos besoins",
     "capacity": "Capacité",
     "people": "personnes",
     "pricePerHour": "par heure",
@@ -43,11 +43,11 @@
     "amenities": "Équipements"
   },
   "booking": {
-    "title": "Réserver un espace",
+    "title": "Réserver la salle",
     "step1": "Détails de la réservation",
     "step2": "Informations personnelles",
     "step3": "Confirmation",
-    "selectSpace": "Sélectionner un espace",
+    "selectSpace": "Sélectionner une configuration",
     "selectDate": "Sélectionner une date",
     "startDate": "Date de début",
     "endDate": "Date de fin",
