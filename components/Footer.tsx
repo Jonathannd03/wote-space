@@ -115,7 +115,8 @@ export default function Footer() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <span className="text-gray-400 text-sm">
-                  Goma, {locale === 'fr' ? 'RDC' : 'DRC'}
+                  112, Boulevard Julien Paluku<br />
+                  Quartier Murara, Goma, {locale === 'fr' ? 'RDC' : 'DRC'}
                 </span>
               </li>
               <li className="flex items-start">

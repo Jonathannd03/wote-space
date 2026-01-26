@@ -1,10 +1,14 @@
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import HeroSection from '@/components/HeroSection';
+import EventsCarousel from '@/components/EventsCarousel';
+import { getEvents, getEventShortDescription } from '@/lib/events';
 
 export default function HomePage() {
   const t = useTranslations('home');
+  const tEvents = useTranslations('events');
   const locale = useLocale();
+  const events = getEvents();
 
   const features = [
     {
@@ -64,6 +68,29 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Events Section */}
+      {events.length > 0 && (
+        <section className="py-20 bg-brand-black">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-white">
+              {tEvents('title')}
+            </h2>
+            <p className="text-center text-gray-400 mb-8">
+              {tEvents('subtitle')}
+            </p>
+            <div className="h-1 w-24 bg-brand-red mb-16 mx-auto"></div>
+
+            <EventsCarousel
+              events={events.map(event => ({
+                ...event,
+                shortDescription: getEventShortDescription(event.id, locale as 'en' | 'fr')
+              }))}
+              locale={locale}
+            />
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="bg-brand-black py-24 border-t border-brand-black-light">

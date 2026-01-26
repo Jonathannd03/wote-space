@@ -116,5 +116,14 @@
     "next": "Suivant",
     "previous": "Précédent",
     "close": "Fermer"
+  },
+  "events": {
+    "title": "Événements Récents",
+    "subtitle": "Découvrez ce qui s'est passé à Wote Space",
+    "viewGallery": "Voir la Galerie",
+    "images": "images",
+    "noEvents": "Aucun événement disponible pour le moment",
+    "gallery": "Galerie de l'Événement",
+    "description": "À propos de cet événement"
   }
 }
