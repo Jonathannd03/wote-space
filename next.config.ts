@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  outputFileTracingExcludes: {
+    '*': [
+      'public/events/**/*',
+    ],
+  },
 };
 
 export default withNextIntl(nextConfig);
