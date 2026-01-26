@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import eventsManifest from '@/public/events-manifest.json';
 
 export interface Event {
   id: string; // slug-friendly version of the folder name
@@ -13,112 +12,52 @@ export interface Event {
   totalImages: number;
 }
 
-/**
- * Parse event folder name to extract name and date
- * Format: "event name_DD_MM_YYYY"
- */
-function parseEventFolder(folderName: string): { name: string; date: Date } | null {
-  const parts = folderName.split('_');
-
-  if (parts.length < 4) {
-    return null;
-  }
-
-  // Last three parts should be DD_MM_YYYY
-  const year = parts[parts.length - 1];
-  const month = parts[parts.length - 2];
-  const day = parts[parts.length - 3];
-
-  // Everything before the date is the event name
-  const name = parts.slice(0, parts.length - 3).join(' ');
-
-  // Validate date parts
-  const yearNum = parseInt(year);
-  const monthNum = parseInt(month);
-  const dayNum = parseInt(day);
-
-  if (isNaN(yearNum) || isNaN(monthNum) || isNaN(dayNum)) {
-    return null;
-  }
-
-  // Create date (month is 0-indexed in JS Date)
-  const date = new Date(yearNum, monthNum - 1, dayNum);
-
-  return { name, date };
+interface EventManifestEntry {
+  folder: string;
+  name: string;
+  year: number;
+  month: number;
+  day: number;
+  imageCount: number;
+  imageFiles: string[];
 }
 
 /**
- * Get all images from an event folder
- */
-function getEventImages(eventFolder: string): string[] {
-  const eventsDir = path.join(process.cwd(), 'public', 'events', eventFolder);
-
-  try {
-    const files = fs.readdirSync(eventsDir);
-    return files
-      .filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file))
-      .sort((a, b) => {
-        // Sort by number in filename (img_1.jpg, img_2.jpg, etc.)
-        const numA = parseInt(a.match(/\d+/)?.[0] || '0');
-        const numB = parseInt(b.match(/\d+/)?.[0] || '0');
-        return numA - numB;
-      })
-      .map(file => `/events/${eventFolder}/${file}`);
-  } catch (error) {
-    console.error(`Error reading event folder ${eventFolder}:`, error);
-    return [];
-  }
-}
-
-/**
- * Get all events from the events directory
+ * Get all events from the pre-generated manifest
+ * This works in both development and production (including Vercel)
  */
 export function getEvents(): Event[] {
-  const eventsDir = path.join(process.cwd(), 'public', 'events');
-
   try {
-    if (!fs.existsSync(eventsDir)) {
-      return [];
-    }
-
-    const folders = fs.readdirSync(eventsDir, { withFileTypes: true })
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name);
-
+    const manifest = eventsManifest as { events: EventManifestEntry[] };
     const events: Event[] = [];
 
-    for (const folder of folders) {
-      const parsed = parseEventFolder(folder);
+    for (const entry of manifest.events) {
+      const eventId = entry.folder.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const date = new Date(entry.year, entry.month - 1, entry.day);
 
-      if (!parsed) {
-        console.warn(`Could not parse event folder: ${folder}`);
-        continue;
-      }
-
-      const images = getEventImages(folder);
-      const eventId = folder.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      // Map image filenames to full paths
+      const images = entry.imageFiles.map(file => `/events/${entry.folder}/${file}`);
 
       events.push({
         id: eventId,
-        name: parsed.name,
+        name: entry.name,
         nameEn: getEventName(eventId, 'en'),
         nameFr: getEventName(eventId, 'fr'),
-        date: parsed.date.toISOString(),
-        displayDate: parsed.date.toLocaleDateString('en-US', {
+        date: date.toISOString(),
+        displayDate: date.toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
         }),
-        folder,
+        folder: entry.folder,
         images,
-        totalImages: images.length,
+        totalImages: entry.imageCount,
       });
     }
 
-    // Sort by date, most recent first
-    return events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return events;
   } catch (error) {
-    console.error('Error getting events:', error);
+    console.error('Error getting events from manifest:', error);
     return [];
   }
 }
