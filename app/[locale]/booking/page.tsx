@@ -45,6 +45,7 @@ const DURATION_PRESETS = [
 
 export default function BookingPage() {
   const t = useTranslations('booking');
+  const tCommon = useTranslations('common');
   const locale = useLocale();
   const searchParams = useSearchParams();
   const preselectedSpaceId = searchParams.get('space');
@@ -208,9 +209,11 @@ export default function BookingPage() {
       isValid = await trigger('spaceId');
     } else if (step === 2) {
       isValid = await trigger(['startDate', 'startTime', 'endDate', 'endTime', 'numberOfPeople']);
+    } else if (step === 3) {
+      isValid = await trigger(['firstName', 'lastName', 'email']);
     }
 
-    if (isValid || step === 3) {
+    if (isValid) {
       setStep(step + 1);
     }
   };
@@ -236,7 +239,7 @@ export default function BookingPage() {
               href={`/${locale}`}
               className="inline-block bg-brand-red text-white px-8 py-3 rounded-sm font-semibold hover:bg-brand-red-dark transition-colors uppercase tracking-wider"
             >
-              {t('common.back')}
+              {tCommon('back')}
             </a>
           </div>
         </div>
@@ -254,9 +257,9 @@ export default function BookingPage() {
         </div>
 
         {/* Progress Steps */}
-        <div className="max-w-3xl mx-auto mb-12">
+        <div className="max-w-4xl mx-auto mb-12">
           <div className="flex items-center justify-between">
-            {[1, 2, 3].map((s) => (
+            {[1, 2, 3, 4].map((s) => (
               <div key={s} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div
@@ -277,12 +280,16 @@ export default function BookingPage() {
                       ? locale === 'fr'
                         ? 'Date & Durée'
                         : 'Date & Time'
+                      : s === 3
+                      ? locale === 'fr'
+                        ? 'Informations'
+                        : 'Details'
                       : locale === 'fr'
-                      ? 'Informations'
-                      : 'Details'}
+                      ? 'Confirmation'
+                      : 'Review'}
                   </p>
                 </div>
-                {s < 3 && (
+                {s < 4 && (
                   <div
                     className={`h-1 flex-1 mx-4 ${
                       step > s ? 'bg-brand-red' : 'bg-brand-black-light'
@@ -582,12 +589,6 @@ export default function BookingPage() {
                     />
                   </div>
 
-                  {error && (
-                    <div className="bg-brand-red/10 border border-brand-red rounded-sm p-4 mb-6">
-                      <p className="text-brand-red">{error}</p>
-                    </div>
-                  )}
-
                   <div className="flex gap-4">
                     <button
                       type="button"
@@ -595,6 +596,166 @@ export default function BookingPage() {
                       className="flex-1 bg-brand-black border-2 border-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red transition-colors uppercase tracking-wider"
                     >
                       {locale === 'fr' ? 'Retour' : 'Back'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors uppercase tracking-wider"
+                    >
+                      {locale === 'fr' ? 'Continuer' : 'Continue'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Review & Confirm */}
+              {step === 4 && (
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-6">
+                    {locale === 'fr' ? 'Vérifiez vos informations' : 'Review Your Information'}
+                  </h2>
+
+                  {/* Booking Summary */}
+                  <div className="space-y-6">
+                    {/* Space Configuration */}
+                    <div className="bg-brand-black border border-brand-black-light rounded-sm p-6">
+                      <h3 className="text-lg font-semibold text-brand-red mb-4 uppercase tracking-wider">
+                        {locale === 'fr' ? 'Configuration' : 'Setup'}
+                      </h3>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{locale === 'fr' ? 'Espace' : 'Space'}:</span>
+                          <span className="text-white font-semibold">
+                            {selectedSpace && (locale === 'fr' ? selectedSpace.nameFr : selectedSpace.nameEn)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{locale === 'fr' ? 'Capacité' : 'Capacity'}:</span>
+                          <span className="text-white font-semibold">
+                            {selectedSpace?.capacity} {locale === 'fr' ? 'personnes' : 'people'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{locale === 'fr' ? 'Nombre de personnes' : 'Number of people'}:</span>
+                          <span className="text-white font-semibold">{watchedValues.numberOfPeople}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Date & Time */}
+                    <div className="bg-brand-black border border-brand-black-light rounded-sm p-6">
+                      <h3 className="text-lg font-semibold text-brand-red mb-4 uppercase tracking-wider">
+                        {locale === 'fr' ? 'Date & Heure' : 'Date & Time'}
+                      </h3>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{locale === 'fr' ? 'Début' : 'Start'}:</span>
+                          <span className="text-white font-semibold">
+                            {watchedValues.startDate && new Date(watchedValues.startDate).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })} {watchedValues.startTime}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{locale === 'fr' ? 'Fin' : 'End'}:</span>
+                          <span className="text-white font-semibold">
+                            {watchedValues.endDate && new Date(watchedValues.endDate).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })} {watchedValues.endTime}
+                          </span>
+                        </div>
+                        {calculationDetails && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">{locale === 'fr' ? 'Durée' : 'Duration'}:</span>
+                            <span className="text-white font-semibold">
+                              {calculationDetails.hours.toFixed(1)}h
+                              {calculationDetails.days > 0 && ` (${calculationDetails.days} ${locale === 'fr' ? 'jour(s)' : 'day(s)'})`}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Personal Information */}
+                    <div className="bg-brand-black border border-brand-black-light rounded-sm p-6">
+                      <h3 className="text-lg font-semibold text-brand-red mb-4 uppercase tracking-wider">
+                        {locale === 'fr' ? 'Vos Informations' : 'Your Information'}
+                      </h3>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{locale === 'fr' ? 'Nom complet' : 'Full name'}:</span>
+                          <span className="text-white font-semibold">
+                            {watchedValues.firstName} {watchedValues.lastName}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Email:</span>
+                          <span className="text-white font-semibold">{watchedValues.email}</span>
+                        </div>
+                        {watchedValues.phone && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">{locale === 'fr' ? 'Téléphone' : 'Phone'}:</span>
+                            <span className="text-white font-semibold">{watchedValues.phone}</span>
+                          </div>
+                        )}
+                        {watchedValues.company && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">{locale === 'fr' ? 'Entreprise' : 'Company'}:</span>
+                            <span className="text-white font-semibold">{watchedValues.company}</span>
+                          </div>
+                        )}
+                        {watchedValues.notes && (
+                          <div>
+                            <span className="text-gray-400 block mb-2">{locale === 'fr' ? 'Notes' : 'Notes'}:</span>
+                            <p className="text-white bg-brand-black-light p-3 rounded-sm">{watchedValues.notes}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Total Price */}
+                    <div className="bg-brand-red/10 border-2 border-brand-red rounded-sm p-6">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xl font-bold text-white">
+                          {locale === 'fr' ? 'Prix Total' : 'Total Price'}:
+                        </span>
+                        <span className="text-4xl font-black text-brand-red">
+                          {formatPrice(totalPrice)}
+                        </span>
+                      </div>
+                      {calculationDetails && (
+                        <p className="text-sm text-gray-300 mt-3 text-center">
+                          {calculationDetails.rateType === 'daily'
+                            ? locale === 'fr'
+                              ? `Tarif journalier: ${formatPrice(calculationDetails.rate)} × ${calculationDetails.days} jour(s)`
+                              : `Daily rate: ${formatPrice(calculationDetails.rate)} × ${calculationDetails.days} day(s)`
+                            : locale === 'fr'
+                            ? `Tarif horaire: ${formatPrice(calculationDetails.rate)} × ${calculationDetails.hours.toFixed(1)}h`
+                            : `Hourly rate: ${formatPrice(calculationDetails.rate)} × ${calculationDetails.hours.toFixed(1)}h`}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="bg-brand-red/10 border border-brand-red rounded-sm p-4 mt-6">
+                      <p className="text-brand-red">{error}</p>
+                    </div>
+                  )}
+
+                  <div className="flex gap-4 mt-8">
+                    <button
+                      type="button"
+                      onClick={prevStep}
+                      className="flex-1 bg-brand-black border-2 border-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red transition-colors uppercase tracking-wider"
+                    >
+                      {locale === 'fr' ? 'Modifier' : 'Edit'}
                     </button>
                     <button
                       type="submit"
