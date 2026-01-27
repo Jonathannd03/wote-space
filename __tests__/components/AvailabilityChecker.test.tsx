@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import AvailabilityChecker from '@/components/AvailabilityChecker';
 
 // Mock fetch
@@ -11,7 +11,9 @@ describe('AvailabilityChecker', () => {
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
   });
 
@@ -29,7 +31,7 @@ describe('AvailabilityChecker', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('should show checking state initially', () => {
+  it('should show checking state initially', async () => {
     render(
       <AvailabilityChecker
         startDate="2026-01-28"
@@ -40,7 +42,18 @@ describe('AvailabilityChecker', () => {
       />
     );
 
-    expect(screen.getByText(/checking availability/i)).toBeInTheDocument();
+    // Component doesn't show checking state until debounce fires
+    expect(screen.queryByText(/checking availability/i)).not.toBeInTheDocument();
+
+    // Advance timer to trigger debounce
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
+    // Now checking state should appear
+    await waitFor(() => {
+      expect(screen.getByText(/checking availability/i)).toBeInTheDocument();
+    });
   });
 
   it('should show available when slot is available', async () => {
@@ -60,7 +73,9 @@ describe('AvailabilityChecker', () => {
     );
 
     // Advance timers to trigger debounced check
-    jest.advanceTimersByTime(500);
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Available')).toBeInTheDocument();
@@ -94,7 +109,9 @@ describe('AvailabilityChecker', () => {
     );
 
     // Advance timers to trigger debounced check
-    jest.advanceTimersByTime(500);
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Not Available')).toBeInTheDocument();
@@ -127,7 +144,9 @@ describe('AvailabilityChecker', () => {
       />
     );
 
-    jest.advanceTimersByTime(500);
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
 
     await waitFor(() => {
       expect(screen.getByText(/existing bookings/i)).toBeInTheDocument();
@@ -151,11 +170,17 @@ describe('AvailabilityChecker', () => {
       />
     );
 
-    // Should show French checking text initially
-    expect(screen.getByText(/vérification de la disponibilité/i)).toBeInTheDocument();
+    // Advance timer to trigger debounce and checking state
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
 
-    jest.advanceTimersByTime(500);
+    // Wait for checking state with French text
+    await waitFor(() => {
+      expect(screen.getByText(/vérification de la disponibilité/i)).toBeInTheDocument();
+    });
 
+    // Wait for available state with French text
     await waitFor(() => {
       expect(screen.getByText('Disponible')).toBeInTheDocument();
       expect(screen.getByText(/la salle est disponible pour ces dates/i)).toBeInTheDocument();
@@ -181,7 +206,9 @@ describe('AvailabilityChecker', () => {
       />
     );
 
-    jest.advanceTimersByTime(500);
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
 
     await waitFor(() => {
       expect(onAvailabilityChange).toHaveBeenCalledWith(true);
@@ -205,21 +232,27 @@ describe('AvailabilityChecker', () => {
     );
 
     // Advance partially through debounce period
-    jest.advanceTimersByTime(300);
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
 
     // Update props before debounce completes
-    rerender(
-      <AvailabilityChecker
-        startDate="2026-01-28"
-        startTime="10:00"
-        endDate="2026-01-28"
-        endTime="13:00"
-        locale="en"
-      />
-    );
+    act(() => {
+      rerender(
+        <AvailabilityChecker
+          startDate="2026-01-28"
+          startTime="10:00"
+          endDate="2026-01-28"
+          endTime="13:00"
+          locale="en"
+        />
+      );
+    });
 
     // Complete debounce period
-    jest.advanceTimersByTime(500);
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
 
     await waitFor(() => {
       // Should only call once after debounce
@@ -242,7 +275,9 @@ describe('AvailabilityChecker', () => {
       />
     );
 
-    jest.advanceTimersByTime(500);
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
 
     await waitFor(() => {
       expect(consoleError).toHaveBeenCalled();
@@ -255,7 +290,7 @@ describe('AvailabilityChecker', () => {
     consoleError.mockRestore();
   });
 
-  it('should reset state when fields are cleared', () => {
+  it('should reset state when fields are cleared', async () => {
     const { rerender } = render(
       <AvailabilityChecker
         startDate="2026-01-28"
@@ -266,18 +301,28 @@ describe('AvailabilityChecker', () => {
       />
     );
 
-    expect(screen.getByText(/checking/i)).toBeInTheDocument();
+    // Advance timer to trigger checking state
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
+    // Wait for checking state to appear
+    await waitFor(() => {
+      expect(screen.getByText(/checking/i)).toBeInTheDocument();
+    });
 
     // Clear fields
-    rerender(
-      <AvailabilityChecker
-        startDate=""
-        startTime=""
-        endDate=""
-        endTime=""
-        locale="en"
-      />
-    );
+    act(() => {
+      rerender(
+        <AvailabilityChecker
+          startDate=""
+          startTime=""
+          endDate=""
+          endTime=""
+          locale="en"
+        />
+      );
+    });
 
     // Should not show anything
     expect(screen.queryByText(/checking/i)).not.toBeInTheDocument();
