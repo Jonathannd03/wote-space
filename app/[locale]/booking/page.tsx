@@ -179,6 +179,14 @@ export default function BookingPage() {
     setStep(2);
   };
 
+  // Helper to format date in local timezone (avoids UTC conversion issues)
+  const formatDateLocal = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const applyDurationPreset = (hours: number) => {
     const now = new Date();
     const startDate = new Date(now);
@@ -187,9 +195,9 @@ export default function BookingPage() {
     const endDate = new Date(startDate);
     endDate.setHours(startDate.getHours() + hours);
 
-    setValue('startDate', startDate.toISOString().split('T')[0]);
+    setValue('startDate', formatDateLocal(startDate));
     setValue('startTime', '09:00');
-    setValue('endDate', endDate.toISOString().split('T')[0]);
+    setValue('endDate', formatDateLocal(endDate));
     setValue('endTime', endDate.toTimeString().slice(0, 5));
   };
 
@@ -351,8 +359,8 @@ export default function BookingPage() {
                       locale={locale as 'en' | 'fr'}
                       selectedDate={watchedValues.startDate ? new Date(watchedValues.startDate) : undefined}
                       onDateSelect={(date) => {
-                        setValue('startDate', date.toISOString().split('T')[0]);
-                        setValue('endDate', date.toISOString().split('T')[0]);
+                        setValue('startDate', formatDateLocal(date));
+                        setValue('endDate', formatDateLocal(date));
                       }}
                     />
                   </div>
