@@ -7,6 +7,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { formatPrice } from '@/lib/utils';
+import AvailabilityCalendar from '@/components/AvailabilityCalendar';
+import AvailabilityChecker from '@/components/AvailabilityChecker';
 
 const bookingSchema = z.object({
   spaceId: z.string().min(1, 'Space is required'),
@@ -61,6 +63,7 @@ export default function BookingPage() {
     rateType: 'hourly' | 'daily';
     rate: number;
   } | null>(null);
+  const [isAvailable, setIsAvailable] = useState<boolean>(true);
 
   const {
     register,
@@ -339,6 +342,21 @@ export default function BookingPage() {
                     {locale === 'fr' ? 'Date et durée' : 'Date & Duration'}
                   </h2>
 
+                  {/* Availability Calendar */}
+                  <div className="mb-8">
+                    <label className="block text-sm font-medium text-gray-300 mb-3">
+                      {locale === 'fr' ? 'Sélectionnez une date' : 'Select a date'}
+                    </label>
+                    <AvailabilityCalendar
+                      locale={locale as 'en' | 'fr'}
+                      selectedDate={watchedValues.startDate ? new Date(watchedValues.startDate) : undefined}
+                      onDateSelect={(date) => {
+                        setValue('startDate', date.toISOString().split('T')[0]);
+                        setValue('endDate', date.toISOString().split('T')[0]);
+                      }}
+                    />
+                  </div>
+
                   {/* Quick Presets */}
                   <div className="mb-8">
                     <label className="block text-sm font-medium text-gray-300 mb-3">
@@ -439,6 +457,16 @@ export default function BookingPage() {
                     )}
                   </div>
 
+                  {/* Real-time Availability Check */}
+                  <AvailabilityChecker
+                    startDate={watchedValues.startDate || ''}
+                    startTime={watchedValues.startTime || ''}
+                    endDate={watchedValues.endDate || ''}
+                    endTime={watchedValues.endTime || ''}
+                    locale={locale as 'en' | 'fr'}
+                    onAvailabilityChange={setIsAvailable}
+                  />
+
                   <div className="flex gap-4">
                     <button
                       type="button"
@@ -450,7 +478,8 @@ export default function BookingPage() {
                     <button
                       type="button"
                       onClick={nextStep}
-                      className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors uppercase tracking-wider"
+                      disabled={!isAvailable}
+                      className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors uppercase tracking-wider disabled:bg-gray-600 disabled:cursor-not-allowed"
                     >
                       {locale === 'fr' ? 'Continuer' : 'Continue'}
                     </button>

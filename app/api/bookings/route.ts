@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateBookingReference } from '@/lib/utils';
 import { z } from 'zod';
 import { MOCK_SPACES } from '@/lib/mock-data';
+import { checkAvailability } from '@/lib/availability';
 
 const bookingSchema = z.object({
   spaceId: z.string(),
@@ -39,6 +40,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Start date cannot be in the past' },
         { status: 400 }
+      );
+    }
+
+    // Check availability before accepting booking
+    const availabilityCheck = await checkAvailability(startDate, endDate);
+    if (!availabilityCheck.available) {
+      return NextResponse.json(
+        {
+          error: 'Room is not available for the selected time slot',
+          conflicts: availabilityCheck.conflicts,
+        },
+        { status: 409 } // 409 Conflict
       );
     }
 
