@@ -125,5 +125,22 @@
     "noEvents": "No events available at the moment",
     "gallery": "Event Gallery",
     "description": "About this event"
+  },
+  "availability": {
+    "title": "Check Availability",
+    "subtitle": "View our room availability calendar",
+    "checking": "Checking availability...",
+    "available": "Available",
+    "availableMessage": "The room is available for these dates",
+    "notAvailable": "Not Available",
+    "notAvailableMessage": "The room is already booked for this time period",
+    "existingBookings": "Existing bookings:",
+    "selectDate": "Select a date",
+    "selected": "Selected",
+    "booked": "Booked",
+    "today": "Today",
+    "legend": "Legend",
+    "conflictError": "Room is not available for the selected time slot",
+    "viewCalendar": "View Availability"
   }
 }

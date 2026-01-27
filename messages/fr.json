@@ -125,5 +125,22 @@
     "noEvents": "Aucun événement disponible pour le moment",
     "gallery": "Galerie de l'Événement",
     "description": "À propos de cet événement"
+  },
+  "availability": {
+    "title": "Vérifier la Disponibilité",
+    "subtitle": "Consultez notre calendrier de disponibilité",
+    "checking": "Vérification de la disponibilité...",
+    "available": "Disponible",
+    "availableMessage": "La salle est disponible pour ces dates",
+    "notAvailable": "Non disponible",
+    "notAvailableMessage": "La salle est déjà réservée pour cette période",
+    "existingBookings": "Réservations existantes:",
+    "selectDate": "Sélectionnez une date",
+    "selected": "Sélectionné",
+    "booked": "Réservé",
+    "today": "Aujourd'hui",
+    "legend": "Légende",
+    "conflictError": "La salle n'est pas disponible pour le créneau sélectionné",
+    "viewCalendar": "Voir la Disponibilité"
   }
 }
