@@ -18,7 +18,7 @@ describe('Utility Functions', () => {
     });
 
     it('should handle large numbers', () => {
-      expect(formatPrice(1000000)).toBe('$1,000,000');
+      expect(formatPrice(1000000)).toBe('$1,000,000.00');
     });
   });
 
