@@ -15,11 +15,13 @@ export default async function SpacesPage() {
   const premisesImages = [
     '/premises/IMG_2776.jpg',
     '/premises/IMG_2780.jpg',
+    '/premises/IMG_2780.jpeg',
     '/premises/IMG_2783.jpg',
     '/premises/IMG_2787.jpg',
     '/premises/IMG_2789.jpg',
     '/premises/IMG_2792.jpg',
     '/premises/IMG_2794.jpg',
+    '/premises/IMG_2796.jpeg',
     '/premises/IMG_2797.jpg',
     '/premises/IMG_2800.jpg',
     '/premises/IMG_2801.jpg',
