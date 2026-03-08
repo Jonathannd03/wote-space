@@ -3,6 +3,7 @@ import Link from 'next/link';
 import HeroSection from '@/components/HeroSection';
 import EventsCarousel from '@/components/EventsCarousel';
 import PartnersSection from '@/components/PartnersSection';
+import NewsSection from '@/components/NewsSection';
 import { getEvents, getEventShortDescription } from '@/lib/events';
 
 export default function HomePage() {
@@ -95,6 +96,9 @@ export default function HomePage() {
 
       {/* Partners Section */}
       <PartnersSection locale={locale} />
+
+      {/* News Section */}
+      <NewsSection locale={locale} />
 
       {/* CTA Section */}
       <section className="bg-brand-black py-24 border-t border-brand-black-light">
