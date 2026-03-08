@@ -98,7 +98,13 @@ export default function HomePage() {
       <PartnersSection locale={locale} />
 
       {/* News Section */}
-      <NewsSection locale={locale} />
+      <NewsSection
+        locale={locale}
+        events={events}
+        eventShortDescriptions={Object.fromEntries(
+          events.map(event => [event.id, getEventShortDescription(event.id, locale as 'en' | 'fr')])
+        )}
+      />
 
       {/* CTA Section */}
       <section className="bg-brand-black py-24 border-t border-brand-black-light">
