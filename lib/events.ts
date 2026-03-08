@@ -123,8 +123,8 @@ export function getEventDescription(eventId: string, locale: 'en' | 'fr'): strin
       fr: 'Suite au succès de la première édition, la Master Class en Art Oratoire est revenue pour une deuxième session. Les participants ont approfondi leurs compétences en communication, narration et plaidoyer, avec un accent sur la représentation efficace de leurs communautés.',
     },
     'wahdi-training-conference-07-03-2026': {
-      en: 'Wote Space hosted a training conference organised by WAHDI, Women in Action for Human Dignity. The event brought together women leaders and advocates to strengthen their capacity for humanitarian action and community empowerment.',
-      fr: 'Wote Space a accueilli une conférence de formation organisée par WAHDI, Femmes en Action pour la Dignité Humaine. L\'événement a réuni des femmes leaders et militantes pour renforcer leurs capacités d\'action humanitaire et d\'autonomisation communautaire.',
+      en: 'Wote Space hosted a training workshop organised by WAHDI, Women in Action for Human Dignity, focused on monitoring, analysing and understanding security issues and violence linked to the climate crisis. Participants developed practical tools to better grasp the links between environmental degradation and conflict, and to strengthen their advocacy and protection responses.',
+      fr: 'Wote Space a accueilli un atelier de formation organisé par WAHDI, Femmes en Action pour la Dignité Humaine, axé sur le suivi, l\'analyse et la compréhension des questions de sécurité et des violences liées à la crise climatique. Les participants ont développé des outils pratiques pour mieux saisir les liens entre dégradation environnementale et conflits, et renforcer leurs réponses en matière de plaidoyer et de protection.',
     },
   };
 
@@ -156,8 +156,8 @@ export function getEventShortDescription(eventId: string, locale: 'en' | 'fr'): 
       fr: 'La deuxième édition de notre formation en art oratoire, axée sur le plaidoyer et la représentation communautaire.',
     },
     'wahdi-training-conference-07-03-2026': {
-      en: 'A training conference by WAHDI to strengthen women leaders in humanitarian action and community empowerment.',
-      fr: 'Une conférence de formation de WAHDI pour renforcer les femmes leaders dans l\'action humanitaire et l\'autonomisation communautaire.',
+      en: 'A WAHDI training workshop on monitoring and understanding security issues and violence linked to the climate crisis, with practical tools for advocacy and protection.',
+      fr: 'Un atelier de formation WAHDI sur le suivi et la compréhension des questions de sécurité et des violences liées à la crise climatique, avec des outils pratiques pour le plaidoyer et la protection.',
     },
   };
 
