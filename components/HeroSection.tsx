@@ -32,7 +32,7 @@ export default function HeroSection({
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 h-full flex items-center">
+      <div className="relative z-10 h-full flex items-center pt-16 sm:pt-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="max-w-4xl">
             {/* Eyebrow */}
