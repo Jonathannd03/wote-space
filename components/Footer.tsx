@@ -23,8 +23,8 @@ export default function Footer() {
             />
             <p className="text-gray-400 text-sm leading-relaxed">
               {locale === 'fr'
-                ? 'Votre espace de travail collaboratif au cœur de Goma'
-                : 'Your collaborative workspace in the heart of Goma'}
+                ? 'Un espace humanitaire au service de la dignité et des communautés de Goma'
+                : 'A humanitarian space in service of dignity and communities in Goma'}
             </p>
           </div>
 
@@ -88,17 +88,17 @@ export default function Footer() {
                   href={`/${locale}/booking`}
                   className="text-gray-400 hover:text-brand-red transition-colors text-sm"
                 >
-                  {locale === 'fr' ? 'Réservation' : 'Booking'}
+                  {locale === 'fr' ? 'Réserver un espace' : 'Reserve a space'}
                 </Link>
               </li>
               <li className="text-gray-400 text-sm">
-                {locale === 'fr' ? 'Salles de réunion' : 'Meeting Rooms'}
+                {locale === 'fr' ? 'Coordination humanitaire' : 'Humanitarian coordination'}
               </li>
               <li className="text-gray-400 text-sm">
-                Coworking
+                {locale === 'fr' ? 'Formations & ateliers' : 'Trainings & workshops'}
               </li>
               <li className="text-gray-400 text-sm">
-                {locale === 'fr' ? 'Événements' : 'Events'}
+                {locale === 'fr' ? 'Événements communautaires' : 'Community events'}
               </li>
             </ul>
           </div>
