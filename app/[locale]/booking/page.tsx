@@ -43,6 +43,13 @@ const DURATION_PRESETS = [
   { hours: 16, label: '2 jours', labelEn: '2 days' },
 ];
 
+const STEPS = [
+  { fr: 'Espace', en: 'Space' },
+  { fr: 'Date', en: 'Date' },
+  { fr: 'Infos', en: 'Details' },
+  { fr: 'Confirm.', en: 'Review' },
+];
+
 export default function BookingPage() {
   const t = useTranslations('booking');
   const tCommon = useTranslations('common');
@@ -120,21 +127,11 @@ export default function BookingPage() {
         const days = Math.ceil(hours / 24);
         const price = days * space.pricePerDay;
         setTotalPrice(price);
-        setCalculationDetails({
-          hours,
-          days,
-          rateType: 'daily',
-          rate: space.pricePerDay,
-        });
+        setCalculationDetails({ hours, days, rateType: 'daily', rate: space.pricePerDay });
       } else {
         const price = hours * space.pricePerHour;
         setTotalPrice(price);
-        setCalculationDetails({
-          hours,
-          days: 0,
-          rateType: 'hourly',
-          rate: space.pricePerHour,
-        });
+        setCalculationDetails({ hours, days: 0, rateType: 'hourly', rate: space.pricePerHour });
       }
     } else {
       setTotalPrice(0);
@@ -178,9 +175,10 @@ export default function BookingPage() {
     setSelectedSpace(space);
     setValue('spaceId', space.id);
     setStep(2);
+    // Scroll to top of page on mobile after selecting
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Helper to format date in local timezone (avoids UTC conversion issues)
   const formatDateLocal = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -192,10 +190,8 @@ export default function BookingPage() {
     const now = new Date();
     const startDate = new Date(now);
     startDate.setHours(9, 0, 0, 0);
-
     const endDate = new Date(startDate);
     endDate.setHours(startDate.getHours() + hours);
-
     setValue('startDate', formatDateLocal(startDate));
     setValue('startTime', '09:00');
     setValue('endDate', formatDateLocal(endDate));
@@ -204,7 +200,6 @@ export default function BookingPage() {
 
   const nextStep = async () => {
     let isValid = false;
-
     if (step === 1) {
       isValid = await trigger('spaceId');
     } else if (step === 2) {
@@ -212,15 +207,18 @@ export default function BookingPage() {
     } else if (step === 3) {
       isValid = await trigger(['firstName', 'lastName', 'email']);
     }
-
     if (isValid) {
       setStep(step + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const prevStep = () => {
     setStep(step - 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const fr = locale === 'fr';
 
   if (success) {
     return (
@@ -229,37 +227,28 @@ export default function BookingPage() {
           <div className="bg-brand-black-light border border-brand-red rounded-sm p-8 text-center">
             <div className="text-6xl mb-4">📋</div>
             <h1 className="text-3xl font-bold text-white mb-3">
-              {locale === 'fr' ? 'Demande reçue !' : 'Request received!'}
+              {fr ? 'Demande reçue !' : 'Request received!'}
             </h1>
             <p className="text-gray-300 mb-6">
-              {locale === 'fr'
+              {fr
                 ? 'Votre demande de réservation a bien été transmise à notre équipe.'
                 : 'Your booking request has been sent to our team.'}
             </p>
 
-            {/* Reference */}
             <div className="bg-brand-black border border-brand-black-light p-4 rounded-sm mb-8">
               <p className="text-sm text-gray-400 mb-1">{t('reference')}</p>
               <p className="text-2xl font-bold text-white">{bookingRef}</p>
             </div>
 
-            {/* Call to action */}
             <div className="bg-brand-red/10 border-2 border-brand-red rounded-sm p-6 mb-8">
               <p className="text-white font-semibold text-lg mb-2">
-                {locale === 'fr'
-                  ? 'Pour finaliser votre réservation, appelez-nous :'
-                  : 'To complete your booking, please call us:'}
+                {fr ? 'Pour finaliser votre réservation, appelez-nous :' : 'To complete your booking, please call us:'}
               </p>
-              <a
-                href="tel:+243980244431"
-                className="text-3xl font-black text-brand-red hover:text-brand-red-light transition-colors"
-              >
+              <a href="tel:+243980244431" className="text-3xl font-black text-brand-red hover:text-brand-red-light transition-colors">
                 +243 980 244 431
               </a>
               <p className="text-gray-400 text-sm mt-3">
-                {locale === 'fr'
-                  ? 'Mentionnez votre numéro de référence lors de l\'appel.'
-                  : 'Please mention your reference number when you call.'}
+                {fr ? 'Mentionnez votre numéro de référence lors de l\'appel.' : 'Please mention your reference number when you call.'}
               </p>
             </div>
 
@@ -267,7 +256,7 @@ export default function BookingPage() {
               href={`/${locale}`}
               className="inline-block bg-brand-red text-white px-8 py-3 rounded-sm font-semibold hover:bg-brand-red-dark transition-colors uppercase tracking-wider"
             >
-              {locale === 'fr' ? 'Retour à l\'accueil' : 'Back to home'}
+              {fr ? 'Retour à l\'accueil' : 'Back to home'}
             </a>
           </div>
         </div>
@@ -276,102 +265,125 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-black py-16">
+    <div className="min-h-screen bg-brand-black pb-24 lg:pb-16 pt-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-4">{t('title')}</h1>
-          <div className="h-1 w-24 bg-brand-red mb-6 mx-auto"></div>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-5xl font-bold text-white mb-3">{t('title')}</h1>
+          <div className="h-1 w-24 bg-brand-red mb-0 mx-auto"></div>
         </div>
 
         {/* Progress Steps */}
-        <div className="max-w-4xl mx-auto mb-12">
-          <div className="flex items-center justify-between">
+        <div className="max-w-2xl mx-auto mb-8 px-2">
+          {/* Mobile: step label */}
+          <p className="text-center text-brand-red text-sm font-semibold uppercase tracking-widest mb-4 sm:hidden">
+            {fr ? `Étape ${step} sur 4` : `Step ${step} of 4`} — {STEPS[step - 1][fr ? 'fr' : 'en']}
+          </p>
+
+          <div className="flex items-center">
             {[1, 2, 3, 4].map((s) => (
               <div key={s} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center font-bold transition-all ${
-                      step >= s
+                    className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-base transition-all ${
+                      step > s
                         ? 'bg-brand-red text-white'
+                        : step === s
+                        ? 'bg-brand-red text-white ring-4 ring-brand-red/30'
                         : 'bg-brand-black-light text-gray-500 border-2 border-brand-black-light'
                     }`}
                   >
-                    {s}
+                    {step > s ? (
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : s}
                   </div>
-                  <p className={`text-sm mt-2 ${step >= s ? 'text-white' : 'text-gray-500'}`}>
-                    {s === 1
-                      ? locale === 'fr'
-                        ? 'Espace'
-                        : 'Space'
-                      : s === 2
-                      ? locale === 'fr'
-                        ? 'Date & Durée'
-                        : 'Date & Time'
-                      : s === 3
-                      ? locale === 'fr'
-                        ? 'Informations'
-                        : 'Details'
-                      : locale === 'fr'
-                      ? 'Confirmation'
-                      : 'Review'}
+                  <p className={`hidden sm:block text-xs mt-2 font-medium ${step >= s ? 'text-white' : 'text-gray-500'}`}>
+                    {STEPS[s - 1][fr ? 'fr' : 'en']}
                   </p>
                 </div>
                 {s < 4 && (
-                  <div
-                    className={`h-1 flex-1 mx-4 ${
-                      step > s ? 'bg-brand-red' : 'bg-brand-black-light'
-                    }`}
-                  />
+                  <div className={`h-0.5 flex-1 mx-1 sm:mx-3 transition-all ${step > s ? 'bg-brand-red' : 'bg-brand-black-light'}`} />
                 )}
               </div>
             ))}
           </div>
         </div>
 
+        {/* Mobile: compact selected space banner (steps 2-4) */}
+        {selectedSpace && step > 1 && (
+          <div className="lg:hidden mb-4 bg-brand-black-light border border-brand-red/40 rounded-sm px-4 py-3 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-gray-400 uppercase tracking-wider">{fr ? 'Espace sélectionné' : 'Selected space'}</p>
+              <p className="text-white font-semibold text-sm">{fr ? selectedSpace.nameFr : selectedSpace.nameEn}</p>
+            </div>
+            {totalPrice > 0 && (
+              <div className="text-right">
+                <p className="text-xs text-gray-400">{fr ? 'Estimation' : 'Estimate'}</p>
+                <p className="text-brand-red font-black text-lg">{formatPrice(totalPrice)}</p>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit(onSubmit)} className="bg-brand-black-light border border-brand-black-light rounded-sm p-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="bg-brand-black-light border border-brand-black-light rounded-sm p-5 sm:p-8">
 
               {/* Step 1: Select Space */}
               {step === 1 && (
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-6">
-                    {locale === 'fr' ? 'Choisissez votre espace' : 'Choose your space'}
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+                    {fr ? 'Choisissez votre espace' : 'Choose your space'}
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <p className="text-gray-400 text-sm mb-6">
+                    {fr ? 'Appuyez sur un espace pour le sélectionner et continuer.' : 'Tap a space to select it and continue.'}
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {spaces.map((space) => (
                       <button
                         key={space.id}
                         type="button"
                         onClick={() => handleSpaceSelect(space)}
-                        className={`text-left p-6 rounded-sm border-2 transition-all ${
+                        className={`text-left p-5 rounded-sm border-2 transition-all active:scale-95 ${
                           selectedSpace?.id === space.id
                             ? 'border-brand-red bg-brand-red/10'
-                            : 'border-brand-black-light hover:border-brand-red/50'
+                            : 'border-brand-black-light hover:border-brand-red/50 active:border-brand-red'
                         }`}
                       >
-                        <h3 className="text-xl font-bold text-white mb-2">
-                          {locale === 'fr' ? space.nameFr : space.nameEn}
-                        </h3>
-                        <div className="flex items-center text-gray-400 mb-3">
-                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-bold text-white mb-2 leading-tight">
+                              {fr ? space.nameFr : space.nameEn}
+                            </h3>
+                            <div className="flex items-center text-gray-400 mb-3 text-sm">
+                              <svg className="w-4 h-4 mr-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                              </svg>
+                              <span>{fr ? 'Jusqu\'à' : 'Up to'} {space.capacity} {fr ? 'personnes' : 'people'}</span>
+                            </div>
+                            <div className="flex flex-wrap gap-2 text-sm">
+                              <span className="bg-brand-black px-2 py-1 rounded-sm text-brand-red font-semibold">
+                                {formatPrice(space.pricePerHour)}/h
+                              </span>
+                              <span className="bg-brand-black px-2 py-1 rounded-sm text-brand-red font-semibold">
+                                {formatPrice(space.pricePerDay)}/{fr ? 'jour' : 'day'}
+                              </span>
+                            </div>
+                          </div>
+                          {/* Arrow indicating tappable */}
+                          <svg className="w-5 h-5 text-brand-red flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
-                          <span>{locale === 'fr' ? 'Jusqu\'à' : 'Up to'} {space.capacity} {locale === 'fr' ? 'personnes' : 'people'}</span>
-                        </div>
-                        <div className="flex gap-2 text-sm">
-                          <span className="bg-brand-black px-3 py-1 rounded-sm text-brand-red font-semibold">
-                            {formatPrice(space.pricePerHour)}/h
-                          </span>
-                          <span className="bg-brand-black px-3 py-1 rounded-sm text-brand-red font-semibold">
-                            {formatPrice(space.pricePerDay)}/{locale === 'fr' ? 'jour' : 'day'}
-                          </span>
                         </div>
                       </button>
                     ))}
                   </div>
+
                   {errors.spaceId && (
                     <p className="mt-4 text-sm text-brand-red">{errors.spaceId.message}</p>
                   )}
@@ -381,14 +393,17 @@ export default function BookingPage() {
               {/* Step 2: Select Date & Time */}
               {step === 2 && (
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-6">
-                    {locale === 'fr' ? 'Date et durée' : 'Date & Duration'}
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+                    {fr ? 'Date et durée' : 'Date & Duration'}
                   </h2>
+                  <p className="text-gray-400 text-sm mb-6">
+                    {fr ? 'Sélectionnez une date puis choisissez vos horaires.' : 'Pick a date then set your start and end times.'}
+                  </p>
 
                   {/* Availability Calendar */}
-                  <div className="mb-8">
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                      {locale === 'fr' ? 'Sélectionnez une date' : 'Select a date'}
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-300 mb-3">
+                      {fr ? 'Sélectionnez une date' : 'Select a date'}
                     </label>
                     <AvailabilityCalendar
                       locale={locale as 'en' | 'fr'}
@@ -401,106 +416,95 @@ export default function BookingPage() {
                   </div>
 
                   {/* Quick Presets */}
-                  <div className="mb-8">
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                      {locale === 'fr' ? 'Durée rapide' : 'Quick Duration'}
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-300 mb-3">
+                      {fr ? 'Durée rapide (optionnel)' : 'Quick duration (optional)'}
                     </label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {DURATION_PRESETS.map((preset) => (
                         <button
                           key={preset.hours}
                           type="button"
                           onClick={() => applyDurationPreset(preset.hours)}
-                          className="px-4 py-3 bg-brand-black border border-brand-black-light hover:border-brand-red rounded-sm text-white font-semibold transition-all"
+                          className="px-3 py-3 bg-brand-black border border-brand-black-light hover:border-brand-red active:bg-brand-red/10 rounded-sm text-white text-sm font-semibold transition-all"
                         >
-                          {locale === 'fr' ? preset.label : preset.labelEn}
+                          {fr ? preset.label : preset.labelEn}
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="grid grid-cols-2 gap-4 mb-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        {locale === 'fr' ? 'Date de début' : 'Start Date'} *
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">
+                        {fr ? 'Date de début' : 'Start date'} *
                       </label>
                       <input
                         type="date"
                         {...register('startDate')}
-                        className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white text-sm"
                         min={new Date().toISOString().split('T')[0]}
                       />
-                      {errors.startDate && (
-                        <p className="mt-1 text-sm text-brand-red">{errors.startDate.message}</p>
-                      )}
+                      {errors.startDate && <p className="mt-1 text-xs text-brand-red">{errors.startDate.message}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        {locale === 'fr' ? 'Heure de début' : 'Start Time'} *
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">
+                        {fr ? 'Heure de début' : 'Start time'} *
                       </label>
                       <input
                         type="time"
                         {...register('startTime')}
-                        className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white text-sm"
                       />
-                      {errors.startTime && (
-                        <p className="mt-1 text-sm text-brand-red">{errors.startTime.message}</p>
-                      )}
+                      {errors.startTime && <p className="mt-1 text-xs text-brand-red">{errors.startTime.message}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        {locale === 'fr' ? 'Date de fin' : 'End Date'} *
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">
+                        {fr ? 'Date de fin' : 'End date'} *
                       </label>
                       <input
                         type="date"
                         {...register('endDate')}
-                        className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white text-sm"
                         min={new Date().toISOString().split('T')[0]}
                       />
-                      {errors.endDate && (
-                        <p className="mt-1 text-sm text-brand-red">{errors.endDate.message}</p>
-                      )}
+                      {errors.endDate && <p className="mt-1 text-xs text-brand-red">{errors.endDate.message}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        {locale === 'fr' ? 'Heure de fin' : 'End Time'} *
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">
+                        {fr ? 'Heure de fin' : 'End time'} *
                       </label>
                       <input
                         type="time"
                         {...register('endTime')}
-                        className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white text-sm"
                       />
-                      {errors.endTime && (
-                        <p className="mt-1 text-sm text-brand-red">{errors.endTime.message}</p>
-                      )}
+                      {errors.endTime && <p className="mt-1 text-xs text-brand-red">{errors.endTime.message}</p>}
                     </div>
                   </div>
 
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      {locale === 'fr' ? 'Nombre de personnes' : 'Number of People'} *
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">
+                      {fr ? 'Nombre de participants' : 'Number of participants'} *
                     </label>
                     <input
                       type="number"
                       {...register('numberOfPeople', { valueAsNumber: true })}
                       min="1"
                       max={selectedSpace?.capacity}
-                      className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                      className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white text-sm"
                     />
                     {selectedSpace && (
-                      <p className="mt-1 text-sm text-gray-400">
-                        {locale === 'fr' ? 'Capacité maximale' : 'Maximum capacity'}: {selectedSpace.capacity}
+                      <p className="mt-1 text-xs text-gray-400">
+                        {fr ? 'Capacité maximale' : 'Maximum capacity'}: {selectedSpace.capacity}
                       </p>
                     )}
-                    {errors.numberOfPeople && (
-                      <p className="mt-1 text-sm text-brand-red">{errors.numberOfPeople.message}</p>
-                    )}
+                    {errors.numberOfPeople && <p className="mt-1 text-xs text-brand-red">{errors.numberOfPeople.message}</p>}
                   </div>
 
-                  {/* Real-time Availability Check */}
                   <AvailabilityChecker
                     startDate={watchedValues.startDate || ''}
                     startTime={watchedValues.startTime || ''}
@@ -510,21 +514,13 @@ export default function BookingPage() {
                     onAvailabilityChange={setIsAvailable}
                   />
 
-                  <div className="flex gap-4">
-                    <button
-                      type="button"
-                      onClick={prevStep}
-                      className="flex-1 bg-brand-black border-2 border-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red transition-colors uppercase tracking-wider"
-                    >
-                      {locale === 'fr' ? 'Retour' : 'Back'}
+                  {/* Desktop buttons */}
+                  <div className="hidden sm:flex gap-4 mt-6">
+                    <button type="button" onClick={prevStep} className="flex-1 bg-brand-black border-2 border-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red transition-colors uppercase tracking-wider">
+                      {fr ? 'Retour' : 'Back'}
                     </button>
-                    <button
-                      type="button"
-                      onClick={nextStep}
-                      disabled={!isAvailable}
-                      className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors uppercase tracking-wider disabled:bg-gray-600 disabled:cursor-not-allowed"
-                    >
-                      {locale === 'fr' ? 'Continuer' : 'Continue'}
+                    <button type="button" onClick={nextStep} disabled={!isAvailable} className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors uppercase tracking-wider disabled:bg-gray-600 disabled:cursor-not-allowed">
+                      {fr ? 'Continuer' : 'Continue'}
                     </button>
                   </div>
                 </div>
@@ -533,104 +529,82 @@ export default function BookingPage() {
               {/* Step 3: Personal Details */}
               {step === 3 && (
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-6">
-                    {locale === 'fr' ? 'Vos informations' : 'Your Information'}
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+                    {fr ? 'Vos informations' : 'Your information'}
                   </h2>
+                  <p className="text-gray-400 text-sm mb-6">
+                    {fr ? 'Renseignez vos coordonnées pour que nous puissions vous contacter.' : 'Fill in your details so we can reach you to confirm.'}
+                  </p>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        {locale === 'fr' ? 'Prénom' : 'First Name'} *
-                      </label>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">{fr ? 'Prénom' : 'First name'} *</label>
                       <input
                         type="text"
                         {...register('firstName')}
-                        className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
                       />
-                      {errors.firstName && (
-                        <p className="mt-1 text-sm text-brand-red">{errors.firstName.message}</p>
-                      )}
+                      {errors.firstName && <p className="mt-1 text-xs text-brand-red">{errors.firstName.message}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        {locale === 'fr' ? 'Nom' : 'Last Name'} *
-                      </label>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">{fr ? 'Nom' : 'Last name'} *</label>
                       <input
                         type="text"
                         {...register('lastName')}
-                        className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
                       />
-                      {errors.lastName && (
-                        <p className="mt-1 text-sm text-brand-red">{errors.lastName.message}</p>
-                      )}
+                      {errors.lastName && <p className="mt-1 text-xs text-brand-red">{errors.lastName.message}</p>}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        {locale === 'fr' ? 'Email' : 'Email'} *
-                      </label>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">Email *</label>
                       <input
                         type="email"
                         {...register('email')}
-                        className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
                       />
-                      {errors.email && (
-                        <p className="mt-1 text-sm text-brand-red">{errors.email.message}</p>
-                      )}
+                      {errors.email && <p className="mt-1 text-xs text-brand-red">{errors.email.message}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        {locale === 'fr' ? 'Téléphone' : 'Phone'}
-                      </label>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">{fr ? 'Téléphone' : 'Phone'}</label>
                       <input
                         type="tel"
                         {...register('phone')}
-                        className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
                       />
                     </div>
                   </div>
 
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      {locale === 'fr' ? 'Entreprise' : 'Company'}
-                    </label>
+                  <div className="mb-5">
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">{fr ? 'Organisation' : 'Organisation'}</label>
                     <input
                       type="text"
                       {...register('company')}
-                      className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                      className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
                     />
                   </div>
 
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      {locale === 'fr' ? 'Notes additionnelles' : 'Additional Notes'}
-                    </label>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">{fr ? 'Notes additionnelles' : 'Additional notes'}</label>
                     <textarea
                       {...register('notes')}
-                      rows={4}
-                      className="w-full px-4 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
-                      placeholder={locale === 'fr' ? 'Besoins spécifiques, équipements, etc.' : 'Special needs, equipment, etc.'}
+                      rows={3}
+                      className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white"
+                      placeholder={fr ? 'Besoins spécifiques, équipements, etc.' : 'Special needs, equipment, etc.'}
                     />
                   </div>
 
-                  <div className="flex gap-4">
-                    <button
-                      type="button"
-                      onClick={prevStep}
-                      className="flex-1 bg-brand-black border-2 border-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red transition-colors uppercase tracking-wider"
-                    >
-                      {locale === 'fr' ? 'Retour' : 'Back'}
+                  {/* Desktop buttons */}
+                  <div className="hidden sm:flex gap-4">
+                    <button type="button" onClick={prevStep} className="flex-1 bg-brand-black border-2 border-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red transition-colors uppercase tracking-wider">
+                      {fr ? 'Retour' : 'Back'}
                     </button>
-                    <button
-                      type="button"
-                      onClick={nextStep}
-                      className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors uppercase tracking-wider"
-                    >
-                      {locale === 'fr' ? 'Continuer' : 'Continue'}
+                    <button type="button" onClick={nextStep} className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors uppercase tracking-wider">
+                      {fr ? 'Continuer' : 'Continue'}
                     </button>
                   </div>
                 </div>
@@ -639,158 +613,108 @@ export default function BookingPage() {
               {/* Step 4: Review & Confirm */}
               {step === 4 && (
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-6">
-                    {locale === 'fr' ? 'Vérifiez vos informations' : 'Review Your Information'}
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+                    {fr ? 'Vérifiez vos informations' : 'Review your booking'}
                   </h2>
+                  <p className="text-gray-400 text-sm mb-6">
+                    {fr ? 'Tout est correct ? Confirmez pour envoyer votre demande.' : 'Everything looks good? Confirm to send your request.'}
+                  </p>
 
-                  {/* Booking Summary */}
-                  <div className="space-y-6">
-                    {/* Space Configuration */}
-                    <div className="bg-brand-black border border-brand-black-light rounded-sm p-6">
-                      <h3 className="text-lg font-semibold text-brand-red mb-4 uppercase tracking-wider">
-                        {locale === 'fr' ? 'Configuration' : 'Setup'}
-                      </h3>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">{locale === 'fr' ? 'Espace' : 'Space'}:</span>
-                          <span className="text-white font-semibold">
-                            {selectedSpace && (locale === 'fr' ? selectedSpace.nameFr : selectedSpace.nameEn)}
-                          </span>
+                  <div className="space-y-4">
+                    <div className="bg-brand-black border border-brand-black-light rounded-sm p-5">
+                      <h3 className="text-sm font-semibold text-brand-red mb-3 uppercase tracking-wider">{fr ? 'Espace' : 'Space'}</h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">{fr ? 'Espace' : 'Space'}:</span>
+                          <span className="text-white font-semibold">{selectedSpace && (fr ? selectedSpace.nameFr : selectedSpace.nameEn)}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">{locale === 'fr' ? 'Capacité' : 'Capacity'}:</span>
-                          <span className="text-white font-semibold">
-                            {selectedSpace?.capacity} {locale === 'fr' ? 'personnes' : 'people'}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">{locale === 'fr' ? 'Nombre de personnes' : 'Number of people'}:</span>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">{fr ? 'Participants' : 'Participants'}:</span>
                           <span className="text-white font-semibold">{watchedValues.numberOfPeople}</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Date & Time */}
-                    <div className="bg-brand-black border border-brand-black-light rounded-sm p-6">
-                      <h3 className="text-lg font-semibold text-brand-red mb-4 uppercase tracking-wider">
-                        {locale === 'fr' ? 'Date & Heure' : 'Date & Time'}
-                      </h3>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">{locale === 'fr' ? 'Début' : 'Start'}:</span>
-                          <span className="text-white font-semibold">
-                            {watchedValues.startDate && new Date(watchedValues.startDate).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
-                              weekday: 'long',
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })} {watchedValues.startTime}
+                    <div className="bg-brand-black border border-brand-black-light rounded-sm p-5">
+                      <h3 className="text-sm font-semibold text-brand-red mb-3 uppercase tracking-wider">{fr ? 'Date & Heure' : 'Date & Time'}</h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">{fr ? 'Début' : 'Start'}:</span>
+                          <span className="text-white font-semibold text-right">
+                            {watchedValues.startDate && new Date(watchedValues.startDate).toLocaleDateString(fr ? 'fr-FR' : 'en-US', { weekday: 'short', day: 'numeric', month: 'short' })} {watchedValues.startTime}
                           </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">{locale === 'fr' ? 'Fin' : 'End'}:</span>
-                          <span className="text-white font-semibold">
-                            {watchedValues.endDate && new Date(watchedValues.endDate).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
-                              weekday: 'long',
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })} {watchedValues.endTime}
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">{fr ? 'Fin' : 'End'}:</span>
+                          <span className="text-white font-semibold text-right">
+                            {watchedValues.endDate && new Date(watchedValues.endDate).toLocaleDateString(fr ? 'fr-FR' : 'en-US', { weekday: 'short', day: 'numeric', month: 'short' })} {watchedValues.endTime}
                           </span>
                         </div>
                         {calculationDetails && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">{locale === 'fr' ? 'Durée' : 'Duration'}:</span>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">{fr ? 'Durée' : 'Duration'}:</span>
                             <span className="text-white font-semibold">
-                              {calculationDetails.hours.toFixed(1)}h
-                              {calculationDetails.days > 0 && ` (${calculationDetails.days} ${locale === 'fr' ? 'jour(s)' : 'day(s)'})`}
+                              {calculationDetails.hours.toFixed(1)}h{calculationDetails.days > 0 && ` (${calculationDetails.days} ${fr ? 'jour(s)' : 'day(s)'})`}
                             </span>
                           </div>
                         )}
                       </div>
                     </div>
 
-                    {/* Personal Information */}
-                    <div className="bg-brand-black border border-brand-black-light rounded-sm p-6">
-                      <h3 className="text-lg font-semibold text-brand-red mb-4 uppercase tracking-wider">
-                        {locale === 'fr' ? 'Vos Informations' : 'Your Information'}
-                      </h3>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">{locale === 'fr' ? 'Nom complet' : 'Full name'}:</span>
-                          <span className="text-white font-semibold">
-                            {watchedValues.firstName} {watchedValues.lastName}
-                          </span>
+                    <div className="bg-brand-black border border-brand-black-light rounded-sm p-5">
+                      <h3 className="text-sm font-semibold text-brand-red mb-3 uppercase tracking-wider">{fr ? 'Vos Informations' : 'Your Details'}</h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">{fr ? 'Nom' : 'Name'}:</span>
+                          <span className="text-white font-semibold">{watchedValues.firstName} {watchedValues.lastName}</span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between text-sm">
                           <span className="text-gray-400">Email:</span>
-                          <span className="text-white font-semibold">{watchedValues.email}</span>
+                          <span className="text-white font-semibold break-all text-right">{watchedValues.email}</span>
                         </div>
                         {watchedValues.phone && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">{locale === 'fr' ? 'Téléphone' : 'Phone'}:</span>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">{fr ? 'Téléphone' : 'Phone'}:</span>
                             <span className="text-white font-semibold">{watchedValues.phone}</span>
                           </div>
                         )}
                         {watchedValues.company && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">{locale === 'fr' ? 'Entreprise' : 'Company'}:</span>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">{fr ? 'Organisation' : 'Organisation'}:</span>
                             <span className="text-white font-semibold">{watchedValues.company}</span>
-                          </div>
-                        )}
-                        {watchedValues.notes && (
-                          <div>
-                            <span className="text-gray-400 block mb-2">{locale === 'fr' ? 'Notes' : 'Notes'}:</span>
-                            <p className="text-white bg-brand-black-light p-3 rounded-sm">{watchedValues.notes}</p>
                           </div>
                         )}
                       </div>
                     </div>
 
-                    {/* Total Price */}
-                    <div className="bg-brand-red/10 border-2 border-brand-red rounded-sm p-6">
+                    <div className="bg-brand-red/10 border-2 border-brand-red rounded-sm p-5">
                       <div className="flex justify-between items-center">
-                        <span className="text-xl font-bold text-white">
-                          {locale === 'fr' ? 'Prix Total' : 'Total Price'}:
-                        </span>
-                        <span className="text-4xl font-black text-brand-red">
-                          {formatPrice(totalPrice)}
-                        </span>
+                        <span className="text-lg font-bold text-white">{fr ? 'Prix estimé' : 'Estimated price'}:</span>
+                        <span className="text-3xl font-black text-brand-red">{formatPrice(totalPrice)}</span>
                       </div>
                       {calculationDetails && (
-                        <p className="text-sm text-gray-300 mt-3 text-center">
+                        <p className="text-xs text-gray-400 mt-2">
                           {calculationDetails.rateType === 'daily'
-                            ? locale === 'fr'
-                              ? `Tarif journalier: ${formatPrice(calculationDetails.rate)} × ${calculationDetails.days} jour(s)`
-                              : `Daily rate: ${formatPrice(calculationDetails.rate)} × ${calculationDetails.days} day(s)`
-                            : locale === 'fr'
-                            ? `Tarif horaire: ${formatPrice(calculationDetails.rate)} × ${calculationDetails.hours.toFixed(1)}h`
-                            : `Hourly rate: ${formatPrice(calculationDetails.rate)} × ${calculationDetails.hours.toFixed(1)}h`}
+                            ? `${formatPrice(calculationDetails.rate)} × ${calculationDetails.days} ${fr ? 'jour(s)' : 'day(s)'}`
+                            : `${formatPrice(calculationDetails.rate)} × ${calculationDetails.hours.toFixed(1)}h`}
                         </p>
                       )}
                     </div>
                   </div>
 
                   {error && (
-                    <div className="bg-brand-red/10 border border-brand-red rounded-sm p-4 mt-6">
-                      <p className="text-brand-red">{error}</p>
+                    <div className="bg-brand-red/10 border border-brand-red rounded-sm p-4 mt-4">
+                      <p className="text-brand-red text-sm">{error}</p>
                     </div>
                   )}
 
-                  <div className="flex gap-4 mt-8">
-                    <button
-                      type="button"
-                      onClick={prevStep}
-                      className="flex-1 bg-brand-black border-2 border-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red transition-colors uppercase tracking-wider"
-                    >
-                      {locale === 'fr' ? 'Modifier' : 'Edit'}
+                  {/* Desktop buttons */}
+                  <div className="hidden sm:flex gap-4 mt-6">
+                    <button type="button" onClick={prevStep} className="flex-1 bg-brand-black border-2 border-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red transition-colors uppercase tracking-wider">
+                      {fr ? 'Modifier' : 'Edit'}
                     </button>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed uppercase tracking-wider"
-                    >
-                      {loading ? (locale === 'fr' ? 'Chargement...' : 'Loading...') : (locale === 'fr' ? 'Confirmer la réservation' : 'Confirm Booking')}
+                    <button type="submit" disabled={loading} className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed uppercase tracking-wider">
+                      {loading ? (fr ? 'Envoi...' : 'Sending...') : (fr ? 'Confirmer la demande' : 'Send request')}
                     </button>
                   </div>
                 </div>
@@ -798,137 +722,100 @@ export default function BookingPage() {
             </form>
           </div>
 
-          {/* Price Summary Sidebar */}
-          <div className="lg:col-span-1">
+          {/* Price Summary Sidebar — desktop only */}
+          <div className="hidden lg:block lg:col-span-1">
             <div className="sticky top-24">
               <div className="bg-brand-black-light border-2 border-brand-red rounded-sm p-6">
                 <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-wider">
-                  {locale === 'fr' ? 'Résumé' : 'Summary'}
+                  {fr ? 'Résumé' : 'Summary'}
                 </h3>
 
                 {selectedSpace ? (
                   <>
-                    {/* Selected Space */}
                     <div className="mb-6 pb-6 border-b border-brand-black-light">
-                      <p className="text-sm text-gray-400 mb-2">
-                        {locale === 'fr' ? 'Espace' : 'Space'}
-                      </p>
-                      <p className="text-lg font-semibold text-white">
-                        {locale === 'fr' ? selectedSpace.nameFr : selectedSpace.nameEn}
-                      </p>
-                      <p className="text-sm text-gray-400 mt-1">
-                        {locale === 'fr' ? 'Capacité' : 'Capacity'}: {selectedSpace.capacity} {locale === 'fr' ? 'personnes' : 'people'}
-                      </p>
+                      <p className="text-sm text-gray-400 mb-1">{fr ? 'Espace' : 'Space'}</p>
+                      <p className="text-lg font-semibold text-white">{fr ? selectedSpace.nameFr : selectedSpace.nameEn}</p>
+                      <p className="text-sm text-gray-400 mt-1">{fr ? 'Capacité' : 'Capacity'}: {selectedSpace.capacity} {fr ? 'personnes' : 'people'}</p>
                     </div>
 
-                    {/* Duration & Price Calculation */}
                     {calculationDetails && (
                       <>
                         <div className="mb-6 pb-6 border-b border-brand-black-light">
-                          <p className="text-sm text-gray-400 mb-3">
-                            {locale === 'fr' ? 'Durée' : 'Duration'}
-                          </p>
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-white">
-                              <span>{locale === 'fr' ? 'Heures' : 'Hours'}:</span>
-                              <span className="font-semibold">
-                                {calculationDetails.hours.toFixed(1)}h
-                              </span>
-                            </div>
-                            {calculationDetails.days > 0 && (
-                              <div className="flex justify-between text-white">
-                                <span>{locale === 'fr' ? 'Jours' : 'Days'}:</span>
-                                <span className="font-semibold">
-                                  {calculationDetails.days}
-                                </span>
-                              </div>
-                            )}
-                          </div>
+                          <p className="text-sm text-gray-400 mb-2">{fr ? 'Durée' : 'Duration'}</p>
+                          <p className="text-white font-semibold">{calculationDetails.hours.toFixed(1)}h{calculationDetails.days > 0 && ` · ${calculationDetails.days} ${fr ? 'jour(s)' : 'day(s)'}`}</p>
                         </div>
-
                         <div className="mb-6 pb-6 border-b border-brand-black-light">
-                          <p className="text-sm text-gray-400 mb-3">
-                            {locale === 'fr' ? 'Calcul' : 'Calculation'}
+                          <p className="text-sm text-gray-400 mb-2">{fr ? 'Tarif' : 'Rate'}</p>
+                          <p className="text-white">
+                            {formatPrice(calculationDetails.rate)}/{calculationDetails.rateType === 'daily' ? (fr ? 'jour' : 'day') : 'h'}
                           </p>
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-white">
-                              <span>
-                                {calculationDetails.rateType === 'daily'
-                                  ? locale === 'fr'
-                                    ? 'Tarif journalier'
-                                    : 'Daily rate'
-                                  : locale === 'fr'
-                                  ? 'Tarif horaire'
-                                  : 'Hourly rate'}:
-                              </span>
-                              <span className="font-semibold">
-                                {formatPrice(calculationDetails.rate)}
-                              </span>
-                            </div>
-                            {calculationDetails.rateType === 'daily' ? (
-                              <div className="flex justify-between text-gray-400 text-sm">
-                                <span>
-                                  {calculationDetails.days} {locale === 'fr' ? 'jour(s)' : 'day(s)'} × {formatPrice(calculationDetails.rate)}
-                                </span>
-                              </div>
-                            ) : (
-                              <div className="flex justify-between text-gray-400 text-sm">
-                                <span>
-                                  {calculationDetails.hours.toFixed(1)}h × {formatPrice(calculationDetails.rate)}
-                                </span>
-                              </div>
-                            )}
-                          </div>
                         </div>
                       </>
                     )}
 
-                    {/* Total Price */}
                     <div className="bg-brand-red/10 border border-brand-red rounded-sm p-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-white">
-                          {locale === 'fr' ? 'Total' : 'Total'}:
-                        </span>
-                        <span className="text-3xl font-black text-brand-red">
-                          {totalPrice > 0 ? formatPrice(totalPrice) : '$0'}
-                        </span>
+                        <span className="text-lg font-semibold text-white">Total:</span>
+                        <span className="text-3xl font-black text-brand-red">{totalPrice > 0 ? formatPrice(totalPrice) : '$0'}</span>
                       </div>
                     </div>
 
-                    {calculationDetails && calculationDetails.rateType === 'daily' && (
+                    {calculationDetails?.rateType === 'daily' && (
                       <p className="text-xs text-gray-400 mt-3 text-center">
-                        {locale === 'fr'
-                          ? '* Tarif journalier appliqué (≥8h)'
-                          : '* Daily rate applied (≥8h)'}
+                        {fr ? '* Tarif journalier appliqué (≥8h)' : '* Daily rate applied (≥8h)'}
                       </p>
                     )}
                   </>
                 ) : (
                   <div className="text-center py-8">
-                    <svg
-                      className="w-16 h-16 mx-auto text-gray-600 mb-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                      />
+                    <svg className="w-12 h-12 mx-auto text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
-                    <p className="text-gray-400 text-sm">
-                      {locale === 'fr'
-                        ? 'Sélectionnez un espace pour commencer'
-                        : 'Select a space to get started'}
-                    </p>
+                    <p className="text-gray-400 text-sm">{fr ? 'Sélectionnez un espace pour commencer' : 'Select a space to get started'}</p>
                   </div>
                 )}
               </div>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Mobile sticky bottom action bar */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-brand-black-light border-t border-brand-black-light px-4 py-3 z-40">
+        {step === 1 ? (
+          <p className="text-center text-gray-400 text-sm py-1">
+            {fr ? 'Appuyez sur un espace ci-dessus pour continuer' : 'Tap a space above to continue'}
+          </p>
+        ) : (
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={prevStep}
+              className="flex-none bg-brand-black border-2 border-brand-red text-white px-5 py-3.5 rounded-sm font-bold transition-colors active:bg-brand-red uppercase text-sm"
+            >
+              {fr ? 'Retour' : 'Back'}
+            </button>
+            {step < 4 ? (
+              <button
+                type="button"
+                onClick={nextStep}
+                disabled={step === 2 && !isAvailable}
+                className="flex-1 bg-brand-red text-white py-3.5 rounded-sm font-bold transition-colors active:bg-brand-red-dark uppercase tracking-wider text-sm disabled:bg-gray-600 disabled:cursor-not-allowed"
+              >
+                {fr ? 'Continuer' : 'Continue'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSubmit(onSubmit)}
+                disabled={loading}
+                className="flex-1 bg-brand-red text-white py-3.5 rounded-sm font-bold transition-colors active:bg-brand-red-dark uppercase tracking-wider text-sm disabled:bg-gray-600"
+              >
+                {loading ? (fr ? 'Envoi...' : 'Sending...') : (fr ? 'Confirmer' : 'Confirm')}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
