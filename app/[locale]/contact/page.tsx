@@ -32,15 +32,21 @@ export default function ContactPage() {
 
   const onSubmit = async (data: ContactFormData) => {
     setLoading(true);
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log('Contact form data:', data);
-    setSuccess(true);
-    setLoading(false);
-    reset();
-
-    // Reset success message after 5 seconds
-    setTimeout(() => setSuccess(false), 5000);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed');
+      setSuccess(true);
+      reset();
+      setTimeout(() => setSuccess(false), 5000);
+    } catch {
+      // error state is handled by the form remaining active
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
