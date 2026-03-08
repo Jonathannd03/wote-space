@@ -19,7 +19,7 @@ export default function HeroSection({
   locale,
 }: HeroSectionProps) {
   return (
-    <div className="relative h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <div
@@ -32,7 +32,7 @@ export default function HeroSection({
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 h-full flex items-center pt-16 sm:pt-0">
+      <div className="relative z-10 min-h-screen flex items-center pt-20 pb-16 sm:pt-0 sm:pb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="max-w-4xl">
             {/* Eyebrow */}
