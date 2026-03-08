@@ -13,22 +13,7 @@ interface NewsItem {
   isoDate: string;
 }
 
-const staticNews: NewsItem[] = [
-  {
-    isoDate: '2026-02-01',
-    date: '2026-02-01',
-    tag: { fr: 'Partenariat', en: 'Partnership' },
-    title: {
-      fr: "Wote Space signe un partenariat avec l'ONG ITC",
-      en: 'Wote Space signs a partnership with ONG ITC',
-    },
-    excerpt: {
-      fr: "Nous sommes fiers d'annoncer la signature d'un accord de partenariat avec le Centre de formation humanitaire ONG ITC. Ce partenariat renforce notre engagement à soutenir les acteurs du développement et de l'humanitaire en leur offrant un cadre de travail professionnel et adapté à leurs besoins.",
-      en: 'We are proud to announce the signing of a partnership agreement with the Centre de formation humanitaire ONG ITC. This partnership reinforces our commitment to supporting humanitarian and development actors by providing them with a professional workspace tailored to their needs.',
-    },
-    image: '/partners/Centre de formation humanitaire ONG ITC.jpg',
-  },
-];
+const staticNews: NewsItem[] = [];
 
 function formatDisplayDate(isoDate: string, locale: string): string {
   const date = new Date(isoDate);
