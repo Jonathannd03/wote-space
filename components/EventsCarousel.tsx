@@ -14,38 +14,77 @@ interface EventsCarouselProps {
   locale: string;
 }
 
+const AUTOPLAY_INTERVAL = 5000; // ms between slides
+const RESUME_AFTER = 6000;      // ms after manual interaction before autoplay resumes
+
 export default function EventsCarousel({ events, locale }: EventsCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);      // 0–100 for the progress bar
   const touchStartX = useRef<number | null>(null);
+  const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const goToNext = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % events.length);
+    setProgress(0);
   }, [events.length]);
 
   const goToPrevious = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + events.length) % events.length);
+    setProgress(0);
   }, [events.length]);
 
   const goToSlide = useCallback((index: number) => {
     setCurrentIndex(index);
+    setProgress(0);
   }, []);
 
+  // Pause autoplay and schedule a resume
+  const pauseAndScheduleResume = useCallback(() => {
+    setIsAutoPlaying(false);
+    setProgress(0);
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => {
+      setIsAutoPlaying(true);
+    }, RESUME_AFTER);
+  }, []);
+
+  // Autoplay interval
   useEffect(() => {
     if (!isAutoPlaying || events.length <= 1) return;
-    const interval = setInterval(goToNext, 5000);
+    const interval = setInterval(goToNext, AUTOPLAY_INTERVAL);
     return () => clearInterval(interval);
   }, [isAutoPlaying, goToNext, events.length]);
 
+  // Progress bar tick
+  useEffect(() => {
+    if (!isAutoPlaying || events.length <= 1) {
+      setProgress(0);
+      return;
+    }
+    setProgress(0);
+    const step = 100 / (AUTOPLAY_INTERVAL / 50); // update every 50ms
+    const ticker = setInterval(() => {
+      setProgress((p) => Math.min(p + step, 100));
+    }, 50);
+    return () => clearInterval(ticker);
+  }, [isAutoPlaying, currentIndex, events.length]);
+
+  // Cleanup resume timer on unmount
+  useEffect(() => () => {
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+  }, []);
+
+  // Touch swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
-    setIsAutoPlaying(false);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (touchStartX.current === null) return;
     const delta = e.changedTouches[0].clientX - touchStartX.current;
     if (Math.abs(delta) > 50) {
+      pauseAndScheduleResume();
       if (delta < 0) goToNext();
       else goToPrevious();
     }
@@ -69,8 +108,8 @@ export default function EventsCarousel({ events, locale }: EventsCarouselProps) 
   return (
     <div
       className="relative"
-      onMouseEnter={() => setIsAutoPlaying(false)}
-      onMouseLeave={() => setIsAutoPlaying(true)}
+      onMouseEnter={() => { setIsAutoPlaying(false); setProgress(0); }}
+      onMouseLeave={() => { setIsAutoPlaying(true); }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -89,50 +128,53 @@ export default function EventsCarousel({ events, locale }: EventsCarouselProps) 
         </div>
       </div>
 
-      {/* Navigation — inside the container, never clipped */}
+      {/* Navigation */}
       {events.length > 1 && (
-        <div className="flex items-center justify-center gap-4 mt-8">
-          <button
-            onClick={() => { goToPrevious(); setIsAutoPlaying(false); }}
-            className="bg-brand-black-light hover:bg-brand-red border border-brand-red text-white p-3 rounded-full transition-all touch-manipulation"
-            aria-label="Previous event"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          {/* Dots */}
-          <div className="flex gap-2">
-            {events.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => { goToSlide(index); setIsAutoPlaying(false); }}
-                className={`h-2 rounded-full transition-all touch-manipulation ${
-                  index === currentIndex ? 'w-8 bg-brand-red' : 'w-2 bg-gray-600 hover:bg-gray-400'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
+        <div className="flex flex-col items-center gap-3 mt-8">
+          {/* Progress bar — shows autoplay state */}
+          <div className="w-48 h-0.5 bg-brand-black-light rounded-full overflow-hidden">
+            <div
+              className="h-full bg-brand-red rounded-full transition-none"
+              style={{ width: `${isAutoPlaying ? progress : 0}%` }}
+            />
           </div>
 
-          <button
-            onClick={() => { goToNext(); setIsAutoPlaying(false); }}
-            className="bg-brand-black-light hover:bg-brand-red border border-brand-red text-white p-3 rounded-full transition-all touch-manipulation"
-            aria-label="Next event"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      )}
+          {/* Arrow — Dots — Arrow */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => { goToPrevious(); pauseAndScheduleResume(); }}
+              className="bg-brand-black-light hover:bg-brand-red border border-brand-red text-white p-3 rounded-full transition-all touch-manipulation"
+              aria-label="Previous event"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
 
-      {/* Mobile swipe hint */}
-      {events.length > 1 && (
-        <p className="text-center text-gray-500 text-xs mt-3 sm:hidden">
-          Glissez ou utilisez les flèches pour naviguer
-        </p>
+            <div className="flex gap-2">
+              {events.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => { goToSlide(index); pauseAndScheduleResume(); }}
+                  className={`h-2 rounded-full transition-all touch-manipulation ${
+                    index === currentIndex ? 'w-8 bg-brand-red' : 'w-2 bg-gray-600 hover:bg-gray-400'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={() => { goToNext(); pauseAndScheduleResume(); }}
+              className="bg-brand-black-light hover:bg-brand-red border border-brand-red text-white p-3 rounded-full transition-all touch-manipulation"
+              aria-label="Next event"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -162,7 +204,7 @@ function EventCard({ event, locale }: EventCardProps) {
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-transparent to-transparent" />
-        {/* "View event" tap hint — always visible on mobile */}
+        {/* "View" badge — always visible on mobile */}
         <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-black/60 text-white text-xs font-semibold px-2.5 py-1.5 rounded-sm sm:opacity-0 group-hover:opacity-100 transition-opacity">
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
