@@ -44,7 +44,7 @@ async function sendBookingRequestEmail(data: {
     from: process.env.SMTP_FROM,
     to: 'info@wote-space.com',
     replyTo: data.email,
-    subject: `[Demande de réservation] ${data.referenceId} — ${data.firstName} ${data.lastName}`,
+    subject: `[Demande de réservation] ${data.referenceId} - ${data.firstName} ${data.lastName}`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -101,7 +101,7 @@ async function sendBookingRequestEmail(data: {
           ` : ''}
         </div>
         <div style="text-align: center; padding: 16px; color: #999; font-size: 12px;">
-          <p>Wote Space &mdash; 112, Boulevard Julien Paluku, Quartier Murara, Goma, RDC</p>
+          <p>Wote Space, 112 Boulevard Julien Paluku, Quartier Murara, Goma, RDC</p>
         </div>
       </body>
       </html>

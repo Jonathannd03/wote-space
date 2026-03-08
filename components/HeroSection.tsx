@@ -43,7 +43,7 @@ export default function HeroSection({
               className="mb-6"
             >
               <span className="text-brand-red text-sm uppercase tracking-widest font-bold">
-                {locale === 'fr' ? 'Espace Humanitaire — Goma, RDC' : 'Humanitarian Space — Goma, DRC'}
+                {locale === 'fr' ? 'Espace Humanitaire à Goma, RDC' : 'Humanitarian Space in Goma, DRC'}
               </span>
             </motion.div>
 
