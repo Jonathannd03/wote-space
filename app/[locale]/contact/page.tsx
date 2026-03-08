@@ -250,9 +250,9 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-white mb-1">{t('info.hours')}</h3>
                       <p className="text-gray-300">
-                        {locale === 'fr' ? 'Lundi - Vendredi' : 'Monday - Friday'}: 8:00 - 20:00
+                        {locale === 'fr' ? 'Lundi - Vendredi' : 'Monday - Friday'}: 8:00 - 17:30
                         <br />
-                        {locale === 'fr' ? 'Samedi - Dimanche' : 'Saturday - Sunday'}: 9:00 - 18:00
+                        {locale === 'fr' ? 'Samedi - Dimanche' : 'Saturday - Sunday'}: 11:00 - 16:30
                       </p>
                     </div>
                   </div>
