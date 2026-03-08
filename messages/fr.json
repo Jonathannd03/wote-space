@@ -8,42 +8,42 @@
   },
   "home": {
     "hero": {
-      "title": "Votre espace de travail idéal",
-      "subtitle": "Un espace polyvalent qui s'adapte à vos besoins au cœur de la ville",
-      "cta": "Réserver maintenant"
+      "title": "Au service de la dignité humaine",
+      "subtitle": "Un espace dédié aux acteurs humanitaires, associations et organisations qui œuvrent pour les communautés de Goma et au-delà",
+      "cta": "Rejoindre notre réseau"
     },
     "features": {
-      "title": "Pourquoi choisir Wote Space ?",
+      "title": "Un espace pensé pour l'action humanitaire",
       "wifi": {
-        "title": "Wi-Fi haute vitesse",
-        "description": "Connexion internet fiable et rapide"
+        "title": "Connectivité fiable",
+        "description": "Restez connecté à votre réseau d'intervention, où que soit votre mission"
       },
       "flexible": {
-        "title": "Horaires flexibles",
-        "description": "Réservez à l'heure ou à la journée"
+        "title": "Accès adapté au terrain",
+        "description": "Des horaires flexibles qui s'ajustent aux réalités de votre engagement"
       },
       "modern": {
-        "title": "Équipements modernes",
-        "description": "Espaces entièrement équipés et confortables"
+        "title": "Équipé pour vos missions",
+        "description": "Tout le nécessaire pour vos formations, coordination et plaidoyers"
       },
       "location": {
-        "title": "Emplacement central",
-        "description": "Facilement accessible en transports en commun"
+        "title": "Ancré dans la communauté",
+        "description": "Au cœur de Goma, accessible à tous les acteurs de terrain"
       }
     }
   },
   "spaces": {
-    "title": "Configurations de la salle",
-    "subtitle": "Choisissez la configuration qui correspond à vos besoins",
+    "title": "Nos espaces de coordination",
+    "subtitle": "Des configurations adaptées à vos réunions de coordination, formations humanitaires et ateliers communautaires",
     "capacity": "Capacité",
     "people": "personnes",
     "pricePerHour": "par heure",
     "pricePerDay": "par jour",
-    "bookNow": "Réserver",
+    "bookNow": "Réserver cet espace",
     "amenities": "Équipements"
   },
   "booking": {
-    "title": "Réserver la salle",
+    "title": "Réserver un espace",
     "step1": "Détails de la réservation",
     "step2": "Informations personnelles",
     "step3": "Confirmation",
@@ -53,14 +53,14 @@
     "endDate": "Date de fin",
     "startTime": "Heure de début",
     "endTime": "Heure de fin",
-    "numberOfPeople": "Nombre de personnes",
+    "numberOfPeople": "Nombre de participants",
     "firstName": "Prénom",
     "lastName": "Nom",
     "email": "Email",
     "phone": "Téléphone",
-    "company": "Entreprise (optionnel)",
-    "notes": "Notes supplémentaires",
-    "totalPrice": "Prix total",
+    "company": "Organisation (optionnel)",
+    "notes": "Informations complémentaires",
+    "totalPrice": "Coût total",
     "submit": "Confirmer la réservation",
     "success": "Réservation confirmée !",
     "successMessage": "Votre réservation a été confirmée. Un email de confirmation a été envoyé à",
@@ -70,26 +70,26 @@
     "validation": {
       "required": "Ce champ est requis",
       "email": "Email invalide",
-      "minPeople": "Au moins 1 personne",
+      "minPeople": "Au moins 1 participant",
       "dateInPast": "La date ne peut pas être dans le passé",
       "endBeforeStart": "La date de fin doit être après la date de début"
     }
   },
   "about": {
     "title": "À propos de Wote Space",
-    "subtitle": "Votre partenaire pour un travail productif",
+    "subtitle": "Un espace au service de la dignité et de l'action humanitaire",
     "mission": {
       "title": "Notre mission",
-      "description": "Offrir des espaces de travail flexibles et modernes qui favorisent la productivité et la collaboration."
+      "description": "Mettre à disposition des acteurs humanitaires et des organisations de la société civile un espace sûr, équipé et accessible pour coordonner, former et agir en faveur des communautés vulnérables."
     },
     "story": {
       "title": "Notre histoire",
-      "description": "Fondé en 2024, Wote Space est né de la volonté de créer des espaces de travail adaptés aux besoins des freelances, startups et équipes modernes."
+      "description": "Fondé en 2024 à Goma, Wote Space est né de la conviction que les acteurs humanitaires méritent un cadre de travail digne de leurs missions — un lieu où ONG, associations et défenseurs des droits peuvent se retrouver, se former et amplifier leur impact."
     }
   },
   "contact": {
     "title": "Contactez-nous",
-    "subtitle": "Nous sommes là pour répondre à vos questions",
+    "subtitle": "Nous sommes à vos côtés pour soutenir votre mission",
     "name": "Nom",
     "email": "Email",
     "subject": "Sujet",
@@ -118,12 +118,12 @@
     "close": "Fermer"
   },
   "events": {
-    "title": "Événements Récents",
-    "subtitle": "Découvrez ce qui s'est passé à Wote Space",
+    "title": "Vie Humanitaire",
+    "subtitle": "Retour sur les moments qui rassemblent les acteurs du changement",
     "viewGallery": "Voir la Galerie",
-    "images": "images",
+    "images": "photos",
     "noEvents": "Aucun événement disponible pour le moment",
-    "gallery": "Galerie de l'Événement",
+    "gallery": "Galerie",
     "description": "À propos de cet événement"
   },
   "availability": {
@@ -131,16 +131,16 @@
     "subtitle": "Consultez notre calendrier de disponibilité",
     "checking": "Vérification de la disponibilité...",
     "available": "Disponible",
-    "availableMessage": "La salle est disponible pour ces dates",
+    "availableMessage": "L'espace est disponible pour ces dates",
     "notAvailable": "Non disponible",
-    "notAvailableMessage": "La salle est déjà réservée pour cette période",
-    "existingBookings": "Réservations existantes:",
+    "notAvailableMessage": "L'espace est déjà réservé pour cette période",
+    "existingBookings": "Réservations existantes :",
     "selectDate": "Sélectionnez une date",
     "selected": "Sélectionné",
     "booked": "Réservé",
     "today": "Aujourd'hui",
     "legend": "Légende",
-    "conflictError": "La salle n'est pas disponible pour le créneau sélectionné",
+    "conflictError": "L'espace n'est pas disponible pour le créneau sélectionné",
     "viewCalendar": "Voir la Disponibilité"
   }
 }

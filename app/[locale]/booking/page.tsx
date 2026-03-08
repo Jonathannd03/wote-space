@@ -227,19 +227,47 @@ export default function BookingPage() {
       <div className="min-h-screen bg-brand-black py-12">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-brand-black-light border border-brand-red rounded-sm p-8 text-center">
-            <div className="text-6xl mb-4">✅</div>
-            <h1 className="text-3xl font-bold text-white mb-4">{t('success')}</h1>
-            <p className="text-lg text-gray-300 mb-2">{t('successMessage')}</p>
-            <p className="text-lg font-semibold text-brand-red mb-6">{watchedValues.email}</p>
-            <div className="bg-brand-black border border-brand-black-light p-4 rounded-sm mb-6">
+            <div className="text-6xl mb-4">📋</div>
+            <h1 className="text-3xl font-bold text-white mb-3">
+              {locale === 'fr' ? 'Demande reçue !' : 'Request received!'}
+            </h1>
+            <p className="text-gray-300 mb-6">
+              {locale === 'fr'
+                ? 'Votre demande de réservation a bien été transmise à notre équipe.'
+                : 'Your booking request has been sent to our team.'}
+            </p>
+
+            {/* Reference */}
+            <div className="bg-brand-black border border-brand-black-light p-4 rounded-sm mb-8">
               <p className="text-sm text-gray-400 mb-1">{t('reference')}</p>
               <p className="text-2xl font-bold text-white">{bookingRef}</p>
             </div>
+
+            {/* Call to action */}
+            <div className="bg-brand-red/10 border-2 border-brand-red rounded-sm p-6 mb-8">
+              <p className="text-white font-semibold text-lg mb-2">
+                {locale === 'fr'
+                  ? 'Pour finaliser votre réservation, appelez-nous :'
+                  : 'To complete your booking, please call us:'}
+              </p>
+              <a
+                href="tel:+243980244431"
+                className="text-3xl font-black text-brand-red hover:text-brand-red-light transition-colors"
+              >
+                +243 980 244 431
+              </a>
+              <p className="text-gray-400 text-sm mt-3">
+                {locale === 'fr'
+                  ? 'Mentionnez votre numéro de référence lors de l\'appel.'
+                  : 'Please mention your reference number when you call.'}
+              </p>
+            </div>
+
             <a
               href={`/${locale}`}
               className="inline-block bg-brand-red text-white px-8 py-3 rounded-sm font-semibold hover:bg-brand-red-dark transition-colors uppercase tracking-wider"
             >
-              {tCommon('back')}
+              {locale === 'fr' ? 'Retour à l\'accueil' : 'Back to home'}
             </a>
           </div>
         </div>

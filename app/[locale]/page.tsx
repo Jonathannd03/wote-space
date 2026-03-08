@@ -2,6 +2,8 @@ import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import HeroSection from '@/components/HeroSection';
 import EventsCarousel from '@/components/EventsCarousel';
+import PartnersSection from '@/components/PartnersSection';
+import NewsSection from '@/components/NewsSection';
 import { getEvents, getEventShortDescription } from '@/lib/events';
 
 export default function HomePage() {
@@ -40,7 +42,7 @@ export default function HomePage() {
         title={t('hero.title')}
         subtitle={t('hero.subtitle')}
         ctaText={t('hero.cta')}
-        secondaryCtaText={locale === 'fr' ? 'Voir les Espaces' : 'View Spaces'}
+        secondaryCtaText={locale === 'fr' ? 'Découvrir nos espaces' : 'Discover our spaces'}
         locale={locale}
       />
 
@@ -92,30 +94,42 @@ export default function HomePage() {
         </section>
       )}
 
+      {/* Partners Section */}
+      <PartnersSection locale={locale} />
+
+      {/* News Section */}
+      <NewsSection
+        locale={locale}
+        events={events}
+        eventShortDescriptions={Object.fromEntries(
+          events.map(event => [event.id, getEventShortDescription(event.id, locale as 'en' | 'fr')])
+        )}
+      />
+
       {/* CTA Section */}
       <section className="bg-brand-black py-24 border-t border-brand-black-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold mb-4 text-white">
-            {locale === 'fr' ? 'Prêt à commencer ?' : 'Ready to get started?'}
+            {locale === 'fr' ? 'Votre mission, notre engagement' : 'Your mission, our commitment'}
           </h2>
           <div className="h-1 w-24 bg-brand-red mb-8 mx-auto"></div>
           <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
             {locale === 'fr'
-              ? 'Découvrez nos espaces et réservez dès maintenant'
-              : 'Discover our spaces and book now'}
+              ? 'Rejoignez les acteurs humanitaires qui font confiance à Wote Space pour coordonner et amplifier leur impact'
+              : 'Join the humanitarian actors who trust Wote Space to coordinate and amplify their impact'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href={`/${locale}/spaces`}
               className="inline-block bg-brand-red text-white px-10 py-4 rounded-sm font-semibold hover:bg-brand-red-dark transition-all transform hover:scale-105 uppercase tracking-wider"
             >
-              {locale === 'fr' ? 'Voir les espaces' : 'View spaces'}
+              {locale === 'fr' ? 'Découvrir nos espaces' : 'Discover our spaces'}
             </Link>
             <Link
               href={`/${locale}/contact`}
               className="inline-block bg-transparent text-white border-2 border-brand-red px-10 py-4 rounded-sm font-semibold hover:bg-brand-red hover:border-brand-red transition-all uppercase tracking-wider"
             >
-              {locale === 'fr' ? 'Nous contacter' : 'Contact us'}
+              {locale === 'fr' ? 'Nous rejoindre' : 'Get in touch'}
             </Link>
           </div>
         </div>

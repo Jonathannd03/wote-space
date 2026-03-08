@@ -8,59 +8,59 @@ export default function AboutPage() {
 
   const values = [
     {
+      icon: '🕊️',
+      title: locale === 'fr' ? 'Dignité humaine' : 'Human dignity',
+      description: locale === 'fr'
+        ? 'Toute personne mérite d\'être traitée avec respect et humanité — c\'est la conviction fondatrice de Wote Space'
+        : 'Every person deserves to be treated with respect and humanity — this is the founding conviction of Wote Space',
+    },
+    {
       icon: '🤝',
-      title: locale === 'fr' ? 'Collaboration' : 'Collaboration',
+      title: locale === 'fr' ? 'Solidarité' : 'Solidarity',
       description: locale === 'fr'
-        ? 'Nous créons un environnement propice aux échanges et à la collaboration entre professionnels'
-        : 'We create an environment conducive to exchanges and collaboration between professionals',
+        ? 'Nous croyons que les défis humanitaires se surmontent ensemble, en unissant les forces des acteurs locaux et internationaux'
+        : 'We believe humanitarian challenges are overcome together, by uniting the strengths of local and international actors',
     },
     {
-      icon: '💡',
-      title: locale === 'fr' ? 'Innovation' : 'Innovation',
+      icon: '🔓',
+      title: locale === 'fr' ? 'Inclusion' : 'Inclusion',
       description: locale === 'fr'
-        ? 'Des espaces modernes équipés des dernières technologies pour stimuler votre créativité'
-        : 'Modern spaces equipped with the latest technologies to stimulate your creativity',
-    },
-    {
-      icon: '✨',
-      title: locale === 'fr' ? 'Qualité' : 'Quality',
-      description: locale === 'fr'
-        ? 'Des services de haute qualité dans un cadre professionnel et inspirant'
-        : 'High-quality services in a professional and inspiring setting',
+        ? 'Un espace ouvert à toutes et à tous — ONG, associations, défenseurs des droits, groupes communautaires'
+        : 'A space open to everyone — NGOs, associations, rights defenders and community groups',
     },
     {
       icon: '🌍',
-      title: locale === 'fr' ? 'Communauté' : 'Community',
+      title: locale === 'fr' ? 'Impact local' : 'Local impact',
       description: locale === 'fr'
-        ? 'Un réseau de professionnels diversifiés pour élargir vos horizons'
-        : 'A network of diverse professionals to broaden your horizons',
+        ? 'Chaque action menée ici contribue directement au bien-être des communautés vulnérables de Goma et de la région'
+        : 'Every action taken here directly contributes to the well-being of vulnerable communities in Goma and the region',
     },
   ];
 
   const features = [
     {
-      title: locale === 'fr' ? 'Espaces flexibles' : 'Flexible spaces',
+      title: locale === 'fr' ? 'Espace de coordination humanitaire' : 'Humanitarian coordination space',
       description: locale === 'fr'
-        ? 'Une salle polyvalente avec différentes configurations adaptées à tous vos besoins'
-        : 'A versatile room with different configurations adapted to all your needs',
+        ? 'Des salles polyvalentes conçues pour les réunions de coordination, les clusters humanitaires, les formations et les ateliers de renforcement des capacités'
+        : 'Versatile rooms designed for coordination meetings, humanitarian clusters, trainings and capacity-building workshops',
     },
     {
-      title: locale === 'fr' ? 'Équipements premium' : 'Premium equipment',
+      title: locale === 'fr' ? 'Équipements adaptés aux missions' : 'Mission-ready equipment',
       description: locale === 'fr'
-        ? 'Wi-Fi haut débit, imprimantes, projecteurs et tout le nécessaire pour votre productivité'
-        : 'High-speed Wi-Fi, printers, projectors and everything you need for your productivity',
+        ? 'Wi-Fi fiable, projecteur, tableau, imprimante : tout ce qu\'il faut pour mener vos opérations sans contrainte matérielle'
+        : 'Reliable Wi-Fi, projector, whiteboard, printer: everything needed to run your operations without material constraints',
     },
     {
-      title: locale === 'fr' ? 'Localisation stratégique' : 'Strategic location',
+      title: locale === 'fr' ? 'Au cœur du terrain' : 'At the heart of the field',
       description: locale === 'fr'
-        ? 'Facile d\'accès avec parking et transports en commun à proximité'
-        : 'Easy access with parking and public transport nearby',
+        ? 'Situé dans le quartier Murara à Goma, Wote Space est accessible à l\'ensemble des acteurs humanitaires présents dans la ville'
+        : 'Located in the Murara district in Goma, Wote Space is accessible to all humanitarian actors present in the city',
     },
     {
-      title: locale === 'fr' ? 'Services inclus' : 'Included services',
+      title: locale === 'fr' ? 'Un écosystème partenarial' : 'A partner ecosystem',
       description: locale === 'fr'
-        ? 'Café, espace détente, événements networking et bien plus'
-        : 'Coffee, relaxation area, networking events and much more',
+        ? 'En rejoignant Wote Space, vous intégrez un réseau d\'organisations engagées qui collaborent, se soutiennent et amplifient leur impact humanitaire'
+        : 'By joining Wote Space, you become part of a network of committed organisations that collaborate, support each other and amplify their humanitarian impact',
     },
   ];
 
@@ -76,8 +76,8 @@ export default function AboutPage() {
             <div className="h-1 w-32 bg-brand-red mb-8 mx-auto"></div>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               {locale === 'fr'
-                ? 'Votre espace de travail collaboratif au cœur de l\'innovation et de la créativité'
-                : 'Your collaborative workspace at the heart of innovation and creativity'}
+                ? 'Un espace au service de la dignité humaine et de l\'action humanitaire à Goma'
+                : 'A space in service of human dignity and humanitarian action in Goma'}
             </p>
           </div>
         </div>
@@ -94,13 +94,13 @@ export default function AboutPage() {
               <div className="h-1 w-24 bg-brand-red mb-6"></div>
               <p className="text-lg text-gray-300 leading-relaxed mb-6">
                 {locale === 'fr'
-                  ? 'Wote Space a été créé avec une vision claire : offrir aux entrepreneurs, freelances, startups et entreprises établies un environnement de travail exceptionnel qui favorise la productivité, la collaboration et l\'innovation.'
-                  : 'Wote Space was created with a clear vision: to offer entrepreneurs, freelancers, startups and established companies an exceptional work environment that promotes productivity, collaboration and innovation.'}
+                  ? 'Wote Space a été créé avec une conviction profonde : les acteurs humanitaires — ONG, associations, défenseurs des droits, groupes communautaires — méritent un cadre de travail digne de leurs missions, au service des populations les plus vulnérables.'
+                  : 'Wote Space was created with a deep conviction: humanitarian actors — NGOs, associations, rights defenders, community groups — deserve a workspace worthy of their missions, in service of the most vulnerable populations.'}
               </p>
               <p className="text-lg text-gray-300 leading-relaxed">
                 {locale === 'fr'
-                  ? 'Nous croyons que le bon environnement de travail peut transformer la façon dont vous travaillez et pensez. C\'est pourquoi nous avons conçu nos espaces pour inspirer, motiver et connecter.'
-                  : 'We believe that the right work environment can transform the way you work and think. That\'s why we designed our spaces to inspire, motivate and connect.'}
+                  ? 'Nous mettons à disposition un espace sûr, accessible et équipé pour que chaque organisation puisse coordonner, former et agir avec plus d\'efficacité — parce que derrière chaque réunion, il y a des vies qui comptent.'
+                  : 'We provide a safe, accessible and equipped space so that every organisation can coordinate, train and act more effectively — because behind every meeting, there are lives that matter.'}
               </p>
             </div>
             <div className="relative h-96 rounded-sm overflow-hidden">
@@ -180,9 +180,9 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-5xl font-black text-brand-red mb-2">500+</div>
+              <div className="text-5xl font-black text-brand-red mb-2">3+</div>
               <p className="text-gray-300">
-                {locale === 'fr' ? 'Membres actifs' : 'Active members'}
+                {locale === 'fr' ? 'Organisations partenaires' : 'Partner organisations'}
               </p>
             </div>
             <div>
@@ -192,15 +192,15 @@ export default function AboutPage() {
               </p>
             </div>
             <div>
-              <div className="text-5xl font-black text-brand-red mb-2">24/7</div>
+              <div className="text-5xl font-black text-brand-red mb-2">2024</div>
               <p className="text-gray-300">
-                {locale === 'fr' ? 'Accès flexible' : 'Flexible access'}
+                {locale === 'fr' ? 'Fondé à Goma' : 'Founded in Goma'}
               </p>
             </div>
             <div>
               <div className="text-5xl font-black text-brand-red mb-2">100%</div>
               <p className="text-gray-300">
-                {locale === 'fr' ? 'Satisfaction client' : 'Client satisfaction'}
+                {locale === 'fr' ? 'Dédié aux communautés' : 'Dedicated to communities'}
               </p>
             </div>
           </div>
@@ -211,26 +211,26 @@ export default function AboutPage() {
       <section className="py-20 bg-brand-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-white mb-4">
-            {locale === 'fr' ? 'Prêt à rejoindre notre communauté ?' : 'Ready to join our community?'}
+            {locale === 'fr' ? 'Votre mission mérite un espace à la hauteur' : 'Your mission deserves the right space'}
           </h2>
           <div className="h-1 w-24 bg-brand-red mb-8 mx-auto"></div>
           <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
             {locale === 'fr'
-              ? 'Découvrez notre espace et réservez votre visite dès aujourd\'hui'
-              : 'Discover our space and book your visit today'}
+              ? 'Rejoignez les organisations qui font confiance à Wote Space pour coordonner et amplifier leur action humanitaire'
+              : 'Join the organisations that trust Wote Space to coordinate and amplify their humanitarian action'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href={`/${locale}/spaces`}
               className="inline-block bg-brand-red text-white px-10 py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-all transform hover:scale-105 uppercase tracking-wider"
             >
-              {locale === 'fr' ? 'Voir les configurations' : 'View setups'}
+              {locale === 'fr' ? 'Découvrir nos espaces' : 'Discover our spaces'}
             </Link>
             <Link
               href={`/${locale}/contact`}
               className="inline-block bg-transparent text-white border-2 border-brand-red px-10 py-4 rounded-sm font-bold hover:bg-brand-red hover:border-brand-red transition-all uppercase tracking-wider"
             >
-              {locale === 'fr' ? 'Nous contacter' : 'Contact us'}
+              {locale === 'fr' ? 'Nous rejoindre' : 'Get in touch'}
             </Link>
           </div>
         </div>

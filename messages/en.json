@@ -8,42 +8,42 @@
   },
   "home": {
     "hero": {
-      "title": "Your ideal workspace",
-      "subtitle": "A versatile space that adapts to your needs in the heart of the city",
-      "cta": "Book now"
+      "title": "In service of human dignity",
+      "subtitle": "A space dedicated to humanitarian actors, associations and organisations working for communities in Goma and beyond",
+      "cta": "Join our network"
     },
     "features": {
-      "title": "Why choose Wote Space?",
+      "title": "A space built for humanitarian action",
       "wifi": {
-        "title": "High-speed Wi-Fi",
-        "description": "Reliable and fast internet connection"
+        "title": "Reliable connectivity",
+        "description": "Stay connected to your response network, wherever your mission takes you"
       },
       "flexible": {
-        "title": "Flexible hours",
-        "description": "Book by the hour or by the day"
+        "title": "Field-adapted access",
+        "description": "Flexible hours that adjust to the realities of your commitment"
       },
       "modern": {
-        "title": "Modern amenities",
-        "description": "Fully equipped and comfortable spaces"
+        "title": "Equipped for your missions",
+        "description": "Everything you need for trainings, coordination and advocacy"
       },
       "location": {
-        "title": "Central location",
-        "description": "Easily accessible by public transport"
+        "title": "Rooted in the community",
+        "description": "In the heart of Goma, accessible to all field actors"
       }
     }
   },
   "spaces": {
-    "title": "Room Configurations",
-    "subtitle": "Choose the setup that fits your needs",
+    "title": "Our coordination spaces",
+    "subtitle": "Configurations adapted to your coordination meetings, humanitarian trainings and community workshops",
     "capacity": "Capacity",
     "people": "people",
     "pricePerHour": "per hour",
     "pricePerDay": "per day",
-    "bookNow": "Book now",
+    "bookNow": "Reserve this space",
     "amenities": "Amenities"
   },
   "booking": {
-    "title": "Book the space",
+    "title": "Reserve a space",
     "step1": "Booking details",
     "step2": "Personal information",
     "step3": "Confirmation",
@@ -53,14 +53,14 @@
     "endDate": "End date",
     "startTime": "Start time",
     "endTime": "End time",
-    "numberOfPeople": "Number of people",
+    "numberOfPeople": "Number of participants",
     "firstName": "First name",
     "lastName": "Last name",
     "email": "Email",
     "phone": "Phone",
-    "company": "Company (optional)",
-    "notes": "Additional notes",
-    "totalPrice": "Total price",
+    "company": "Organisation (optional)",
+    "notes": "Additional information",
+    "totalPrice": "Total cost",
     "submit": "Confirm booking",
     "success": "Booking confirmed!",
     "successMessage": "Your booking has been confirmed. A confirmation email has been sent to",
@@ -70,26 +70,26 @@
     "validation": {
       "required": "This field is required",
       "email": "Invalid email",
-      "minPeople": "At least 1 person",
+      "minPeople": "At least 1 participant",
       "dateInPast": "Date cannot be in the past",
       "endBeforeStart": "End date must be after start date"
     }
   },
   "about": {
     "title": "About Wote Space",
-    "subtitle": "Your partner for productive work",
+    "subtitle": "A space in service of dignity and humanitarian action",
     "mission": {
       "title": "Our mission",
-      "description": "To provide flexible and modern workspaces that foster productivity and collaboration."
+      "description": "To provide humanitarian actors and civil society organisations with a safe, equipped and accessible space to coordinate, train and act in favour of vulnerable communities."
     },
     "story": {
       "title": "Our story",
-      "description": "Founded in 2024, Wote Space was born from the desire to create workspaces adapted to the needs of freelancers, startups, and modern teams."
+      "description": "Founded in 2024 in Goma, Wote Space was born from the conviction that humanitarian actors deserve a workspace worthy of their missions — a place where NGOs, associations and human rights defenders can meet, train and amplify their impact."
     }
   },
   "contact": {
     "title": "Contact us",
-    "subtitle": "We're here to answer your questions",
+    "subtitle": "We are here to support your mission",
     "name": "Name",
     "email": "Email",
     "subject": "Subject",
@@ -118,29 +118,29 @@
     "close": "Close"
   },
   "events": {
-    "title": "Recent Events",
-    "subtitle": "Discover what happened at Wote Space",
+    "title": "Humanitarian Life",
+    "subtitle": "A look back at the moments that bring changemakers together",
     "viewGallery": "View Gallery",
-    "images": "images",
+    "images": "photos",
     "noEvents": "No events available at the moment",
-    "gallery": "Event Gallery",
+    "gallery": "Gallery",
     "description": "About this event"
   },
   "availability": {
     "title": "Check Availability",
-    "subtitle": "View our room availability calendar",
+    "subtitle": "View our space availability calendar",
     "checking": "Checking availability...",
     "available": "Available",
-    "availableMessage": "The room is available for these dates",
+    "availableMessage": "The space is available for these dates",
     "notAvailable": "Not Available",
-    "notAvailableMessage": "The room is already booked for this time period",
+    "notAvailableMessage": "The space is already booked for this time period",
     "existingBookings": "Existing bookings:",
     "selectDate": "Select a date",
     "selected": "Selected",
     "booked": "Booked",
     "today": "Today",
     "legend": "Legend",
-    "conflictError": "Room is not available for the selected time slot",
+    "conflictError": "Space is not available for the selected time slot",
     "viewCalendar": "View Availability"
   }
 }

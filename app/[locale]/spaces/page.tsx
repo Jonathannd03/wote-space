@@ -159,8 +159,8 @@ export default async function SpacesPage() {
           images={premisesImages}
           title={locale === 'fr' ? 'Découvrez nos espaces' : 'Discover our spaces'}
           subtitle={locale === 'fr'
-            ? 'Des environnements modernes conçus pour inspirer et collaborer'
-            : 'Modern environments designed to inspire and collaborate'}
+            ? 'Des espaces adaptés aux besoins des acteurs humanitaires et des organisations communautaires'
+            : 'Spaces adapted to the needs of humanitarian actors and community organisations'}
         />
       </div>
     </div>
