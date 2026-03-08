@@ -11,8 +11,8 @@ export default function AboutPage() {
       icon: '🕊️',
       title: locale === 'fr' ? 'Dignité humaine' : 'Human dignity',
       description: locale === 'fr'
-        ? 'Toute personne mérite d\'être traitée avec respect et humanité — c\'est la conviction fondatrice de Wote Space'
-        : 'Every person deserves to be treated with respect and humanity — this is the founding conviction of Wote Space',
+        ? 'Toute personne mérite d\'être traitée avec respect et humanité. C\'est la conviction fondatrice de Wote Space.'
+        : 'Every person deserves to be treated with respect and humanity. This is the founding conviction of Wote Space.',
     },
     {
       icon: '🤝',
@@ -25,8 +25,8 @@ export default function AboutPage() {
       icon: '🔓',
       title: locale === 'fr' ? 'Inclusion' : 'Inclusion',
       description: locale === 'fr'
-        ? 'Un espace ouvert à toutes et à tous — ONG, associations, défenseurs des droits, groupes communautaires'
-        : 'A space open to everyone — NGOs, associations, rights defenders and community groups',
+        ? 'Un espace ouvert à toutes et à tous : ONG, associations, défenseurs des droits et groupes communautaires.'
+        : 'A space open to everyone: NGOs, associations, rights defenders and community groups.',
     },
     {
       icon: '🌍',
@@ -94,13 +94,13 @@ export default function AboutPage() {
               <div className="h-1 w-24 bg-brand-red mb-6"></div>
               <p className="text-lg text-gray-300 leading-relaxed mb-6">
                 {locale === 'fr'
-                  ? 'Wote Space a été créé avec une conviction profonde : les acteurs humanitaires — ONG, associations, défenseurs des droits, groupes communautaires — méritent un cadre de travail digne de leurs missions, au service des populations les plus vulnérables.'
-                  : 'Wote Space was created with a deep conviction: humanitarian actors — NGOs, associations, rights defenders, community groups — deserve a workspace worthy of their missions, in service of the most vulnerable populations.'}
+                  ? 'Wote Space a été créé avec une conviction profonde : les acteurs humanitaires, qu\'il s\'agisse d\'ONG, d\'associations, de défenseurs des droits ou de groupes communautaires, méritent un cadre de travail digne de leurs missions, au service des populations les plus vulnérables.'
+                  : 'Wote Space was created with a deep conviction: humanitarian actors, whether NGOs, associations, rights defenders or community groups, deserve a workspace worthy of their missions, in service of the most vulnerable populations.'}
               </p>
               <p className="text-lg text-gray-300 leading-relaxed">
                 {locale === 'fr'
-                  ? 'Nous mettons à disposition un espace sûr, accessible et équipé pour que chaque organisation puisse coordonner, former et agir avec plus d\'efficacité — parce que derrière chaque réunion, il y a des vies qui comptent.'
-                  : 'We provide a safe, accessible and equipped space so that every organisation can coordinate, train and act more effectively — because behind every meeting, there are lives that matter.'}
+                  ? 'Nous mettons à disposition un espace sûr, accessible et équipé pour que chaque organisation puisse coordonner, former et agir avec plus d\'efficacité. Parce que derrière chaque réunion, il y a des vies qui comptent.'
+                  : 'We provide a safe, accessible and equipped space so that every organisation can coordinate, train and act more effectively. Because behind every meeting, there are lives that matter.'}
               </p>
             </div>
             <div className="relative h-96 rounded-sm overflow-hidden">

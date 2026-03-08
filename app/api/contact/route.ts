@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
             <p style="white-space: pre-wrap; background: white; padding: 16px; border-radius: 4px; border-left: 4px solid #dc2626;">${message}</p>
           </div>
           <div style="text-align: center; padding: 16px; color: #999; font-size: 12px;">
-            <p>Wote Space &mdash; 112, Boulevard Julien Paluku, Quartier Murara, Goma, RDC</p>
+            <p>Wote Space, 112 Boulevard Julien Paluku, Quartier Murara, Goma, RDC</p>
           </div>
         </body>
         </html>
