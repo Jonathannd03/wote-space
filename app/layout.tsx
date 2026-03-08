@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Wote Space - Espaces de coworking et salles de réunion",
-  description: "Espaces de travail flexibles et modernes pour freelances, startups et équipes",
+  title: "Wote Space - Espace Humanitaire à Goma",
+  description: "Un espace de coordination humanitaire au service des organisations, associations et acteurs communautaires à Goma, RDC.",
 };
 
 export default function RootLayout({
