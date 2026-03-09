@@ -155,11 +155,9 @@ export default function BookingPage() {
       isValid = await trigger('spaceId');
     } else if (step === 2) {
       isValid = await trigger(['slot', 'numberOfPeople']);
-      // Non-bundle slots require a date
-      if (isValid && selectedSlot && !isBundle(selectedSlot) && !watchedValues.date) {
+      if (isValid && !watchedValues.date) {
         isValid = false;
-        // Scroll to calendar
-        document.getElementById('date-picker')?.scrollIntoView({ behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } else if (step === 3) {
       isValid = await trigger(['firstName', 'lastName', 'email']);
@@ -396,13 +394,39 @@ export default function BookingPage() {
               {step === 2 && (
                 <div>
                   <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
-                    {fr ? 'Choisissez votre créneau' : 'Choose your time slot'}
+                    {fr ? 'Date & créneau' : 'Date & time slot'}
                   </h2>
                   <p className="text-gray-400 text-sm mb-6">
                     {fr
-                      ? 'Sélectionnez un créneau horaire pour votre session.'
-                      : 'Select a time slot for your session.'}
+                      ? 'Choisissez une date puis sélectionnez votre créneau.'
+                      : 'Pick a date then choose your time slot.'}
                   </p>
+
+                  {/* Date picker — always visible */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-300 mb-3">
+                      {selectedSlot && isBundle(selectedSlot)
+                        ? (fr ? 'Date de début souhaitée *' : 'Preferred start date *')
+                        : (fr ? 'Date de la session *' : 'Session date *')}
+                    </label>
+                    {selectedSlot && isBundle(selectedSlot) && (
+                      <p className="text-xs text-gray-500 mb-3">
+                        {fr
+                          ? 'Les dates des séances suivantes seront convenues par téléphone.'
+                          : 'Dates for subsequent sessions will be arranged by phone.'}
+                      </p>
+                    )}
+                    <AvailabilityCalendar
+                      locale={locale as 'en' | 'fr'}
+                      selectedDate={watchedValues.date ? new Date(watchedValues.date) : undefined}
+                      onDateSelect={(date) => setValue('date', formatDateLocal(date))}
+                    />
+                    {!watchedValues.date && (
+                      <p className="mt-2 text-xs text-brand-red">
+                        {fr ? 'Veuillez sélectionner une date.' : 'Please select a date.'}
+                      </p>
+                    )}
+                  </div>
 
                   {/* Slot cards */}
                   <div className="space-y-3 mb-6">
@@ -469,10 +493,7 @@ export default function BookingPage() {
                           <button
                             key={key}
                             type="button"
-                            onClick={() => {
-                              setValue('slot', key);
-                              setValue('date', undefined); // bundles have no fixed date
-                            }}
+                            onClick={() => setValue('slot', key)}
                             className={`w-full text-left p-4 rounded-sm border-2 transition-all active:scale-[0.99] mb-2 last:mb-0 ${
                               isSelected
                                 ? 'border-brand-red bg-brand-red/10'
@@ -496,7 +517,7 @@ export default function BookingPage() {
                                     )}
                                   </div>
                                   <span className="text-xs text-gray-400">
-                                    {fr ? slot.timeFr : slot.timeEn} · {fr ? 'dates à convenir par téléphone' : 'dates arranged by phone'}
+                                    {fr ? slot.timeFr : slot.timeEn}
                                   </span>
                                 </div>
                               </div>
@@ -514,25 +535,6 @@ export default function BookingPage() {
 
                   {errors.slot && (
                     <p className="text-sm text-brand-red mb-4">{errors.slot.message}</p>
-                  )}
-
-                  {/* Date picker — only for non-bundle slots */}
-                  {selectedSlot && !isBundle(selectedSlot) && (
-                    <div id="date-picker" className="mb-6">
-                      <label className="block text-sm font-semibold text-gray-300 mb-3">
-                        {fr ? 'Choisissez une date *' : 'Select a date *'}
-                      </label>
-                      <AvailabilityCalendar
-                        locale={locale as 'en' | 'fr'}
-                        selectedDate={watchedValues.date ? new Date(watchedValues.date) : undefined}
-                        onDateSelect={(date) => setValue('date', formatDateLocal(date))}
-                      />
-                      {!watchedValues.date && (
-                        <p className="mt-2 text-xs text-brand-red">
-                          {fr ? 'Veuillez sélectionner une date.' : 'Please select a date.'}
-                        </p>
-                      )}
-                    </div>
                   )}
 
                   {/* Number of participants */}
