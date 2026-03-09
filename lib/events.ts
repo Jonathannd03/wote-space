@@ -95,6 +95,10 @@ export function getEventName(eventId: string, locale: 'en' | 'fr'): string {
       en: 'WAHDI Training Conference',
       fr: 'Conférence de Formation WAHDI',
     },
+    'workshop-young-leader-for-an-equal-future-08-03-2026': {
+      en: 'Young Leader for an Equal Future',
+      fr: 'Jeune Leader pour un Avenir Égal',
+    },
   };
 
   return names[eventId]?.[locale] || eventId.replace(/-/g, ' ');
@@ -125,6 +129,10 @@ export function getEventDescription(eventId: string, locale: 'en' | 'fr'): strin
     'wahdi-training-conference-07-03-2026': {
       en: 'Wote Space hosted a training workshop organised by WAHDI, Women in Action for Human Dignity, focused on monitoring, analysing and understanding security issues and violence linked to the climate crisis. Participants developed practical tools to better grasp the links between environmental degradation and conflict, and to strengthen their advocacy and protection responses.',
       fr: 'Wote Space a accueilli un atelier de formation organisé par WAHDI, Femmes en Action pour la Dignité Humaine, axé sur le suivi, l\'analyse et la compréhension des questions de sécurité et des violences liées à la crise climatique. Les participants ont développé des outils pratiques pour mieux saisir les liens entre dégradation environnementale et conflits, et renforcer leurs réponses en matière de plaidoyer et de protection.',
+    },
+    'workshop-young-leader-for-an-equal-future-08-03-2026': {
+      en: 'On International Women\'s Day, Wote Space hosted the "Young Leader for an Equal Future" workshop — a gathering of young women and community leaders committed to building a more equitable society. Participants explored leadership, advocacy and collective action, sharing their experiences and visions for a future where every voice counts.',
+      fr: 'À l\'occasion de la Journée Internationale des Femmes, Wote Space a accueilli l\'atelier « Jeune Leader pour un Avenir Égal » — un rassemblement de jeunes femmes et de leaders communautaires engagés pour une société plus équitable. Les participants ont exploré le leadership, le plaidoyer et l\'action collective, partageant leurs expériences et leurs visions d\'un avenir où chaque voix compte.',
     },
   };
 
@@ -158,6 +166,10 @@ export function getEventShortDescription(eventId: string, locale: 'en' | 'fr'): 
     'wahdi-training-conference-07-03-2026': {
       en: 'A WAHDI training workshop on monitoring and understanding security issues and violence linked to the climate crisis, with practical tools for advocacy and protection.',
       fr: 'Un atelier de formation WAHDI sur le suivi et la compréhension des questions de sécurité et des violences liées à la crise climatique, avec des outils pratiques pour le plaidoyer et la protection.',
+    },
+    'workshop-young-leader-for-an-equal-future-08-03-2026': {
+      en: 'A workshop for young women leaders on advocacy, leadership and collective action, held on International Women\'s Day at Wote Space.',
+      fr: 'Un atelier pour les jeunes femmes leaders sur le plaidoyer, le leadership et l\'action collective, tenu à l\'occasion de la Journée Internationale des Femmes à Wote Space.',
     },
   };
 
