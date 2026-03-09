@@ -20,6 +20,10 @@ const organisations = [
     name: 'Skills Wote',
     logo: '/partners/skills wote.png',
   },
+  {
+    name: 'Centre for Development and Enterprises',
+    logo: '/partners/Centre for development and entreprises.jpg',
+  },
 ];
 
 interface PartnersSectionProps {
@@ -32,9 +36,9 @@ export default function PartnersSection({ locale }: PartnersSectionProps) {
       ? 'Ils nous font confiance'
       : 'They trust us';
   const subtitle =
-    locale === 'fr'
-      ? 'ONG, associations et organisations qui utilisent et soutiennent Wote Space'
-      : 'NGOs, associations and organisations that use and support Wote Space';
+    locale === "fr"
+      ? "ONG, communautés, associations et organisations qui ont utilisé et soutiennent Wote Space"
+      : "NGOs, communities, associations and organisations that used and support Wote Space";
 
   return (
     <section className="py-20 bg-brand-black-light">
@@ -55,7 +59,7 @@ export default function PartnersSection({ locale }: PartnersSectionProps) {
         </motion.div>
 
         {/* Logos grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {organisations.map((org, index) => (
             <motion.div
               key={org.name}

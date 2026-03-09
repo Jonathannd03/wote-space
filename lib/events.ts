@@ -75,25 +75,25 @@ export function getEventById(id: string): Event | null {
  */
 export function getEventName(eventId: string, locale: 'en' | 'fr'): string {
   const names: Record<string, { en: string; fr: string }> = {
-    'opening-ceremony-25-01-2026': {
-      en: 'Opening Ceremony',
-      fr: 'Cérémonie d\'Ouverture',
+    "opening-ceremony-25-01-2026": {
+      en: "Opening Ceremony",
+      fr: "Cérémonie d'Ouverture",
     },
-    'public-speaking-training-16-01-2026': {
-      en: 'Public Speaking Training',
-      fr: 'Master Class en Art Oratoire',
+    "public-speaking-training-16-01-2026": {
+      en: "Public Speaking Training",
+      fr: "Master Class en Art Oratoire",
     },
-    'great-lakes-graphic-designers-exhibition-23-02-2026': {
-      en: 'Great Lakes Graphic Designers Exhibition',
-      fr: 'Exposition des Graphistes des Grands Lacs',
+    "great-lakes-graphic-designers-exhibition-23-02-2026": {
+      en: "Great Lakes Graphic Designers Exhibition",
+      fr: "Salon des Graphistes des Grands Lacs",
     },
-    'public-speaking-training-second-edition-06-03-2026': {
-      en: 'Public Speaking Training — Second Edition',
-      fr: 'Master Class en Art Oratoire — Deuxième Édition',
+    "public-speaking-training-second-edition-06-03-2026": {
+      en: "Public Speaking Training — Second Edition",
+      fr: "Master Class en Art Oratoire — Deuxième Édition",
     },
-    'wahdi-training-conference-07-03-2026': {
-      en: 'WAHDI Training Conference',
-      fr: 'Conférence de Formation WAHDI',
+    "wahdi-training-conference-07-03-2026": {
+      en: "WAHDI Training Conference",
+      fr: "Conférence de Formation WAHDI",
     },
   };
 
@@ -106,25 +106,25 @@ export function getEventName(eventId: string, locale: 'en' | 'fr'): string {
 export function getEventDescription(eventId: string, locale: 'en' | 'fr'): string {
   // Default descriptions - can be moved to a JSON file or database later
   const descriptions: Record<string, { en: string; fr: string }> = {
-    'opening-ceremony-25-01-2026': {
-      en: 'We celebrated the grand opening of Wote Space, marking the launch of a humanitarian coordination space in the heart of Goma. Organisations, associations and community actors gathered to discover the space and share their vision for collective action.',
-      fr: 'Nous avons célébré l\'ouverture de Wote Space, marquant le lancement d\'un espace de coordination humanitaire au cœur de Goma. Organisations, associations et acteurs communautaires se sont réunis pour découvrir le lieu et partager leur vision d\'une action collective.',
+    "opening-ceremony-25-01-2026": {
+      en: "We celebrated the grand opening of Wote Space, marking the launch of a humanitarian coordination space in the heart of Goma. Organisations, associations and community actors gathered to discover the space and share their vision for collective action.",
+      fr: "Nous avons célébré l'ouverture de Wote Space, marquant le lancement d'un espace de coordination humanitaire au cœur de Goma. Organisations, associations et acteurs communautaires se sont réunis pour découvrir le lieu et partager leur vision d'une action collective.",
     },
-    'public-speaking-training-16-01-2026': {
-      en: 'An intensive workshop to help participants strengthen their public speaking and advocacy skills. Attendees learned techniques to captivate audiences, deliver powerful messages and represent their organisations with confidence.',
-      fr: 'Un atelier intensif pour aider les participants à renforcer leurs compétences en prise de parole et en plaidoyer. Les participants ont appris à captiver leur public, délivrer des messages percutants et représenter leur organisation avec assurance.',
+    "public-speaking-training-16-01-2026": {
+      en: "An intensive workshop to help participants strengthen their public speaking and advocacy skills. Attendees learned techniques to captivate audiences, deliver powerful messages and represent their organisations with confidence.",
+      fr: "Un atelier intensif pour aider les participants à renforcer leurs compétences en prise de parole et en plaidoyer. Les participants ont appris à captiver leur public, délivrer des messages percutants et représenter leur organisation avec assurance.",
     },
-    'great-lakes-graphic-designers-exhibition-23-02-2026': {
-      en: 'Wote Space hosted the Great Lakes Graphic Designers Exhibition, bringing together talented visual artists and designers from across the region. The exhibition showcased creative work at the crossroads of art, identity and social impact.',
-      fr: 'Wote Space a accueilli l\'Exposition des Graphistes des Grands Lacs, rassemblant des artistes visuels et designers talentueux de toute la région. L\'exposition a mis en valeur des créations à la croisée de l\'art, de l\'identité et de l\'impact social.',
+    "great-lakes-graphic-designers-exhibition-23-02-2026": {
+      en: "Wote Space hosted the Great Lakes Graphic Designers Exhibition, bringing together talented visual artists and designers from across the region. The exhibition showcased creative work at the crossroads of art, identity and social impact.",
+      fr: "Wote Space a accueilli le Salon des Graphistes des Grands Lacs, rassemblant des artistes visuels et designers talentueux de toute la région. Le\ salon a mis en valeur des créations à la croisée de l'art, de l'identité et de l'impact social.",
     },
-    'public-speaking-training-second-edition-06-03-2026': {
-      en: 'Following the success of the first edition, the Public Speaking Training returned for a second session. Participants deepened their skills in communication, storytelling and advocacy, with a focus on representing their communities effectively.',
-      fr: 'Suite au succès de la première édition, la Master Class en Art Oratoire est revenue pour une deuxième session. Les participants ont approfondi leurs compétences en communication, narration et plaidoyer, avec un accent sur la représentation efficace de leurs communautés.',
+    "public-speaking-training-second-edition-06-03-2026": {
+      en: "Following the success of the first edition, the Public Speaking Training returned for a second session. Participants deepened their skills in communication, storytelling and advocacy, with a focus on representing their communities effectively.",
+      fr: "Suite au succès de la première édition, la Master Class en Art Oratoire est revenue pour une deuxième session. Les participants ont approfondi leurs compétences en communication, narration et plaidoyer, avec un accent sur la représentation efficace de leurs communautés.",
     },
-    'wahdi-training-conference-07-03-2026': {
-      en: 'Wote Space hosted a training workshop organised by WAHDI, Women in Action for Human Dignity, focused on monitoring, analysing and understanding security issues and violence linked to the climate crisis. Participants developed practical tools to better grasp the links between environmental degradation and conflict, and to strengthen their advocacy and protection responses.',
-      fr: 'Wote Space a accueilli un atelier de formation organisé par WAHDI, Femmes en Action pour la Dignité Humaine, axé sur le suivi, l\'analyse et la compréhension des questions de sécurité et des violences liées à la crise climatique. Les participants ont développé des outils pratiques pour mieux saisir les liens entre dégradation environnementale et conflits, et renforcer leurs réponses en matière de plaidoyer et de protection.',
+    "wahdi-training-conference-07-03-2026": {
+      en: "Wote Space hosted a training workshop organised by WAHDI, Women in Action for Human Dignity, focused on monitoring, analysing and understanding security issues and violence linked to the climate crisis. Participants developed practical tools to better grasp the links between environmental degradation and conflict, and to strengthen their advocacy and protection responses.",
+      fr: "Wote Space a accueilli un atelier de formation organisé par WAHDI, Femmes en Action pour la Dignité Humaine, axé sur le suivi, l'analyse et la compréhension des questions de sécurité et des violences liées à la crise climatique. Les participants ont développé des outils pratiques pour mieux saisir les liens entre dégradation environnementale et conflits, et renforcer leurs réponses en matière de plaidoyer et de protection.",
     },
   };
 
@@ -139,25 +139,25 @@ export function getEventDescription(eventId: string, locale: 'en' | 'fr'): strin
 export function getEventShortDescription(eventId: string, locale: 'en' | 'fr'): string {
   // Short descriptions for event cards
   const shortDescriptions: Record<string, { en: string; fr: string }> = {
-    'opening-ceremony-25-01-2026': {
-      en: 'The launch of Wote Space as a humanitarian coordination hub in Goma, bringing together organisations and community actors.',
-      fr: 'Le lancement de Wote Space comme espace de coordination humanitaire à Goma, réunissant organisations et acteurs communautaires.',
+    "opening-ceremony-25-01-2026": {
+      en: "The launch of Wote Space as a humanitarian coordination hub in Goma, bringing together organisations and community actors.",
+      fr: "Le lancement de Wote Space comme espace de coordination humanitaire à Goma, réunissant organisations et acteurs communautaires.",
     },
-    'public-speaking-training-16-01-2026': {
-      en: 'An intensive workshop to strengthen public speaking and advocacy skills for humanitarian and community actors.',
-      fr: 'Un atelier intensif pour renforcer les compétences en prise de parole et en plaidoyer des acteurs humanitaires et communautaires.',
+    "public-speaking-training-16-01-2026": {
+      en: "An intensive workshop to strengthen public speaking and advocacy skills for humanitarian and community actors.",
+      fr: "Un atelier intensif pour renforcer les compétences en prise de parole et en plaidoyer des acteurs humanitaires et communautaires.",
     },
-    'great-lakes-graphic-designers-exhibition-23-02-2026': {
-      en: 'An exhibition showcasing the creative work of graphic designers from across the Great Lakes region.',
-      fr: 'Une exposition mettant en valeur le travail créatif des graphistes de la région des Grands Lacs.',
+    "great-lakes-graphic-designers-exhibition-23-02-2026": {
+      en: "An exhibition showcasing the creative work of graphic designers from across the Great Lakes region.",
+      fr: "Un Salon mettant en valeur le travail créatif des graphistes de la région des Grands Lacs.",
     },
-    'public-speaking-training-second-edition-06-03-2026': {
-      en: 'The second edition of our public speaking training, focused on advocacy and community representation.',
-      fr: 'La deuxième édition de notre formation en art oratoire, axée sur le plaidoyer et la représentation communautaire.',
+    "public-speaking-training-second-edition-06-03-2026": {
+      en: "The second edition of our public speaking training, focused on advocacy and community representation.",
+      fr: "La deuxième édition de notre formation en art oratoire, axée sur le plaidoyer et la représentation communautaire.",
     },
-    'wahdi-training-conference-07-03-2026': {
-      en: 'A WAHDI training workshop on monitoring and understanding security issues and violence linked to the climate crisis, with practical tools for advocacy and protection.',
-      fr: 'Un atelier de formation WAHDI sur le suivi et la compréhension des questions de sécurité et des violences liées à la crise climatique, avec des outils pratiques pour le plaidoyer et la protection.',
+    "wahdi-training-conference-07-03-2026": {
+      en: "A WAHDI training workshop on monitoring and understanding security issues and violence linked to the climate crisis, with practical tools for advocacy and protection.",
+      fr: "Un atelier de formation WAHDI sur le suivi et la compréhension des questions de sécurité et des violences liées à la crise climatique, avec des outils pratiques pour le plaidoyer et la protection.",
     },
   };
 
