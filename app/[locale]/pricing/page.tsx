@@ -1,412 +1,423 @@
-import { useTranslations, useLocale } from 'next-intl';
+import { getLocale } from 'next-intl/server';
 import Link from 'next/link';
+import { MOCK_SPACES, SLOTS } from '@/lib/mock-data';
+import { formatPrice } from '@/lib/utils';
+import InfoTooltip from '@/components/InfoTooltip';
 
-export default function PricingPage() {
-  const t = useTranslations('pricing');
-  const locale = useLocale();
+export default async function PricingPage() {
+  const locale = await getLocale();
+  const fr = locale === 'fr';
 
-  const coworkingPlans = [
-    {
-      name: locale === 'fr' ? 'Pass Journalier' : 'Day Pass',
-      price: '3',
-      period: locale === 'fr' ? 'jour' : 'day',
-      features: [
-        locale === 'fr' ? 'Accès à l\'espace de coworking partagé' : 'Access to shared coworking space',
-        'Wi-Fi',
-        locale === 'fr' ? 'Mobilier & espaces communs' : 'Furniture & common areas',
-        locale === 'fr' ? 'Café' : 'Coffee',
-      ],
-    },
-    {
-      name: locale === 'fr' ? 'Pass Hebdomadaire' : 'Weekly Pass',
-      price: '15',
-      period: locale === 'fr' ? 'semaine' : 'week',
-      features: [
-        locale === 'fr' ? 'Coworking partagé' : 'Shared coworking',
-        'Wi-Fi',
-        locale === 'fr' ? 'Café' : 'Coffee',
-        locale === 'fr' ? '1 heure de salle incluse' : '1 hour room included',
-      ],
-    },
-    {
-      name: locale === 'fr' ? 'Flex Desk' : 'Flex Desk',
-      price: '60',
-      period: locale === 'fr' ? 'mois' : 'month',
-      featured: true,
-      features: [
-        locale === 'fr' ? 'Accès 5 jours / semaine' : 'Access 5 days / week',
-        'Wi-Fi',
-        locale === 'fr' ? 'Café' : 'Coffee',
-        locale === 'fr' ? 'Événements communautaires' : 'Community events',
-        locale === 'fr' ? '3 heures de salle / mois' : '3 hours room / month',
-      ],
-    },
-    {
-      name: locale === 'fr' ? 'Premium' : 'Premium',
-      price: '90',
-      period: locale === 'fr' ? 'mois' : 'month',
-      features: [
-        locale === 'fr' ? 'Accès 7j / 7j' : 'Access 7 days / week',
-        locale === 'fr' ? 'Wi-Fi haut débit' : 'High-speed Wi-Fi',
-        locale === 'fr' ? 'Café + impression légère' : 'Coffee + light printing',
-        locale === 'fr' ? '6 heures de salle / mois' : '6 hours room / month',
-      ],
-    },
-    {
-      name: locale === 'fr' ? 'Pro / Équipe' : 'Pro / Team',
-      price: '130',
-      period: locale === 'fr' ? 'mois' : 'month',
-      features: [
-        locale === 'fr' ? 'Accès illimité au coworking' : 'Unlimited coworking access',
-        locale === 'fr' ? 'Wi-Fi premium' : 'Premium Wi-Fi',
-        locale === 'fr' ? 'Café' : 'Coffee',
-        locale === 'fr' ? '10 heures de salle / mois' : '10 hours room / month',
-        locale === 'fr' ? 'Adresse professionnelle' : 'Professional address',
-      ],
-    },
-  ];
+  // Room setups (all except coworking)
+  const roomSetups = MOCK_SPACES.filter((s) => s.capacity > 1);
+  const coworking = MOCK_SPACES.find((s) => s.capacity === 1)!;
 
-  const meetingRoomPricing = [
-    {
-      capacity: '1 – 10',
-      hourly: '10',
-      halfDay: '35',
-      fullDay: '60',
-    },
-    {
-      capacity: '11 – 25',
-      hourly: '15',
-      halfDay: '50',
-      fullDay: '90',
-    },
-    {
-      capacity: '26 – 40',
-      hourly: '20',
-      halfDay: '70',
-      fullDay: '120',
-    },
-    {
-      capacity: '41 – 60',
-      hourly: '25',
-      halfDay: '90',
-      fullDay: '160',
-    },
-  ];
+  // Tooltip content
+  const tooltips = {
+    morning: fr
+      ? 'Session de 4h de 8h00 à 12h00. La salle doit être libérée à 12h00 précises pour permettre la session suivante.'
+      : '4-hour session from 8:00 AM to 12:00 PM. The room must be vacated at 12:00 PM sharp to allow the next session.',
+    afternoon: fr
+      ? 'Session de 4h30 de 13h00 à 17h30. La salle doit être libérée à 17h30 précises.'
+      : '4.5-hour session from 1:00 PM to 5:30 PM. The room must be vacated at 5:30 PM sharp.',
+    fullday: fr
+      ? 'Accès continu de 8h00 à 17h30 (9h30 au total). Idéal pour les formations longues, conférences ou ateliers en plusieurs parties. Économique comparé à deux demi-journées séparées.'
+      : 'Continuous access from 8:00 AM to 5:30 PM (9.5 hours total). Ideal for long trainings, conferences, or multi-part workshops. Saves money vs. two separate half-day slots.',
+    bundle5: fr
+      ? 'Achetez 5 séances (demi-journées) à l\'avance à un tarif réduit. Les dates sont convenues par téléphone selon vos besoins. Valable pour les créneaux matin ou après-midi. Non remboursable, valable 6 mois.'
+      : 'Pre-purchase 5 sessions (half-days) at a reduced rate. Dates are arranged by phone according to your schedule. Valid for morning or afternoon slots. Non-refundable, valid for 6 months.',
+    bundle10: fr
+      ? 'Achetez 10 séances (demi-journées) à l\'avance — notre tarif le plus avantageux. Les dates sont convenues par téléphone. Non remboursable, valable 12 mois. Idéal pour les organisations à besoins réguliers.'
+      : 'Pre-purchase 10 sessions (half-days) — our best-value rate. Dates are arranged by phone. Non-refundable, valid for 12 months. Ideal for organisations with recurring needs.',
+    coworkingBundle: fr
+      ? 'Les forfaits coworking fonctionnent comme les forfaits salle : achetez un bloc de séances à l\'avance. Chaque séance = une demi-journée (matin ou après-midi). Dates à convenir par téléphone.'
+      : 'Coworking packs work like room packs: pre-purchase a block of sessions. Each session = one half-day (morning or afternoon). Dates arranged by phone.',
+    addon: fr
+      ? 'Ces équipements sont fournis sur demande lors de la réservation. Le tarif s\'ajoute au prix de la session.'
+      : 'Equipment is provided on request at the time of booking. The fee is added to the session price.',
+  };
 
   const addOns = [
     {
-      name: locale === 'fr' ? 'Vidéoprojecteur ou écran' : 'Projector or screen',
-      price: locale === 'fr' ? '+5 $ / heure · 15 $ / jour' : '+$5 / hour · $15 / day',
+      name: fr ? 'Vidéoprojecteur / Écran' : 'Projector / Screen',
+      price: fr ? 'Inclus selon configuration' : 'Included in most setups',
+      note: fr ? 'Inclus dans les configurations M, L et XL' : 'Included in M, L, and XL setups',
     },
     {
-      name: locale === 'fr' ? 'Wi-Fi premium dédié' : 'Dedicated premium Wi-Fi',
-      price: locale === 'fr' ? '+5 $ / événement' : '+$5 / event',
+      name: fr ? 'Wi-Fi premium dédié' : 'Dedicated premium Wi-Fi',
+      price: fr ? '+5 $ / événement' : '+$5 / event',
     },
     {
-      name: locale === 'fr' ? 'Sonorisation (micro + haut-parleurs)' : 'Sound system (mic + speakers)',
-      price: locale === 'fr' ? '+10 $ / événement' : '+$10 / event',
+      name: fr ? 'Sonorisation (micro + haut-parleurs)' : 'Sound system (mic + speakers)',
+      price: fr ? '+10 $ / événement' : '+$10 / event',
     },
     {
-      name: locale === 'fr' ? 'Assistance technique' : 'Technical assistance',
-      price: locale === 'fr' ? '+10 $ / événement' : '+$10 / event',
-    },
-  ];
-
-  const specialPacks = [
-    {
-      name: locale === 'fr' ? 'Pack Étudiants / Écoles' : 'Students / Schools Pack',
-      capacity: '25–40',
-      price: '10',
-      period: locale === 'fr' ? 'heure' : 'hour',
-      features: [
-        locale === 'fr' ? 'Salle' : 'Room',
-        locale === 'fr' ? 'Projecteur ou écran' : 'Projector or screen',
-        'Wi-Fi',
-      ],
-    },
-    {
-      name: locale === 'fr' ? 'Pack Communauté' : 'Community Pack',
-      capacity: '26–40',
-      price: '150',
-      period: locale === 'fr' ? 'mois' : 'month',
-      features: [
-        locale === 'fr' ? 'Salle' : 'Room',
-        locale === 'fr' ? 'Projecteur ou écran' : 'Projector or screen',
-        'Wi-Fi',
-      ],
-    },
-    {
-      name: locale === 'fr' ? 'Pack Réunion ONG' : 'NGO Meeting Pack',
-      capacity: '26–40',
-      price: '200',
-      period: locale === 'fr' ? 'mois' : 'month',
-      features: [
-        locale === 'fr' ? 'Salle' : 'Room',
-        locale === 'fr' ? 'Projecteur ou écran' : 'Projector or screen',
-        'Wi-Fi',
-      ],
-    },
-    {
-      name: locale === 'fr' ? 'Pack Formation' : 'Training Pack',
-      capacity: '26–40',
-      price: '130',
-      period: locale === 'fr' ? 'jour' : 'day',
-      features: [
-        locale === 'fr' ? 'Salle (journée)' : 'Room (full day)',
-        locale === 'fr' ? 'Projecteur + sonorisation' : 'Projector + sound',
-        locale === 'fr' ? 'Wi-Fi premium' : 'Premium Wi-Fi',
-        locale === 'fr' ? 'Photographie (2 heures)' : 'Photography (2 hours)',
-      ],
-    },
-    {
-      name: locale === 'fr' ? 'Pack Conférence Pro' : 'Pro Conference Pack',
-      capacity: '41–60',
-      price: '180',
-      period: locale === 'fr' ? 'jour' : 'day',
-      featured: true,
-      features: [
-        locale === 'fr' ? 'Salle (journée)' : 'Room (full day)',
-        locale === 'fr' ? 'Projecteur + sonorisation' : 'Projector + sound',
-        locale === 'fr' ? 'Wi-Fi premium' : 'Premium Wi-Fi',
-        locale === 'fr' ? 'Photographie complète' : 'Full photography',
-        locale === 'fr' ? 'Assistance technique' : 'Technical assistance',
-      ],
+      name: fr ? 'Assistance technique' : 'Technical assistance',
+      price: fr ? '+10 $ / événement' : '+$10 / event',
     },
   ];
 
   return (
     <div className="bg-brand-black min-h-screen">
-      {/* Hero Section */}
+
+      {/* Hero */}
       <section className="relative py-24 bg-brand-black-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl md:text-6xl font-black text-white mb-6">
-            {locale === 'fr' ? 'Offres & Tarifs' : 'Offers & Pricing'}
+            {fr ? 'Offres & Tarifs' : 'Offers & Pricing'}
           </h1>
-          <div className="h-1 w-32 bg-brand-red mb-8 mx-auto"></div>
+          <div className="h-1 w-32 bg-brand-red mb-8 mx-auto" />
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            {locale === 'fr'
-              ? 'Des solutions flexibles adaptées à vos besoins'
-              : 'Flexible solutions adapted to your needs'}
+            {fr
+              ? 'Des créneaux horaires fixes pour des sessions claires et prévisibles'
+              : 'Fixed time slots for clear, predictable sessions'}
           </p>
         </div>
       </section>
 
-      {/* Coworking Plans */}
-      <section className="py-20 bg-brand-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white mb-4 text-center">
-            {locale === 'fr' ? 'Espace de Coworking' : 'Coworking Space'}
-          </h2>
-          <div className="h-1 w-24 bg-brand-red mb-12 mx-auto"></div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {coworkingPlans.map((plan, index) => (
-              <div
-                key={index}
-                className={`relative bg-brand-black-light p-8 rounded-sm border-2 ${
-                  plan.featured ? 'border-brand-red' : 'border-brand-black-light'
-                } hover:border-brand-red transition-all`}
-              >
-                {plan.featured && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-brand-red text-white px-4 py-1 rounded-sm text-sm font-bold uppercase">
-                      {locale === 'fr' ? 'Populaire' : 'Popular'}
-                    </span>
+      {/* How it works callout */}
+      <section className="py-12 bg-brand-black">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-brand-black-light border-l-4 border-brand-red rounded-sm p-6 flex gap-4">
+            <div className="flex-shrink-0 mt-0.5">
+              <svg className="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-lg mb-2">
+                {fr ? 'Comment fonctionne notre tarification ?' : 'How does our pricing work?'}
+              </h3>
+              <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                {fr
+                  ? 'Nous travaillons avec des créneaux horaires définis — pas de facturation à l\'heure ouverte. Chaque session a une heure de début et une heure de fin fixe, affichées lors de la réservation. Cela garantit que la salle est toujours disponible à temps pour l\'utilisateur suivant.'
+                  : 'We work with defined time slots — no open-ended hourly billing. Each session has a fixed start and end time, displayed at booking. This ensures the room is always available on time for the next user.'}
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+                {(['morning', 'afternoon', 'fullday'] as const).map((key) => (
+                  <div key={key} className="bg-brand-black rounded-sm px-3 py-2">
+                    <p className="text-brand-red font-semibold">{fr ? SLOTS[key].labelFr : SLOTS[key].labelEn}</p>
+                    <p className="text-gray-400 text-xs">{fr ? SLOTS[key].timeFr : SLOTS[key].timeEn}</p>
                   </div>
-                )}
-                <h3 className="text-2xl font-bold text-white mb-4">{plan.name}</h3>
-                <div className="mb-6">
-                  <span className="text-5xl font-black text-brand-red">${plan.price}</span>
-                  <span className="text-gray-400 ml-2">/ {plan.period}</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start text-gray-300">
-                      <svg
-                        className="w-5 h-5 text-brand-red mr-2 flex-shrink-0 mt-0.5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href={`/${locale}/booking`}
-                  className={`block text-center py-3 rounded-sm font-bold transition-colors ${
-                    plan.featured
-                      ? 'bg-brand-red text-white hover:bg-brand-red-dark'
-                      : 'bg-transparent border-2 border-brand-red text-brand-red hover:bg-brand-red hover:text-white'
-                  }`}
-                >
-                  {locale === 'fr' ? 'Réserver' : 'Book Now'}
-                </Link>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Meeting Room Pricing */}
+      {/* Meeting Room Setups */}
       <section className="py-20 bg-brand-black-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold text-white mb-4 text-center">
-            {locale === 'fr' ? 'La Salle' : 'The Room'}
+            {fr ? 'La Salle de Réunion' : 'The Meeting Room'}
           </h2>
-          <p className="text-center text-gray-400 mb-8">
-            {locale === 'fr' ? 'Configurations disponibles jusqu\'à 60 personnes' : 'Setups available for up to 60 people'}
+          <p className="text-center text-gray-400 mb-4">
+            {fr
+              ? 'Une salle modulable, 4 configurations selon votre effectif'
+              : 'One modular room, 4 configurations for your group size'}
           </p>
-          <div className="h-1 w-24 bg-brand-red mb-12 mx-auto"></div>
+          <div className="h-1 w-24 bg-brand-red mb-12 mx-auto" />
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          {/* Pricing table */}
+          <div className="overflow-x-auto rounded-sm border border-brand-black-light">
+            <table className="w-full text-left border-collapse min-w-[640px]">
               <thead>
-                <tr className="border-b-2 border-brand-red">
-                  <th className="py-4 px-6 text-white font-bold">
-                    {locale === 'fr' ? 'Participants' : 'Participants'}
+                <tr className="border-b-2 border-brand-red bg-brand-black">
+                  <th className="py-4 px-5 text-white font-bold text-sm">
+                    {fr ? 'Configuration' : 'Setup'}
                   </th>
-                  <th className="py-4 px-6 text-white font-bold">
-                    {locale === 'fr' ? '1 heure' : '1 hour'}
+                  <th className="py-4 px-5 text-white font-bold text-sm">
+                    {fr ? 'Capacité' : 'Capacity'}
                   </th>
-                  <th className="py-4 px-6 text-white font-bold">
-                    {locale === 'fr' ? 'Demi-journée (4h)' : 'Half-day (4h)'}
+                  <th className="py-4 px-5 text-white font-bold text-sm whitespace-nowrap">
+                    <span className="flex items-center">
+                      {fr ? SLOTS.morning.labelFr : SLOTS.morning.labelEn}
+                      <InfoTooltip content={tooltips.morning} position="bottom" />
+                    </span>
+                    <span className="text-gray-500 font-normal text-xs block">
+                      {fr ? SLOTS.morning.timeFr : SLOTS.morning.timeEn}
+                    </span>
                   </th>
-                  <th className="py-4 px-6 text-white font-bold">
-                    {locale === 'fr' ? 'Journée (8h)' : 'Full day (8h)'}
+                  <th className="py-4 px-5 text-white font-bold text-sm whitespace-nowrap">
+                    <span className="flex items-center">
+                      {fr ? SLOTS.afternoon.labelFr : SLOTS.afternoon.labelEn}
+                      <InfoTooltip content={tooltips.afternoon} position="bottom" />
+                    </span>
+                    <span className="text-gray-500 font-normal text-xs block">
+                      {fr ? SLOTS.afternoon.timeFr : SLOTS.afternoon.timeEn}
+                    </span>
+                  </th>
+                  <th className="py-4 px-5 text-white font-bold text-sm whitespace-nowrap">
+                    <span className="flex items-center">
+                      {fr ? SLOTS.fullday.labelFr : SLOTS.fullday.labelEn}
+                      <InfoTooltip content={tooltips.fullday} position="bottom" />
+                    </span>
+                    <span className="text-gray-500 font-normal text-xs block">
+                      {fr ? SLOTS.fullday.timeFr : SLOTS.fullday.timeEn}
+                    </span>
+                  </th>
+                  <th className="py-4 px-5 text-white font-bold text-sm whitespace-nowrap">
+                    <span className="flex items-center">
+                      {fr ? SLOTS.bundle5.labelFr : SLOTS.bundle5.labelEn}
+                      <InfoTooltip content={tooltips.bundle5} position="bottom" />
+                    </span>
+                    <span className="text-gray-500 font-normal text-xs block">
+                      {fr ? SLOTS.bundle5.timeFr : SLOTS.bundle5.timeEn}
+                    </span>
+                  </th>
+                  <th className="py-4 px-5 text-white font-bold text-sm whitespace-nowrap">
+                    <span className="flex items-center">
+                      {fr ? SLOTS.bundle10.labelFr : SLOTS.bundle10.labelEn}
+                      <InfoTooltip content={tooltips.bundle10} position="bottom" />
+                    </span>
+                    <span className="text-gray-500 font-normal text-xs block">
+                      {fr ? SLOTS.bundle10.timeFr : SLOTS.bundle10.timeEn}
+                    </span>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {meetingRoomPricing.map((row, index) => (
+                {roomSetups.map((space, index) => (
                   <tr
-                    key={index}
-                    className="border-b border-brand-black hover:bg-brand-black transition-colors"
+                    key={space.id}
+                    className={`border-b border-brand-black transition-colors hover:bg-brand-black/40 ${index % 2 === 0 ? 'bg-brand-black-light' : 'bg-brand-black'}`}
                   >
-                    <td className="py-4 px-6 text-gray-300 font-semibold">
-                      {row.capacity} {locale === 'fr' ? 'pers.' : 'people'}
+                    <td className="py-4 px-5 text-white font-semibold text-sm">
+                      {fr ? space.nameFr : space.nameEn}
                     </td>
-                    <td className="py-4 px-6 text-brand-red font-bold">${row.hourly}</td>
-                    <td className="py-4 px-6 text-brand-red font-bold">${row.halfDay}</td>
-                    <td className="py-4 px-6 text-brand-red font-bold">${row.fullDay}</td>
+                    <td className="py-4 px-5 text-gray-400 text-sm">
+                      {fr ? `jusqu'à ${space.capacity} pers.` : `up to ${space.capacity} people`}
+                    </td>
+                    <td className="py-4 px-5 text-brand-red font-bold">{formatPrice(space.priceHalfDay)}</td>
+                    <td className="py-4 px-5 text-brand-red font-bold">{formatPrice(space.priceHalfDay)}</td>
+                    <td className="py-4 px-5 font-bold">
+                      <span className="text-brand-red">{formatPrice(space.priceFullDay)}</span>
+                    </td>
+                    <td className="py-4 px-5 font-bold">
+                      <span className="text-brand-red">{formatPrice(space.priceBundle5)}</span>
+                      <span className="text-gray-500 text-xs block font-normal">
+                        {formatPrice(space.priceBundle5 / 5)} / {fr ? 'séance' : 'session'}
+                      </span>
+                    </td>
+                    <td className="py-4 px-5 font-bold">
+                      <span className="text-brand-red">{formatPrice(space.priceBundle10)}</span>
+                      <span className="text-gray-500 text-xs block font-normal">
+                        {formatPrice(space.priceBundle10 / 10)} / {fr ? 'séance' : 'session'}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+
+          {/* Savings callout */}
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-brand-black border border-brand-red/30 rounded-sm p-4 flex gap-3">
+              <svg className="w-5 h-5 text-brand-red flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              <div>
+                <p className="text-white text-sm font-semibold mb-1">
+                  {fr ? 'Économies avec le Pack 5' : 'Savings with 5-Session Pack'}
+                </p>
+                <p className="text-gray-400 text-xs">
+                  {fr
+                    ? 'Le Pack 5 équivaut à 5 demi-journées à un tarif réduit par rapport aux réservations individuelles.'
+                    : 'The 5-Session Pack covers 5 half-days at a reduced per-session rate vs. individual bookings.'}
+                </p>
+              </div>
+            </div>
+            <div className="bg-brand-black border border-brand-red/30 rounded-sm p-4 flex gap-3">
+              <svg className="w-5 h-5 text-brand-red flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
+              <div>
+                <p className="text-white text-sm font-semibold mb-1">
+                  {fr ? 'Meilleure valeur : Pack 10' : 'Best value: 10-Session Pack'}
+                </p>
+                <p className="text-gray-400 text-xs">
+                  {fr
+                    ? 'Le Pack 10 offre le coût par séance le plus bas. Idéal pour les organisations avec des besoins réguliers.'
+                    : 'The 10-Session Pack offers the lowest per-session cost. Ideal for organisations with recurring needs.'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <Link
+              href={`/${locale}/booking`}
+              className="inline-block bg-brand-red text-white px-10 py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors uppercase tracking-wider"
+            >
+              {fr ? 'Réserver un créneau' : 'Book a slot'}
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Add-ons */}
+      {/* Coworking Space */}
       <section className="py-20 bg-brand-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold text-white mb-4 text-center">
-            {locale === 'fr' ? 'Options Techniques' : 'Technical Add-ons'}
+            {fr ? 'Espace de Coworking' : 'Coworking Space'}
           </h2>
-          <div className="h-1 w-24 bg-brand-red mb-12 mx-auto"></div>
+          <p className="text-center text-gray-400 mb-4">
+            {fr
+              ? 'Accès par poste de travail, selon les mêmes créneaux que la salle'
+              : 'Per-seat access, using the same fixed time slots as the room'}
+          </p>
+          <div className="h-1 w-24 bg-brand-red mb-12 mx-auto" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {/* Morning */}
+            <div className="bg-brand-black-light border-2 border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6 text-center">
+              <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">{fr ? SLOTS.morning.labelFr : SLOTS.morning.labelEn}</p>
+              <p className="text-3xl font-black text-brand-red mb-1">{formatPrice(coworking.priceHalfDay)}</p>
+              <p className="text-gray-500 text-xs">{fr ? SLOTS.morning.timeFr : SLOTS.morning.timeEn}</p>
+            </div>
+
+            {/* Full day — featured */}
+            <div className="relative bg-brand-black-light border-2 border-brand-red rounded-sm p-6 text-center">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="bg-brand-red text-white px-3 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider">
+                  {fr ? 'Journée' : 'Full day'}
+                </span>
+              </div>
+              <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">{fr ? SLOTS.fullday.labelFr : SLOTS.fullday.labelEn}</p>
+              <p className="text-3xl font-black text-brand-red mb-1">{formatPrice(coworking.priceFullDay)}</p>
+              <p className="text-gray-500 text-xs">{fr ? SLOTS.fullday.timeFr : SLOTS.fullday.timeEn}</p>
+            </div>
+
+            {/* Bundle 5 */}
+            <div className="bg-brand-black-light border-2 border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6 text-center">
+              <p className="text-gray-400 text-xs uppercase tracking-wider mb-2 flex items-center justify-center">
+                {fr ? SLOTS.bundle5.labelFr : SLOTS.bundle5.labelEn}
+                <InfoTooltip content={tooltips.coworkingBundle} position="top" />
+              </p>
+              <p className="text-3xl font-black text-brand-red mb-1">{formatPrice(coworking.priceBundle5)}</p>
+              <p className="text-gray-500 text-xs">{fr ? SLOTS.bundle5.timeFr : SLOTS.bundle5.timeEn}</p>
+              <p className="text-gray-600 text-xs mt-1">{formatPrice(coworking.priceBundle5 / 5)} / {fr ? 'séance' : 'session'}</p>
+            </div>
+
+            {/* Bundle 10 */}
+            <div className="bg-brand-black-light border-2 border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6 text-center">
+              <p className="text-gray-400 text-xs uppercase tracking-wider mb-2 flex items-center justify-center">
+                {fr ? SLOTS.bundle10.labelFr : SLOTS.bundle10.labelEn}
+                <InfoTooltip content={tooltips.coworkingBundle} position="top" />
+              </p>
+              <p className="text-3xl font-black text-brand-red mb-1">{formatPrice(coworking.priceBundle10)}</p>
+              <p className="text-gray-500 text-xs">{fr ? SLOTS.bundle10.timeFr : SLOTS.bundle10.timeEn}</p>
+              <p className="text-gray-600 text-xs mt-1">{formatPrice(coworking.priceBundle10 / 10)} / {fr ? 'séance' : 'session'}</p>
+            </div>
+          </div>
+
+          <p className="text-center text-gray-500 text-sm mt-8">
+            {fr
+              ? '* Tarif par poste de travail. Les forfaits sont à utiliser sur rendez-vous.'
+              : '* Price per workstation. Packs are used by appointment.'}
+          </p>
+        </div>
+      </section>
+
+      {/* Technical Add-ons */}
+      <section className="py-20 bg-brand-black-light">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-bold text-white mb-4 text-center flex items-center justify-center">
+            {fr ? 'Options Techniques' : 'Technical Add-ons'}
+            <InfoTooltip content={tooltips.addon} position="top" />
+          </h2>
+          <div className="h-1 w-24 bg-brand-red mb-12 mx-auto" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {addOns.map((addon, index) => (
               <div
                 key={index}
-                className="bg-brand-black-light p-6 rounded-sm border border-brand-black-light hover:border-brand-red transition-all"
+                className="bg-brand-black p-6 rounded-sm border border-brand-black-light hover:border-brand-red transition-all"
               >
-                <h3 className="text-xl font-bold text-white mb-2">{addon.name}</h3>
+                <h3 className="text-lg font-bold text-white mb-1">{addon.name}</h3>
                 <p className="text-brand-red font-bold">{addon.price}</p>
+                {addon.note && <p className="text-gray-500 text-xs mt-1">{addon.note}</p>}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Special Packs */}
+      {/* FAQ callout */}
+      <section className="py-16 bg-brand-black">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-brand-black-light border border-brand-black-light rounded-sm p-5">
+              <svg className="w-6 h-6 text-brand-red mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <h4 className="text-white font-bold text-sm mb-2">
+                {fr ? 'Confirmation par téléphone' : 'Phone confirmation'}
+              </h4>
+              <p className="text-gray-400 text-xs leading-relaxed">
+                {fr
+                  ? 'Toute réservation est confirmée par un appel de notre équipe. Les forfaits multi-séances sont planifiés ensemble lors de cet appel.'
+                  : 'Every booking is confirmed by a call from our team. Multi-session packs are scheduled together during this call.'}
+              </p>
+            </div>
+            <div className="bg-brand-black-light border border-brand-black-light rounded-sm p-5">
+              <svg className="w-6 h-6 text-brand-red mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h4 className="text-white font-bold text-sm mb-2">
+                {fr ? 'Horaires stricts' : 'Strict time limits'}
+              </h4>
+              <p className="text-gray-400 text-xs leading-relaxed">
+                {fr
+                  ? 'Les créneaux ont des heures de fin définies. Un dépassement peut être facturé au tarif de la session suivante si elle est occupée.'
+                  : 'Slots have defined end times. Overtime may be billed at the next session rate if it is occupied.'}
+              </p>
+            </div>
+            <div className="bg-brand-black-light border border-brand-black-light rounded-sm p-5">
+              <svg className="w-6 h-6 text-brand-red mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              <h4 className="text-white font-bold text-sm mb-2">
+                {fr ? 'Paiement & annulation' : 'Payment & cancellation'}
+              </h4>
+              <p className="text-gray-400 text-xs leading-relaxed">
+                {fr
+                  ? 'Paiement à la confirmation. Annulation gratuite jusqu\'à 48h avant. Les forfaits ne sont pas remboursables mais les séances sont reportables.'
+                  : 'Payment at confirmation. Free cancellation up to 48h before. Packs are non-refundable but sessions can be rescheduled.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
       <section className="py-20 bg-brand-black-light">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white mb-4 text-center">
-            {locale === 'fr' ? 'Packs Spéciaux' : 'Special Packs'}
-          </h2>
-          <div className="h-1 w-24 bg-brand-red mb-12 mx-auto"></div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {specialPacks.map((pack, index) => (
-              <div
-                key={index}
-                className={`relative bg-brand-black p-8 rounded-sm border-2 ${
-                  pack.featured ? 'border-brand-red' : 'border-brand-black-light'
-                } hover:border-brand-red transition-all`}
-              >
-                {pack.featured && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-brand-red text-white px-4 py-1 rounded-sm text-sm font-bold uppercase">
-                      {locale === 'fr' ? 'Recommandé' : 'Recommended'}
-                    </span>
-                  </div>
-                )}
-                <h3 className="text-2xl font-bold text-white mb-2">{pack.name}</h3>
-                <p className="text-gray-400 text-sm mb-4">
-                  {pack.capacity} {locale === 'fr' ? 'personnes' : 'people'}
-                </p>
-                <div className="mb-6">
-                  <span className="text-5xl font-black text-brand-red">${pack.price}</span>
-                  <span className="text-gray-400 ml-2">/ {pack.period}</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {pack.features.map((feature, i) => (
-                    <li key={i} className="flex items-start text-gray-300">
-                      <svg
-                        className="w-5 h-5 text-brand-red mr-2 flex-shrink-0 mt-0.5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href={`/${locale}/booking`}
-                  className={`block text-center py-3 rounded-sm font-bold transition-colors ${
-                    pack.featured
-                      ? 'bg-brand-red text-white hover:bg-brand-red-dark'
-                      : 'bg-transparent border-2 border-brand-red text-brand-red hover:bg-brand-red hover:text-white'
-                  }`}
-                >
-                  {locale === 'fr' ? 'Réserver' : 'Book Now'}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-brand-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-white mb-4">
-            {locale === 'fr' ? 'Besoin d\'une solution personnalisée ?' : 'Need a custom solution?'}
+            {fr ? "Besoin d'une solution personnalisée ?" : 'Need a custom solution?'}
           </h2>
-          <div className="h-1 w-24 bg-brand-red mb-8 mx-auto"></div>
+          <div className="h-1 w-24 bg-brand-red mb-8 mx-auto" />
           <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
-            {locale === 'fr'
+            {fr
               ? 'Contactez-nous pour discuter de vos besoins spécifiques'
               : 'Contact us to discuss your specific needs'}
           </p>
-          <Link
-            href={`/${locale}/contact`}
-            className="inline-block bg-brand-red text-white px-10 py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors text-lg uppercase tracking-wider"
-          >
-            {locale === 'fr' ? 'Nous contacter' : 'Contact Us'}
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href={`/${locale}/booking`}
+              className="inline-block bg-brand-red text-white px-10 py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors text-lg uppercase tracking-wider"
+            >
+              {fr ? 'Réserver maintenant' : 'Book Now'}
+            </Link>
+            <Link
+              href={`/${locale}/contact`}
+              className="inline-block bg-transparent border-2 border-white text-white px-10 py-4 rounded-sm font-bold hover:bg-white hover:text-brand-black transition-all text-lg uppercase tracking-wider"
+            >
+              {fr ? 'Nous contacter' : 'Contact Us'}
+            </Link>
+          </div>
         </div>
       </section>
     </div>

@@ -12,9 +12,7 @@ import { SLOTS, SlotKey } from '@/lib/mock-data';
 
 const bookingSchema = z.object({
   spaceId: z.string().min(1, 'Space is required'),
-  slot: z.enum(['morning', 'afternoon', 'fullday', 'bundle5', 'bundle10'] as const, {
-    required_error: 'Please select a time slot',
-  }),
+  slot: z.enum(['morning', 'afternoon', 'fullday', 'bundle5', 'bundle10'] as const),
   date: z.string().optional(),
   numberOfPeople: z.number().min(1, 'At least 1 person required'),
   firstName: z.string().min(1, 'First name is required'),
