@@ -25,16 +25,15 @@ async function sendBookingRequestEmail(data: {
   spaceName: string;
   slotLabel: string;
   slotTime: string;
-  date?: string;
+  dateLabel: string;
+  date: string;
   numberOfPeople: number;
   totalPrice: number;
   locale: string;
 }) {
-  const dateDisplay = data.date
-    ? new Date(data.date).toLocaleDateString('fr-FR', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-      })
-    : data.locale === 'fr' ? 'Dates à convenir par téléphone' : 'Dates to be arranged by phone';
+  const dateDisplay = new Date(data.date).toLocaleDateString('fr-FR', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  });
 
   await transporter.sendMail({
     from: process.env.SMTP_FROM,
@@ -64,7 +63,7 @@ async function sendBookingRequestEmail(data: {
               <td style="padding: 6px 0;">${data.slotLabel} (${data.slotTime})</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; font-weight: bold; color: #555;">Date :</td>
+              <td style="padding: 6px 0; font-weight: bold; color: #555;">${data.dateLabel} :</td>
               <td style="padding: 6px 0;">${dateDisplay}</td>
             </tr>
             <tr>
@@ -108,7 +107,7 @@ async function sendBookingRequestEmail(data: {
 const bookingSchema = z.object({
   spaceId: z.string(),
   slot: z.enum(['morning', 'afternoon', 'fullday', 'bundle5', 'bundle10'] as const),
-  date: z.string().optional(),
+  date: z.string(),
   numberOfPeople: z.number(),
   firstName: z.string(),
   lastName: z.string(),
@@ -143,26 +142,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Non-bundle slots require a date
-    const isBundle = data.slot === 'bundle5' || data.slot === 'bundle10';
-    if (!isBundle && !data.date) {
+    // Validate date is not in the past
+    const slotDate = new Date(data.date);
+    slotDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (slotDate < today) {
       return NextResponse.json(
-        { error: 'A date is required for single-session slots' },
+        { error: 'Booking date cannot be in the past' },
         { status: 400 }
       );
-    }
-
-    if (!isBundle && data.date) {
-      const slotDate = new Date(data.date);
-      slotDate.setHours(0, 0, 0, 0);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (slotDate < today) {
-        return NextResponse.json(
-          { error: 'Booking date cannot be in the past' },
-          { status: 400 }
-        );
-      }
     }
 
     const slotInfo = SLOTS[data.slot];
@@ -170,6 +159,10 @@ export async function POST(request: NextRequest) {
     const slotLabel = fr ? slotInfo.labelFr : slotInfo.labelEn;
     const slotTime = fr ? slotInfo.timeFr : slotInfo.timeEn;
     const spaceName = fr ? space.nameFr : space.nameEn;
+    const isBundle = data.slot === 'bundle5' || data.slot === 'bundle10';
+    const dateLabel = isBundle
+      ? (fr ? 'Date de début souhaitée' : 'Preferred start date')
+      : (fr ? 'Date' : 'Date');
 
     const referenceId = generateBookingReference();
 
@@ -185,6 +178,7 @@ export async function POST(request: NextRequest) {
         spaceName,
         slotLabel,
         slotTime,
+        dateLabel,
         date: data.date,
         numberOfPeople: data.numberOfPeople,
         totalPrice: data.totalPrice,
