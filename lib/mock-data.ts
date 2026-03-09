@@ -1,19 +1,24 @@
 // Mock data for space setups - used when database is not available
-// This allows the site to work without environment variables for preview/feedback
-// Note: These represent different configurations of the same physical room
+// Pricing uses fixed time slots instead of open-ended hourly billing:
+//   - Half-day (morning 8:00-12:00 OR afternoon 13:00-17:30)
+//   - Full day  (8:00-17:30)
+//   - Bundle of 5 sessions  (half-day or full-day, dates arranged by phone)
+//   - Bundle of 10 sessions
 
 export const MOCK_SPACES = [
   {
     id: 'mock-1',
     name: 'Setup S',
-    nameEn: 'Setup S (1-10 people)',
-    nameFr: 'Configuration S (1-10 personnes)',
+    nameEn: 'Setup S (1–10 people)',
+    nameFr: 'Configuration S (1–10 personnes)',
     description: 'Room configured for up to 10 people',
     descriptionEn: 'Room configured for up to 10 people',
-    descriptionFr: 'Salle configurée pour jusqu\'à 10 personnes',
+    descriptionFr: "Salle configurée pour jusqu'à 10 personnes",
     capacity: 10,
-    pricePerHour: 10,
-    pricePerDay: 60,
+    priceHalfDay: 30,
+    priceFullDay: 60,
+    priceBundle5: 125,
+    priceBundle10: 225,
     amenities: '["Wi-Fi", "Projecteur/Écran", "Whiteboard", "Café"]',
     imageUrl: null,
     available: true,
@@ -23,14 +28,16 @@ export const MOCK_SPACES = [
   {
     id: 'mock-2',
     name: 'Setup M',
-    nameEn: 'Setup M (11-25 people)',
-    nameFr: 'Configuration M (11-25 personnes)',
+    nameEn: 'Setup M (11–25 people)',
+    nameFr: 'Configuration M (11–25 personnes)',
     description: 'Room configured for 11-25 people',
     descriptionEn: 'Room configured for 11-25 people',
-    descriptionFr: 'Salle configurée pour 11-25 personnes',
+    descriptionFr: 'Salle configurée pour 11–25 personnes',
     capacity: 25,
-    pricePerHour: 15,
-    pricePerDay: 90,
+    priceHalfDay: 45,
+    priceFullDay: 90,
+    priceBundle5: 185,
+    priceBundle10: 335,
     amenities: '["Wi-Fi", "Projecteur/Écran", "Whiteboard", "Video Conferencing", "Café"]',
     imageUrl: null,
     available: true,
@@ -40,14 +47,16 @@ export const MOCK_SPACES = [
   {
     id: 'mock-3',
     name: 'Setup L',
-    nameEn: 'Setup L (26-40 people)',
-    nameFr: 'Configuration L (26-40 personnes)',
+    nameEn: 'Setup L (26–40 people)',
+    nameFr: 'Configuration L (26–40 personnes)',
     description: 'Room configured for 26-40 people',
     descriptionEn: 'Room configured for 26-40 people',
-    descriptionFr: 'Salle configurée pour 26-40 personnes',
+    descriptionFr: 'Salle configurée pour 26–40 personnes',
     capacity: 40,
-    pricePerHour: 20,
-    pricePerDay: 120,
+    priceHalfDay: 60,
+    priceFullDay: 120,
+    priceBundle5: 250,
+    priceBundle10: 450,
     amenities: '["Wi-Fi", "Projecteur/Écran", "Whiteboard", "Video Conferencing", "Café", "Sonorisation"]',
     imageUrl: null,
     available: true,
@@ -57,14 +66,16 @@ export const MOCK_SPACES = [
   {
     id: 'mock-4',
     name: 'Setup XL',
-    nameEn: 'Setup XL (41-60 people)',
-    nameFr: 'Configuration XL (41-60 personnes)',
+    nameEn: 'Setup XL (41–60 people)',
+    nameFr: 'Configuration XL (41–60 personnes)',
     description: 'Room configured for 41-60 people',
     descriptionEn: 'Room configured for 41-60 people',
-    descriptionFr: 'Salle configurée pour 41-60 personnes',
+    descriptionFr: 'Salle configurée pour 41–60 personnes',
     capacity: 60,
-    pricePerHour: 25,
-    pricePerDay: 160,
+    priceHalfDay: 80,
+    priceFullDay: 160,
+    priceBundle5: 330,
+    priceBundle10: 600,
     amenities: '["Wi-Fi Premium", "Projecteur/Écran", "Whiteboard", "Video Conferencing", "Café", "Sonorisation", "Assistance Technique"]',
     imageUrl: null,
     available: true,
@@ -80,8 +91,10 @@ export const MOCK_SPACES = [
     descriptionEn: 'Shared co-working space with daily access',
     descriptionFr: 'Espace de coworking partagé avec accès journalier',
     capacity: 1,
-    pricePerHour: 0.5,
-    pricePerDay: 3,
+    priceHalfDay: 1.5,
+    priceFullDay: 3,
+    priceBundle5: 12.5,
+    priceBundle10: 22.5,
     amenities: '["Wi-Fi", "Mobilier & espaces communs", "Café"]',
     imageUrl: null,
     available: true,
@@ -91,3 +104,14 @@ export const MOCK_SPACES = [
 ];
 
 export type MockSpace = typeof MOCK_SPACES[0];
+
+// Fixed time slot definitions
+export const SLOTS = {
+  morning:   { startTime: '08:00', endTime: '12:00', labelFr: 'Matinée',          labelEn: 'Morning',         timeFr: '8h00 – 12h00',    timeEn: '8:00 – 12:00'   },
+  afternoon: { startTime: '13:00', endTime: '17:30', labelFr: 'Après-midi',       labelEn: 'Afternoon',       timeFr: '13h00 – 17h30',   timeEn: '1:00 – 5:30 PM' },
+  fullday:   { startTime: '08:00', endTime: '17:30', labelFr: 'Journée complète', labelEn: 'Full Day',        timeFr: '8h00 – 17h30',    timeEn: '8:00 – 5:30 PM' },
+  bundle5:   { startTime: null,    endTime: null,    labelFr: 'Pack 5 séances',   labelEn: '5-Session Pack',  timeFr: '5 demi-journées', timeEn: '5 half-days'    },
+  bundle10:  { startTime: null,    endTime: null,    labelFr: 'Pack 10 séances',  labelEn: '10-Session Pack', timeFr: '10 demi-journées', timeEn: '10 half-days'  },
+} as const;
+
+export type SlotKey = keyof typeof SLOTS;

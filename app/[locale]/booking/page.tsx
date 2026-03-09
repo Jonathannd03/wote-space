@@ -8,14 +8,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { formatPrice } from '@/lib/utils';
 import AvailabilityCalendar from '@/components/AvailabilityCalendar';
-import AvailabilityChecker from '@/components/AvailabilityChecker';
+import { SLOTS, SlotKey } from '@/lib/mock-data';
 
 const bookingSchema = z.object({
   spaceId: z.string().min(1, 'Space is required'),
-  startDate: z.string().min(1, 'Start date is required'),
-  startTime: z.string().min(1, 'Start time is required'),
-  endDate: z.string().min(1, 'End date is required'),
-  endTime: z.string().min(1, 'End time is required'),
+  slot: z.enum(['morning', 'afternoon', 'fullday', 'bundle5', 'bundle10'] as const, {
+    required_error: 'Please select a time slot',
+  }),
+  date: z.string().optional(),
   numberOfPeople: z.number().min(1, 'At least 1 person required'),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
@@ -32,27 +32,33 @@ interface Space {
   nameEn: string;
   nameFr: string;
   capacity: number;
-  pricePerHour: number;
-  pricePerDay: number;
+  priceHalfDay: number;
+  priceFullDay: number;
+  priceBundle5: number;
+  priceBundle10: number;
 }
-
-const DURATION_PRESETS = [
-  { hours: 2, label: '2 heures', labelEn: '2 hours' },
-  { hours: 4, label: '4 heures', labelEn: '4 hours' },
-  { hours: 8, label: 'Journée', labelEn: 'Full day' },
-  { hours: 16, label: '2 jours', labelEn: '2 days' },
-];
 
 const STEPS = [
   { fr: 'Espace', en: 'Space' },
-  { fr: 'Date', en: 'Date' },
+  { fr: 'Créneau', en: 'Slot' },
   { fr: 'Infos', en: 'Details' },
   { fr: 'Confirm.', en: 'Review' },
 ];
 
+function getSlotPrice(space: Space, slot: SlotKey): number {
+  switch (slot) {
+    case 'morning':
+    case 'afternoon': return space.priceHalfDay;
+    case 'fullday':   return space.priceFullDay;
+    case 'bundle5':   return space.priceBundle5;
+    case 'bundle10':  return space.priceBundle10;
+  }
+}
+
+const isBundle = (slot: SlotKey) => slot === 'bundle5' || slot === 'bundle10';
+
 export default function BookingPage() {
   const t = useTranslations('booking');
-  const tCommon = useTranslations('common');
   const locale = useLocale();
   const searchParams = useSearchParams();
   const preselectedSpaceId = searchParams.get('space');
@@ -63,15 +69,7 @@ export default function BookingPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bookingRef, setBookingRef] = useState<string | null>(null);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
   const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
-  const [calculationDetails, setCalculationDetails] = useState<{
-    hours: number;
-    days: number;
-    rateType: 'hourly' | 'daily';
-    rate: number;
-  } | null>(null);
-  const [isAvailable, setIsAvailable] = useState<boolean>(true);
 
   const {
     register,
@@ -89,6 +87,8 @@ export default function BookingPage() {
   });
 
   const watchedValues = watch();
+  const selectedSlot = watchedValues.slot as SlotKey | undefined;
+  const totalPrice = selectedSpace && selectedSlot ? getSlotPrice(selectedSpace, selectedSlot) : 0;
 
   // Fetch spaces
   useEffect(() => {
@@ -107,38 +107,6 @@ export default function BookingPage() {
       .catch((err) => console.error('Error fetching spaces:', err));
   }, [preselectedSpaceId, setValue]);
 
-  // Calculate total price
-  useEffect(() => {
-    if (!watchedValues.spaceId || !watchedValues.startDate || !watchedValues.endDate || !watchedValues.startTime || !watchedValues.endTime) {
-      setTotalPrice(0);
-      setCalculationDetails(null);
-      return;
-    }
-
-    const space = spaces.find((s) => s.id === watchedValues.spaceId);
-    if (!space) return;
-
-    const start = new Date(`${watchedValues.startDate}T${watchedValues.startTime}`);
-    const end = new Date(`${watchedValues.endDate}T${watchedValues.endTime}`);
-    const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-
-    if (hours > 0) {
-      if (hours >= 8) {
-        const days = Math.ceil(hours / 24);
-        const price = days * space.pricePerDay;
-        setTotalPrice(price);
-        setCalculationDetails({ hours, days, rateType: 'daily', rate: space.pricePerDay });
-      } else {
-        const price = hours * space.pricePerHour;
-        setTotalPrice(price);
-        setCalculationDetails({ hours, days: 0, rateType: 'hourly', rate: space.pricePerHour });
-      }
-    } else {
-      setTotalPrice(0);
-      setCalculationDetails(null);
-    }
-  }, [watchedValues.spaceId, watchedValues.startDate, watchedValues.endDate, watchedValues.startTime, watchedValues.endTime, spaces]);
-
   const onSubmit = async (data: BookingFormData) => {
     setLoading(true);
     setError(null);
@@ -149,8 +117,6 @@ export default function BookingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...data,
-          startDate: `${data.startDate}T${data.startTime}`,
-          endDate: `${data.endDate}T${data.endTime}`,
           totalPrice,
           locale,
         }),
@@ -175,7 +141,6 @@ export default function BookingPage() {
     setSelectedSpace(space);
     setValue('spaceId', space.id);
     setStep(2);
-    // Scroll to top of page on mobile after selecting
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -186,24 +151,18 @@ export default function BookingPage() {
     return `${year}-${month}-${day}`;
   };
 
-  const applyDurationPreset = (hours: number) => {
-    const now = new Date();
-    const startDate = new Date(now);
-    startDate.setHours(9, 0, 0, 0);
-    const endDate = new Date(startDate);
-    endDate.setHours(startDate.getHours() + hours);
-    setValue('startDate', formatDateLocal(startDate));
-    setValue('startTime', '09:00');
-    setValue('endDate', formatDateLocal(endDate));
-    setValue('endTime', endDate.toTimeString().slice(0, 5));
-  };
-
   const nextStep = async () => {
     let isValid = false;
     if (step === 1) {
       isValid = await trigger('spaceId');
     } else if (step === 2) {
-      isValid = await trigger(['startDate', 'startTime', 'endDate', 'endTime', 'numberOfPeople']);
+      isValid = await trigger(['slot', 'numberOfPeople']);
+      // Non-bundle slots require a date
+      if (isValid && selectedSlot && !isBundle(selectedSlot) && !watchedValues.date) {
+        isValid = false;
+        // Scroll to calendar
+        document.getElementById('date-picker')?.scrollIntoView({ behavior: 'smooth' });
+      }
     } else if (step === 3) {
       isValid = await trigger(['firstName', 'lastName', 'email']);
     }
@@ -219,6 +178,53 @@ export default function BookingPage() {
   };
 
   const fr = locale === 'fr';
+
+  // Slot card config
+  const slotCards: { key: SlotKey; icon: React.ReactNode; badge?: string }[] = [
+    {
+      key: 'morning',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-13l-.87.5M4.21 17.5l-.87.5M20.66 17.5l-.87-.5M4.21 6.5l-.87-.5M21 12h-1M4 12H3m15.36-6.36l-.7.7M6.34 17.66l-.7.7M17.66 17.66l.7.7M6.34 6.34l.7.7" />
+          <circle cx="12" cy="12" r="4" strokeWidth={2} />
+        </svg>
+      ),
+    },
+    {
+      key: 'afternoon',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+    },
+    {
+      key: 'fullday',
+      badge: fr ? 'Meilleure valeur' : 'Best value',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      ),
+    },
+    {
+      key: 'bundle5',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+      ),
+    },
+    {
+      key: 'bundle10',
+      badge: fr ? 'Le plus économique' : 'Best deal',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+        </svg>
+      ),
+    },
+  ];
 
   if (success) {
     return (
@@ -248,7 +254,7 @@ export default function BookingPage() {
                 +243 980 244 431
               </a>
               <p className="text-gray-400 text-sm mt-3">
-                {fr ? 'Mentionnez votre numéro de référence lors de l\'appel.' : 'Please mention your reference number when you call.'}
+                {fr ? "Mentionnez votre numéro de référence lors de l'appel." : 'Please mention your reference number when you call.'}
               </p>
             </div>
 
@@ -256,7 +262,7 @@ export default function BookingPage() {
               href={`/${locale}`}
               className="inline-block bg-brand-red text-white px-8 py-3 rounded-sm font-semibold hover:bg-brand-red-dark transition-colors uppercase tracking-wider"
             >
-              {fr ? 'Retour à l\'accueil' : 'Back to home'}
+              {fr ? "Retour à l'accueil" : 'Back to home'}
             </a>
           </div>
         </div>
@@ -276,7 +282,6 @@ export default function BookingPage() {
 
         {/* Progress Steps */}
         <div className="max-w-2xl mx-auto mb-8 px-2">
-          {/* Mobile: step label */}
           <p className="text-center text-brand-red text-sm font-semibold uppercase tracking-widest mb-4 sm:hidden">
             {fr ? `Étape ${step} sur 4` : `Step ${step} of 4`} — {STEPS[step - 1][fr ? 'fr' : 'en']}
           </p>
@@ -321,7 +326,7 @@ export default function BookingPage() {
             </div>
             {totalPrice > 0 && (
               <div className="text-right">
-                <p className="text-xs text-gray-400">{fr ? 'Estimation' : 'Estimate'}</p>
+                <p className="text-xs text-gray-400">{fr ? 'Tarif' : 'Price'}</p>
                 <p className="text-brand-red font-black text-lg">{formatPrice(totalPrice)}</p>
               </div>
             )}
@@ -364,18 +369,17 @@ export default function BookingPage() {
                               <svg className="w-4 h-4 mr-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                               </svg>
-                              <span>{fr ? 'Jusqu\'à' : 'Up to'} {space.capacity} {fr ? 'personnes' : 'people'}</span>
+                              <span>{fr ? "Jusqu'à" : 'Up to'} {space.capacity} {fr ? 'personnes' : 'people'}</span>
                             </div>
                             <div className="flex flex-wrap gap-2 text-sm">
                               <span className="bg-brand-black px-2 py-1 rounded-sm text-brand-red font-semibold">
-                                {formatPrice(space.pricePerHour)}/h
+                                {formatPrice(space.priceHalfDay)} / {fr ? 'demi-journée' : 'half-day'}
                               </span>
                               <span className="bg-brand-black px-2 py-1 rounded-sm text-brand-red font-semibold">
-                                {formatPrice(space.pricePerDay)}/{fr ? 'jour' : 'day'}
+                                {formatPrice(space.priceFullDay)} / {fr ? 'journée' : 'day'}
                               </span>
                             </div>
                           </div>
-                          {/* Arrow indicating tappable */}
                           <svg className="w-5 h-5 text-brand-red flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
@@ -390,102 +394,150 @@ export default function BookingPage() {
                 </div>
               )}
 
-              {/* Step 2: Select Date & Time */}
+              {/* Step 2: Select Slot */}
               {step === 2 && (
                 <div>
                   <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
-                    {fr ? 'Date et durée' : 'Date & Duration'}
+                    {fr ? 'Choisissez votre créneau' : 'Choose your time slot'}
                   </h2>
                   <p className="text-gray-400 text-sm mb-6">
-                    {fr ? 'Sélectionnez une date puis choisissez vos horaires.' : 'Pick a date then set your start and end times.'}
+                    {fr
+                      ? 'Sélectionnez un créneau horaire pour votre session.'
+                      : 'Select a time slot for your session.'}
                   </p>
 
-                  {/* Availability Calendar */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-semibold text-gray-300 mb-3">
-                      {fr ? 'Sélectionnez une date' : 'Select a date'}
-                    </label>
-                    <AvailabilityCalendar
-                      locale={locale as 'en' | 'fr'}
-                      selectedDate={watchedValues.startDate ? new Date(watchedValues.startDate) : undefined}
-                      onDateSelect={(date) => {
-                        setValue('startDate', formatDateLocal(date));
-                        setValue('endDate', formatDateLocal(date));
-                      }}
-                    />
-                  </div>
-
-                  {/* Quick Presets */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-semibold text-gray-300 mb-3">
-                      {fr ? 'Durée rapide (optionnel)' : 'Quick duration (optional)'}
-                    </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {DURATION_PRESETS.map((preset) => (
+                  {/* Slot cards */}
+                  <div className="space-y-3 mb-6">
+                    {/* Single sessions */}
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      {fr ? 'Sessions individuelles' : 'Single sessions'}
+                    </p>
+                    {slotCards.slice(0, 3).map(({ key, icon, badge }) => {
+                      const slot = SLOTS[key];
+                      const price = selectedSpace ? getSlotPrice(selectedSpace, key) : 0;
+                      const isSelected = selectedSlot === key;
+                      return (
                         <button
-                          key={preset.hours}
+                          key={key}
                           type="button"
-                          onClick={() => applyDurationPreset(preset.hours)}
-                          className="px-3 py-3 bg-brand-black border border-brand-black-light hover:border-brand-red active:bg-brand-red/10 rounded-sm text-white text-sm font-semibold transition-all"
+                          onClick={() => setValue('slot', key)}
+                          className={`w-full text-left p-4 rounded-sm border-2 transition-all active:scale-[0.99] ${
+                            isSelected
+                              ? 'border-brand-red bg-brand-red/10'
+                              : 'border-brand-black-light hover:border-brand-red/40'
+                          }`}
                         >
-                          {fr ? preset.label : preset.labelEn}
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                              <div className={`flex-shrink-0 p-2 rounded-sm ${isSelected ? 'bg-brand-red text-white' : 'bg-brand-black text-gray-400'}`}>
+                                {icon}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="font-bold text-white text-sm">
+                                    {fr ? slot.labelFr : slot.labelEn}
+                                  </span>
+                                  {badge && (
+                                    <span className="text-xs bg-brand-red text-white px-2 py-0.5 rounded-sm font-semibold uppercase tracking-wide">
+                                      {badge}
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-xs text-gray-400">
+                                  {fr ? slot.timeFr : slot.timeEn}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                              <span className={`text-lg font-black ${isSelected ? 'text-brand-red' : 'text-white'}`}>
+                                {formatPrice(price)}
+                              </span>
+                            </div>
+                          </div>
                         </button>
-                      ))}
+                      );
+                    })}
+
+                    {/* Session packs */}
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-5 mb-2">
+                      {fr ? 'Forfaits multi-séances' : 'Session packs'}
+                    </p>
+                    <div className="bg-brand-black rounded-sm p-1">
+                      {slotCards.slice(3).map(({ key, icon, badge }) => {
+                        const slot = SLOTS[key];
+                        const price = selectedSpace ? getSlotPrice(selectedSpace, key) : 0;
+                        const isSelected = selectedSlot === key;
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            onClick={() => {
+                              setValue('slot', key);
+                              setValue('date', undefined); // bundles have no fixed date
+                            }}
+                            className={`w-full text-left p-4 rounded-sm border-2 transition-all active:scale-[0.99] mb-2 last:mb-0 ${
+                              isSelected
+                                ? 'border-brand-red bg-brand-red/10'
+                                : 'border-transparent hover:border-brand-red/40 bg-brand-black-light'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <div className={`flex-shrink-0 p-2 rounded-sm ${isSelected ? 'bg-brand-red text-white' : 'bg-brand-black text-gray-400'}`}>
+                                  {icon}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="font-bold text-white text-sm">
+                                      {fr ? slot.labelFr : slot.labelEn}
+                                    </span>
+                                    {badge && (
+                                      <span className="text-xs bg-brand-red text-white px-2 py-0.5 rounded-sm font-semibold uppercase tracking-wide">
+                                        {badge}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="text-xs text-gray-400">
+                                    {fr ? slot.timeFr : slot.timeEn} · {fr ? 'dates à convenir par téléphone' : 'dates arranged by phone'}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-right flex-shrink-0">
+                                <span className={`text-lg font-black ${isSelected ? 'text-brand-red' : 'text-white'}`}>
+                                  {formatPrice(price)}
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-300 mb-2">
-                        {fr ? 'Date de début' : 'Start date'} *
-                      </label>
-                      <input
-                        type="date"
-                        {...register('startDate')}
-                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white text-sm"
-                        min={new Date().toISOString().split('T')[0]}
-                      />
-                      {errors.startDate && <p className="mt-1 text-xs text-brand-red">{errors.startDate.message}</p>}
-                    </div>
+                  {errors.slot && (
+                    <p className="text-sm text-brand-red mb-4">{errors.slot.message}</p>
+                  )}
 
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-300 mb-2">
-                        {fr ? 'Heure de début' : 'Start time'} *
+                  {/* Date picker — only for non-bundle slots */}
+                  {selectedSlot && !isBundle(selectedSlot) && (
+                    <div id="date-picker" className="mb-6">
+                      <label className="block text-sm font-semibold text-gray-300 mb-3">
+                        {fr ? 'Choisissez une date *' : 'Select a date *'}
                       </label>
-                      <input
-                        type="time"
-                        {...register('startTime')}
-                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white text-sm"
+                      <AvailabilityCalendar
+                        locale={locale as 'en' | 'fr'}
+                        selectedDate={watchedValues.date ? new Date(watchedValues.date) : undefined}
+                        onDateSelect={(date) => setValue('date', formatDateLocal(date))}
                       />
-                      {errors.startTime && <p className="mt-1 text-xs text-brand-red">{errors.startTime.message}</p>}
+                      {!watchedValues.date && (
+                        <p className="mt-2 text-xs text-brand-red">
+                          {fr ? 'Veuillez sélectionner une date.' : 'Please select a date.'}
+                        </p>
+                      )}
                     </div>
+                  )}
 
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-300 mb-2">
-                        {fr ? 'Date de fin' : 'End date'} *
-                      </label>
-                      <input
-                        type="date"
-                        {...register('endDate')}
-                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white text-sm"
-                        min={new Date().toISOString().split('T')[0]}
-                      />
-                      {errors.endDate && <p className="mt-1 text-xs text-brand-red">{errors.endDate.message}</p>}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-300 mb-2">
-                        {fr ? 'Heure de fin' : 'End time'} *
-                      </label>
-                      <input
-                        type="time"
-                        {...register('endTime')}
-                        className="w-full px-3 py-3 bg-brand-black border border-brand-black-light rounded-sm focus:ring-2 focus:ring-brand-red focus:border-brand-red text-white text-sm"
-                      />
-                      {errors.endTime && <p className="mt-1 text-xs text-brand-red">{errors.endTime.message}</p>}
-                    </div>
-                  </div>
-
+                  {/* Number of participants */}
                   <div className="mb-6">
                     <label className="block text-sm font-semibold text-gray-300 mb-2">
                       {fr ? 'Nombre de participants' : 'Number of participants'} *
@@ -505,21 +557,12 @@ export default function BookingPage() {
                     {errors.numberOfPeople && <p className="mt-1 text-xs text-brand-red">{errors.numberOfPeople.message}</p>}
                   </div>
 
-                  <AvailabilityChecker
-                    startDate={watchedValues.startDate || ''}
-                    startTime={watchedValues.startTime || ''}
-                    endDate={watchedValues.endDate || ''}
-                    endTime={watchedValues.endTime || ''}
-                    locale={locale as 'en' | 'fr'}
-                    onAvailabilityChange={setIsAvailable}
-                  />
-
                   {/* Desktop buttons */}
                   <div className="hidden sm:flex gap-4 mt-6">
                     <button type="button" onClick={prevStep} className="flex-1 bg-brand-black border-2 border-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red transition-colors uppercase tracking-wider">
                       {fr ? 'Retour' : 'Back'}
                     </button>
-                    <button type="button" onClick={nextStep} disabled={!isAvailable} className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors uppercase tracking-wider disabled:bg-gray-600 disabled:cursor-not-allowed">
+                    <button type="button" onClick={nextStep} className="flex-1 bg-brand-red text-white py-4 rounded-sm font-bold hover:bg-brand-red-dark transition-colors uppercase tracking-wider">
                       {fr ? 'Continuer' : 'Continue'}
                     </button>
                   </div>
@@ -636,29 +679,38 @@ export default function BookingPage() {
                     </div>
 
                     <div className="bg-brand-black border border-brand-black-light rounded-sm p-5">
-                      <h3 className="text-sm font-semibold text-brand-red mb-3 uppercase tracking-wider">{fr ? 'Date & Heure' : 'Date & Time'}</h3>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">{fr ? 'Début' : 'Start'}:</span>
-                          <span className="text-white font-semibold text-right">
-                            {watchedValues.startDate && new Date(watchedValues.startDate).toLocaleDateString(fr ? 'fr-FR' : 'en-US', { weekday: 'short', day: 'numeric', month: 'short' })} {watchedValues.startTime}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">{fr ? 'Fin' : 'End'}:</span>
-                          <span className="text-white font-semibold text-right">
-                            {watchedValues.endDate && new Date(watchedValues.endDate).toLocaleDateString(fr ? 'fr-FR' : 'en-US', { weekday: 'short', day: 'numeric', month: 'short' })} {watchedValues.endTime}
-                          </span>
-                        </div>
-                        {calculationDetails && (
+                      <h3 className="text-sm font-semibold text-brand-red mb-3 uppercase tracking-wider">{fr ? 'Créneau' : 'Time Slot'}</h3>
+                      {selectedSlot && (
+                        <div className="space-y-2">
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">{fr ? 'Durée' : 'Duration'}:</span>
+                            <span className="text-gray-400">{fr ? 'Type' : 'Type'}:</span>
                             <span className="text-white font-semibold">
-                              {calculationDetails.hours.toFixed(1)}h{calculationDetails.days > 0 && ` (${calculationDetails.days} ${fr ? 'jour(s)' : 'day(s)'})`}
+                              {fr ? SLOTS[selectedSlot].labelFr : SLOTS[selectedSlot].labelEn}
                             </span>
                           </div>
-                        )}
-                      </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">{fr ? 'Horaires' : 'Hours'}:</span>
+                            <span className="text-white font-semibold">
+                              {fr ? SLOTS[selectedSlot].timeFr : SLOTS[selectedSlot].timeEn}
+                            </span>
+                          </div>
+                          {watchedValues.date && !isBundle(selectedSlot) && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">{fr ? 'Date' : 'Date'}:</span>
+                              <span className="text-white font-semibold">
+                                {new Date(watchedValues.date).toLocaleDateString(fr ? 'fr-FR' : 'en-US', {
+                                  weekday: 'short', day: 'numeric', month: 'long', year: 'numeric',
+                                })}
+                              </span>
+                            </div>
+                          )}
+                          {isBundle(selectedSlot) && (
+                            <p className="text-xs text-gray-400 italic mt-1">
+                              {fr ? 'Les dates seront convenues par téléphone.' : 'Dates will be arranged by phone.'}
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     <div className="bg-brand-black border border-brand-black-light rounded-sm p-5">
@@ -689,14 +741,14 @@ export default function BookingPage() {
 
                     <div className="bg-brand-red/10 border-2 border-brand-red rounded-sm p-5">
                       <div className="flex justify-between items-center">
-                        <span className="text-lg font-bold text-white">{fr ? 'Prix estimé' : 'Estimated price'}:</span>
+                        <span className="text-lg font-bold text-white">{fr ? 'Total' : 'Total'}:</span>
                         <span className="text-3xl font-black text-brand-red">{formatPrice(totalPrice)}</span>
                       </div>
-                      {calculationDetails && (
+                      {selectedSlot && (
                         <p className="text-xs text-gray-400 mt-2">
-                          {calculationDetails.rateType === 'daily'
-                            ? `${formatPrice(calculationDetails.rate)} × ${calculationDetails.days} ${fr ? 'jour(s)' : 'day(s)'}`
-                            : `${formatPrice(calculationDetails.rate)} × ${calculationDetails.hours.toFixed(1)}h`}
+                          {fr ? SLOTS[selectedSlot].labelFr : SLOTS[selectedSlot].labelEn}
+                          {' · '}
+                          {fr ? SLOTS[selectedSlot].timeFr : SLOTS[selectedSlot].timeEn}
                         </p>
                       )}
                     </div>
@@ -738,33 +790,42 @@ export default function BookingPage() {
                       <p className="text-sm text-gray-400 mt-1">{fr ? 'Capacité' : 'Capacity'}: {selectedSpace.capacity} {fr ? 'personnes' : 'people'}</p>
                     </div>
 
-                    {calculationDetails && (
-                      <>
-                        <div className="mb-6 pb-6 border-b border-brand-black-light">
-                          <p className="text-sm text-gray-400 mb-2">{fr ? 'Durée' : 'Duration'}</p>
-                          <p className="text-white font-semibold">{calculationDetails.hours.toFixed(1)}h{calculationDetails.days > 0 && ` · ${calculationDetails.days} ${fr ? 'jour(s)' : 'day(s)'}`}</p>
-                        </div>
-                        <div className="mb-6 pb-6 border-b border-brand-black-light">
-                          <p className="text-sm text-gray-400 mb-2">{fr ? 'Tarif' : 'Rate'}</p>
-                          <p className="text-white">
-                            {formatPrice(calculationDetails.rate)}/{calculationDetails.rateType === 'daily' ? (fr ? 'jour' : 'day') : 'h'}
+                    {selectedSlot && (
+                      <div className="mb-6 pb-6 border-b border-brand-black-light">
+                        <p className="text-sm text-gray-400 mb-2">{fr ? 'Créneau' : 'Slot'}</p>
+                        <p className="text-white font-semibold">{fr ? SLOTS[selectedSlot].labelFr : SLOTS[selectedSlot].labelEn}</p>
+                        <p className="text-sm text-gray-400">{fr ? SLOTS[selectedSlot].timeFr : SLOTS[selectedSlot].timeEn}</p>
+                        {watchedValues.date && !isBundle(selectedSlot) && (
+                          <p className="text-sm text-gray-300 mt-1">
+                            {new Date(watchedValues.date).toLocaleDateString(fr ? 'fr-FR' : 'en-US', {
+                              day: 'numeric', month: 'long', year: 'numeric',
+                            })}
                           </p>
-                        </div>
-                      </>
+                        )}
+                      </div>
                     )}
 
                     <div className="bg-brand-red/10 border border-brand-red rounded-sm p-4">
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-semibold text-white">Total:</span>
-                        <span className="text-3xl font-black text-brand-red">{totalPrice > 0 ? formatPrice(totalPrice) : '$0'}</span>
+                        <span className="text-3xl font-black text-brand-red">
+                          {totalPrice > 0 ? formatPrice(totalPrice) : '—'}
+                        </span>
                       </div>
                     </div>
 
-                    {calculationDetails?.rateType === 'daily' && (
-                      <p className="text-xs text-gray-400 mt-3 text-center">
-                        {fr ? '* Tarif journalier appliqué (≥8h)' : '* Daily rate applied (≥8h)'}
-                      </p>
-                    )}
+                    {/* Pricing reference */}
+                    <div className="mt-5 space-y-1.5">
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">{fr ? 'Tarifs' : 'Rates'}</p>
+                      {(['morning', 'fullday', 'bundle5', 'bundle10'] as SlotKey[]).map((k) => (
+                        <div key={k} className="flex justify-between text-xs">
+                          <span className="text-gray-400">{fr ? SLOTS[k].labelFr : SLOTS[k].labelEn}</span>
+                          <span className={selectedSlot === k ? 'text-brand-red font-bold' : 'text-gray-300'}>
+                            {selectedSpace ? formatPrice(getSlotPrice(selectedSpace, k)) : '—'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </>
                 ) : (
                   <div className="text-center py-8">
@@ -799,8 +860,7 @@ export default function BookingPage() {
               <button
                 type="button"
                 onClick={nextStep}
-                disabled={step === 2 && !isAvailable}
-                className="flex-1 bg-brand-red text-white py-3.5 rounded-sm font-bold transition-colors active:bg-brand-red-dark uppercase tracking-wider text-sm disabled:bg-gray-600 disabled:cursor-not-allowed"
+                className="flex-1 bg-brand-red text-white py-3.5 rounded-sm font-bold transition-colors active:bg-brand-red-dark uppercase tracking-wider text-sm"
               >
                 {fr ? 'Continuer' : 'Continue'}
               </button>
