@@ -131,8 +131,8 @@ export function getEventDescription(eventId: string, locale: 'en' | 'fr'): strin
       fr: 'Wote Space a accueilli un atelier de formation organisé par WAHDI, Femmes en Action pour la Dignité Humaine, axé sur le suivi, l\'analyse et la compréhension des questions de sécurité et des violences liées à la crise climatique. Les participants ont développé des outils pratiques pour mieux saisir les liens entre dégradation environnementale et conflits, et renforcer leurs réponses en matière de plaidoyer et de protection.',
     },
     'workshop-young-leader-for-an-equal-future-08-03-2026': {
-      en: 'On International Women\'s Day, Wote Space hosted the "Young Leader for an Equal Future" workshop — a capacity-building session focused on combating gender-based violence and implementing UN Security Council Resolution 1325 on Women, Peace and Security. Young leaders and community actors explored practical tools for prevention, protection and advocacy, strengthening their role in building lasting peace in the region.',
-      fr: 'À l\'occasion de la Journée Internationale des Femmes, Wote Space a accueilli l\'atelier « Jeune Leader pour un Avenir Égal » — une session de renforcement des capacités axée sur la lutte contre les violences basées sur le genre et la mise en œuvre de la Résolution 1325 du Conseil de Sécurité des Nations Unies sur les Femmes, la Paix et la Sécurité. De jeunes leaders et acteurs communautaires ont exploré des outils pratiques de prévention, de protection et de plaidoyer, renforçant leur rôle dans la construction d\'une paix durable dans la région.',
+      en: 'On International Women\'s Day, Wote Space hosted the "Young Leader for an Equal Future" workshop, organised by Waza & Act. The session focused on capacity building to combat gender-based violence and implement UN Security Council Resolution 1325 on Women, Peace and Security. Young leaders and community actors explored practical tools for prevention, protection and advocacy, strengthening their role in building lasting peace in the region.',
+      fr: 'À l\'occasion de la Journée Internationale des Femmes, Wote Space a accueilli l\'atelier « Jeune Leader pour un Avenir Égal », organisé par Waza & Act. La session était axée sur le renforcement des capacités pour lutter contre les violences basées sur le genre et mettre en œuvre la Résolution 1325 du Conseil de Sécurité des Nations Unies sur les Femmes, la Paix et la Sécurité. De jeunes leaders et acteurs communautaires ont exploré des outils pratiques de prévention, de protection et de plaidoyer, renforçant leur rôle dans la construction d\'une paix durable dans la région.',
     },
   };
 
@@ -168,8 +168,8 @@ export function getEventShortDescription(eventId: string, locale: 'en' | 'fr'): 
       fr: 'Un atelier de formation WAHDI sur le suivi et la compréhension des questions de sécurité et des violences liées à la crise climatique, avec des outils pratiques pour le plaidoyer et la protection.',
     },
     'workshop-young-leader-for-an-equal-future-08-03-2026': {
-      en: 'A capacity-building workshop on combating gender-based violence and implementing Resolution 1325 on Women, Peace and Security, held on International Women\'s Day.',
-      fr: 'Un atelier de renforcement des capacités sur la lutte contre les violences basées sur le genre et la mise en œuvre de la Résolution 1325 sur les Femmes, la Paix et la Sécurité, tenu à l\'occasion de la Journée Internationale des Femmes.',
+      en: 'Organised by Waza & Act — a capacity-building workshop on combating gender-based violence and implementing Resolution 1325 on Women, Peace and Security, held on International Women\'s Day.',
+      fr: 'Organisé par Waza & Act — un atelier de renforcement des capacités sur la lutte contre les violences basées sur le genre et la mise en œuvre de la Résolution 1325 sur les Femmes, la Paix et la Sécurité, tenu à l\'occasion de la Journée Internationale des Femmes.',
     },
   };
 
