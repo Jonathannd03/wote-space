@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateBookingReference } from '@/lib/utils';
 import { z } from 'zod';
-import { MOCK_SPACES } from '@/lib/mock-data';
-import { checkAvailability } from '@/lib/availability';
+import { MOCK_SPACES, SLOTS } from '@/lib/mock-data';
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
@@ -24,21 +23,18 @@ async function sendBookingRequestEmail(data: {
   company?: string;
   notes?: string;
   spaceName: string;
-  startDate: Date;
-  endDate: Date;
+  slotLabel: string;
+  slotTime: string;
+  date?: string;
   numberOfPeople: number;
   totalPrice: number;
   locale: string;
 }) {
-  const formatDate = (d: Date) =>
-    d.toLocaleDateString(data.locale === 'fr' ? 'fr-FR' : 'en-US', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-    });
-
-  const formatTime = (d: Date) =>
-    d.toLocaleTimeString(data.locale === 'fr' ? 'fr-FR' : 'en-US', {
-      hour: '2-digit', minute: '2-digit',
-    });
+  const dateDisplay = data.date
+    ? new Date(data.date).toLocaleDateString('fr-FR', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+      })
+    : data.locale === 'fr' ? 'Dates à convenir par téléphone' : 'Dates to be arranged by phone';
 
   await transporter.sendMail({
     from: process.env.SMTP_FROM,
@@ -64,12 +60,12 @@ async function sendBookingRequestEmail(data: {
               <td style="padding: 6px 0;">${data.spaceName}</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; font-weight: bold; color: #555;">Début :</td>
-              <td style="padding: 6px 0;">${formatDate(data.startDate)} à ${formatTime(data.startDate)}</td>
+              <td style="padding: 6px 0; font-weight: bold; color: #555;">Créneau :</td>
+              <td style="padding: 6px 0;">${data.slotLabel} (${data.slotTime})</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; font-weight: bold; color: #555;">Fin :</td>
-              <td style="padding: 6px 0;">${formatDate(data.endDate)} à ${formatTime(data.endDate)}</td>
+              <td style="padding: 6px 0; font-weight: bold; color: #555;">Date :</td>
+              <td style="padding: 6px 0;">${dateDisplay}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; font-weight: bold; color: #555;">Participants :</td>
@@ -111,8 +107,8 @@ async function sendBookingRequestEmail(data: {
 
 const bookingSchema = z.object({
   spaceId: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
+  slot: z.enum(['morning', 'afternoon', 'fullday', 'bundle5', 'bundle10'] as const),
+  date: z.string().optional(),
   numberOfPeople: z.number(),
   firstName: z.string(),
   lastName: z.string(),
@@ -129,52 +125,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = bookingSchema.parse(body);
 
-    // Convert date strings to Date objects
-    const startDate = new Date(data.startDate);
-    const endDate = new Date(data.endDate);
-
-    // Validate dates
-    if (startDate >= endDate) {
-      return NextResponse.json(
-        { error: 'End date must be after start date' },
-        { status: 400 }
-      );
-    }
-
-    if (startDate < new Date()) {
-      return NextResponse.json(
-        { error: 'Start date cannot be in the past' },
-        { status: 400 }
-      );
-    }
-
-    // Check availability before accepting booking
-    const availabilityCheck = await checkAvailability(startDate, endDate);
-    if (!availabilityCheck.available) {
-      return NextResponse.json(
-        {
-          error: 'Room is not available for the selected time slot',
-          conflicts: availabilityCheck.conflicts,
-        },
-        { status: 409 } // 409 Conflict
-      );
-    }
-
-    // Check if space exists (using mock data)
+    // Check if space exists
     const space = MOCK_SPACES.find(s => s.id === data.spaceId);
-
     if (!space) {
-      return NextResponse.json(
-        { error: 'Space not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Space not found' }, { status: 404 });
     }
 
     if (!space.available) {
-      return NextResponse.json(
-        { error: 'Space is not available' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Space is not available' }, { status: 400 });
     }
 
     // Check capacity
@@ -185,10 +143,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate unique reference ID
+    // Non-bundle slots require a date
+    const isBundle = data.slot === 'bundle5' || data.slot === 'bundle10';
+    if (!isBundle && !data.date) {
+      return NextResponse.json(
+        { error: 'A date is required for single-session slots' },
+        { status: 400 }
+      );
+    }
+
+    if (!isBundle && data.date) {
+      const slotDate = new Date(data.date);
+      slotDate.setHours(0, 0, 0, 0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (slotDate < today) {
+        return NextResponse.json(
+          { error: 'Booking date cannot be in the past' },
+          { status: 400 }
+        );
+      }
+    }
+
+    const slotInfo = SLOTS[data.slot];
+    const fr = data.locale === 'fr';
+    const slotLabel = fr ? slotInfo.labelFr : slotInfo.labelEn;
+    const slotTime = fr ? slotInfo.timeFr : slotInfo.timeEn;
+    const spaceName = fr ? space.nameFr : space.nameEn;
+
     const referenceId = generateBookingReference();
 
-    // Send booking request email to Wote Space team
     try {
       await sendBookingRequestEmail({
         referenceId,
@@ -198,9 +182,10 @@ export async function POST(request: NextRequest) {
         phone: data.phone,
         company: data.company,
         notes: data.notes,
-        spaceName: data.locale === 'fr' ? space.nameFr : space.nameEn,
-        startDate,
-        endDate,
+        spaceName,
+        slotLabel,
+        slotTime,
+        date: data.date,
         numberOfPeople: data.numberOfPeople,
         totalPrice: data.totalPrice,
         locale: data.locale,
@@ -215,10 +200,12 @@ export async function POST(request: NextRequest) {
       referenceId,
       booking: {
         referenceId,
-        startDate,
-        endDate,
+        slot: data.slot,
+        slotLabel,
+        slotTime,
+        date: data.date,
         totalPrice: data.totalPrice,
-        spaceName: data.locale === 'fr' ? space.nameFr : space.nameEn,
+        spaceName,
       },
     });
   } catch (error) {
@@ -240,7 +227,6 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    // DEMO MODE: No bookings saved yet (database not configured)
     return NextResponse.json([]);
   } catch (error) {
     console.error('Error fetching bookings:', error);

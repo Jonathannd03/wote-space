@@ -12,8 +12,10 @@ export async function GET() {
         nameEn: space.nameEn,
         nameFr: space.nameFr,
         capacity: space.capacity,
-        pricePerHour: space.pricePerHour,
-        pricePerDay: space.pricePerDay,
+        priceHalfDay: space.priceHalfDay,
+        priceFullDay: space.priceFullDay,
+        priceBundle5: space.priceBundle5,
+        priceBundle10: space.priceBundle10,
       }));
 
     return NextResponse.json(spaces);
