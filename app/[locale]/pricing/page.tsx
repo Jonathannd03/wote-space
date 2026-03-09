@@ -119,8 +119,75 @@ export default async function PricingPage() {
           </p>
           <div className="h-1 w-24 bg-brand-red mb-12 mx-auto" />
 
-          {/* Pricing table */}
-          <div className="overflow-x-auto rounded-sm border border-brand-black-light">
+          {/* Mobile: one card per setup */}
+          <div className="lg:hidden space-y-4">
+            {roomSetups.map((space) => (
+              <div key={space.id} className="bg-brand-black rounded-sm border border-brand-black-light overflow-hidden">
+                {/* Card header */}
+                <div className="bg-brand-black-light px-4 py-3 border-b border-brand-black-light flex items-center justify-between">
+                  <div>
+                    <p className="text-white font-bold">{fr ? space.nameFr : space.nameEn}</p>
+                    <p className="text-gray-400 text-xs">
+                      {fr ? `jusqu'à ${space.capacity} personnes` : `up to ${space.capacity} people`}
+                    </p>
+                  </div>
+                  <svg className="w-5 h-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                {/* Slot rows */}
+                <div className="divide-y divide-brand-black-light">
+                  {/* Single sessions */}
+                  <div className="px-4 py-2">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider py-1">
+                      {fr ? 'Sessions individuelles' : 'Single sessions'}
+                    </p>
+                  </div>
+                  {(['morning', 'afternoon', 'fullday'] as const).map((key) => (
+                    <div key={key} className="px-4 py-3 flex items-center justify-between">
+                      <div>
+                        <p className="text-white text-sm font-medium flex items-center gap-1">
+                          {fr ? SLOTS[key].labelFr : SLOTS[key].labelEn}
+                          <InfoTooltip content={tooltips[key]} position="top" />
+                        </p>
+                        <p className="text-gray-500 text-xs">{fr ? SLOTS[key].timeFr : SLOTS[key].timeEn}</p>
+                      </div>
+                      <span className="text-brand-red font-black text-lg">
+                        {formatPrice(key === 'fullday' ? space.priceFullDay : space.priceHalfDay)}
+                      </span>
+                    </div>
+                  ))}
+                  {/* Packs */}
+                  <div className="px-4 py-2 bg-brand-black/50">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider py-1">
+                      {fr ? 'Forfaits multi-séances' : 'Session packs'}
+                    </p>
+                  </div>
+                  {(['bundle5', 'bundle10'] as const).map((key) => {
+                    const price = key === 'bundle5' ? space.priceBundle5 : space.priceBundle10;
+                    const count = key === 'bundle5' ? 5 : 10;
+                    return (
+                      <div key={key} className="px-4 py-3 flex items-center justify-between bg-brand-black/50">
+                        <div>
+                          <p className="text-white text-sm font-medium flex items-center gap-1">
+                            {fr ? SLOTS[key].labelFr : SLOTS[key].labelEn}
+                            <InfoTooltip content={tooltips[key]} position="top" />
+                          </p>
+                          <p className="text-gray-500 text-xs">
+                            {fr ? SLOTS[key].timeFr : SLOTS[key].timeEn} · {formatPrice(price / count)}/{fr ? 'séance' : 'session'}
+                          </p>
+                        </div>
+                        <span className="text-brand-red font-black text-lg">{formatPrice(price)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: full table */}
+          <div className="hidden lg:block overflow-x-auto rounded-sm border border-brand-black-light">
             <table className="w-full text-left border-collapse min-w-[640px]">
               <thead>
                 <tr className="border-b-2 border-brand-red bg-brand-black">
