@@ -48,7 +48,7 @@ async function main() {
       capacity: 40,
       pricePerHour: 20,
       pricePerDay: 120,
-      amenities: JSON.stringify(['Wi-Fi', 'Projecteur/Écran', 'Whiteboard', 'Video Conferencing', 'Sonorisation']),
+      amenities: JSON.stringify(['Wi-Fi', 'Projecteur/Écran', 'Whiteboard', 'Video Conferencing']),
       available: true,
     },
     {
@@ -61,7 +61,7 @@ async function main() {
       capacity: 60,
       pricePerHour: 25,
       pricePerDay: 160,
-      amenities: JSON.stringify(['Wi-Fi Premium', 'Projecteur/Écran', 'Whiteboard', 'Video Conferencing', 'Sonorisation', 'Assistance Technique']),
+      amenities: JSON.stringify(['Wi-Fi Premium', 'Projecteur/Écran', 'Whiteboard', 'Video Conferencing', 'Assistance Technique']),
       available: true,
     },
     {

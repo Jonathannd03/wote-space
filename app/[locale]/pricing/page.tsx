@@ -48,10 +48,6 @@ export default async function PricingPage() {
       price: fr ? '+5 $ / événement' : '+$5 / event',
     },
     {
-      name: fr ? 'Sonorisation (micro + haut-parleurs)' : 'Sound system (mic + speakers)',
-      price: fr ? '+10 $ / événement' : '+$10 / event',
-    },
-    {
       name: fr ? 'Assistance technique' : 'Technical assistance',
       price: fr ? '+10 $ / événement' : '+$10 / event',
     },
@@ -764,13 +760,13 @@ export default async function PricingPage() {
               </p>
               <p className="text-gray-400 text-sm leading-relaxed mb-5">
                 {fr
-                  ? "Tout ce qu'il faut pour une journée de formation professionnelle clé en main — salle, son, connectivité et documentation photo. Économisez vs. réservation à la carte."
-                  : "Everything needed for a professional training day, turnkey — room, sound, connectivity and photo documentation. Save vs. booking à la carte."}
+                  ? "Tout ce qu'il faut pour une journée de formation professionnelle clé en main — salle, connectivité et documentation photo. Économisez vs. réservation à la carte."
+                  : "Everything needed for a professional training day, turnkey — room, connectivity and photo documentation. Save vs. booking à la carte."}
               </p>
               <div className="bg-brand-black-light rounded-sm p-4 mb-5">
                 <p className="text-gray-500 text-xs uppercase tracking-wider mb-2 font-semibold">{fr ? "Inclus" : "Included"}</p>
                 <ul className="space-y-1.5">
-                  {[fr ? "Salle journée complète (26–40 pers.)" : "Full-day room (26–40 people)", fr ? "Projecteur + sonorisation (micro & enceintes)" : "Projector + sound system (mic & speakers)", fr ? "Wi-Fi premium dédié" : "Dedicated premium Wi-Fi", fr ? "Photographie (2 heures incluses)" : "Photography (2 hours included)"].map((f, i) => (
+                  {[fr ? "Salle journée complète (26–40 pers.)" : "Full-day room (26–40 people)", fr ? "Projecteur/Écran" : "Projector/Screen", fr ? "Wi-Fi premium dédié" : "Dedicated premium Wi-Fi", fr ? "Photographie (2 heures incluses)" : "Photography (2 hours included)"].map((f, i) => (
                     <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
                       <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                       {f}
@@ -817,7 +813,7 @@ export default async function PricingPage() {
               <div className="bg-brand-black-light rounded-sm p-4 mb-5">
                 <p className="text-gray-500 text-xs uppercase tracking-wider mb-2 font-semibold">{fr ? "Inclus" : "Included"}</p>
                 <ul className="space-y-1.5">
-                  {[fr ? "Salle journée complète (41–60 pers.)" : "Full-day room (41–60 people)", fr ? "Projecteur + sonorisation complète" : "Projector + full sound system", fr ? "Wi-Fi premium dédié" : "Dedicated premium Wi-Fi", fr ? "Photographie complète (toute la journée)" : "Full-day photography coverage", fr ? "Assistance technique sur place" : "On-site technical assistance"].map((f, i) => (
+                  {[fr ? "Salle journée complète (41–60 pers.)" : "Full-day room (41–60 people)", fr ? "Projecteur/Écran" : "Projector/Screen", fr ? "Wi-Fi premium dédié" : "Dedicated premium Wi-Fi", fr ? "Photographie complète (toute la journée)" : "Full-day photography coverage", fr ? "Assistance technique sur place" : "On-site technical assistance"].map((f, i) => (
                     <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
                       <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                       {f}
