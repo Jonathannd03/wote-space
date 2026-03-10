@@ -756,7 +756,7 @@ export default async function PricingPage() {
                 </p>
               </div>
               <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-5xl font-black text-white">$130</span>
+                <span className="text-5xl font-black text-white">$75</span>
                 <span className="text-gray-400 text-sm">/ {fr ? "jour" : "day"}</span>
               </div>
               <p className="text-gray-500 text-xs mb-5">
