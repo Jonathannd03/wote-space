@@ -109,7 +109,7 @@ export default function BookingPage() {
   });
 
   const watchedValues = watch();
-  const selectedSlot = watchedValues.slot as SlotKey | undefined;
+  const selectedSlot = watchedValues.slot as SlotKey | SpecialPackKey | undefined;
   const totalPrice = selectedSpace && selectedSlot ? getSlotPrice(selectedSpace, selectedSlot) : 0;
 
   // Fetch spaces
