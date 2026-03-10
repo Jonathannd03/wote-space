@@ -271,9 +271,32 @@ export default function BookingPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <h1 className="text-3xl sm:text-5xl font-bold text-white mb-3">{t('title')}</h1>
           <div className="h-1 w-24 bg-brand-red mb-0 mx-auto"></div>
+        </div>
+
+        {/* Special packs callout */}
+        <div className="max-w-3xl mx-auto mb-8 bg-brand-black-light border border-brand-red/30 rounded-sm px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex items-start gap-3 flex-1">
+            <svg className="w-5 h-5 text-brand-red flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-sm text-gray-300">
+              <span className="text-white font-semibold">
+                {fr ? 'Packs spéciaux (ONG, Formation, Conférence, Communauté, Étudiants) ' : 'Special packs (NGO, Training, Conference, Community, Students) '}
+              </span>
+              {fr
+                ? 'et forfaits coworking hebdomadaires / mensuels ne sont pas réservables en ligne — contactez-nous directement.'
+                : 'and weekly / monthly coworking passes are not bookable online — please contact us directly.'}
+            </p>
+          </div>
+          <a
+            href={`/${locale}/contact`}
+            className="flex-shrink-0 text-center text-xs font-bold uppercase tracking-wider text-brand-red border border-brand-red px-4 py-2 rounded-sm hover:bg-brand-red hover:text-white transition-colors"
+          >
+            {fr ? 'Nous contacter' : 'Contact us'}
+          </a>
         </div>
 
         {/* Progress Steps */}
@@ -367,12 +390,18 @@ export default function BookingPage() {
                               </svg>
                               <span>{fr ? "Jusqu'à" : 'Up to'} {space.capacity} {fr ? 'personnes' : 'people'}</span>
                             </div>
-                            <div className="flex flex-wrap gap-2 text-sm">
+                            <div className="flex flex-wrap gap-2 text-xs">
                               <span className="bg-brand-black px-2 py-1 rounded-sm text-brand-red font-semibold">
-                                {formatPrice(space.priceHalfDay)} / {fr ? 'demi-journée' : 'half-day'}
+                                {formatPrice(space.priceHalfDay)} / {fr ? 'demi-j.' : 'half-day'}
                               </span>
                               <span className="bg-brand-black px-2 py-1 rounded-sm text-brand-red font-semibold">
                                 {formatPrice(space.priceFullDay)} / {fr ? 'journée' : 'day'}
+                              </span>
+                              <span className="bg-brand-black px-2 py-1 rounded-sm text-gray-400">
+                                {fr ? 'Pack 5 :' : '5-pack:'} {formatPrice(space.priceBundle5)}
+                              </span>
+                              <span className="bg-brand-black px-2 py-1 rounded-sm text-gray-400">
+                                {fr ? 'Pack 10 :' : '10-pack:'} {formatPrice(space.priceBundle10)}
                               </span>
                             </div>
                           </div>
