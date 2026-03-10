@@ -85,7 +85,7 @@ export default function HeroSection({
               <div className="bg-brand-red/10 border border-brand-red px-6 py-3 rounded-sm">
                 <div className="flex items-baseline gap-2">
                   <span className="text-gray-400 text-sm">
-                    {locale === 'fr' ? 'Accessible dès' : 'Accessible from'}
+                    {locale === 'fr' ? 'Coworking individuel dès' : 'Individual coworking from'}
                   </span>
                   <span className="text-4xl font-black text-white">3$</span>
                   <span className="text-gray-400">

@@ -42,10 +42,10 @@ export default async function SpacesPage() {
     <div className="py-16 bg-brand-black min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-white mb-4">{t('title')}</h1>
+        <div className="text-center mb-12 sm:mb-16">
+          <h1 className="text-3xl sm:text-5xl font-bold text-white mb-4">{t('title')}</h1>
           <div className="h-1 w-24 bg-brand-red mb-6 mx-auto"></div>
-          <p className="text-xl text-gray-300">{t('subtitle')}</p>
+          <p className="text-base sm:text-xl text-gray-300">{t('subtitle')}</p>
         </div>
 
         {/* Spaces Grid */}
@@ -117,48 +117,38 @@ export default async function SpacesPage() {
 
                     {/* Single sessions */}
                     <div className="space-y-2 mb-3">
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-300">
-                          {fr ? SLOTS.morning.labelFr : SLOTS.morning.labelEn}
-                          <span className="text-gray-500 ml-1 text-xs">({fr ? SLOTS.morning.timeFr : SLOTS.morning.timeEn})</span>
-                        </span>
-                        <span className="font-bold text-white">{formatPrice(space.priceHalfDay)}</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-300">
-                          {fr ? SLOTS.afternoon.labelFr : SLOTS.afternoon.labelEn}
-                          <span className="text-gray-500 ml-1 text-xs">({fr ? SLOTS.afternoon.timeFr : SLOTS.afternoon.timeEn})</span>
-                        </span>
-                        <span className="font-bold text-white">{formatPrice(space.priceHalfDay)}</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-300">
-                          {fr ? SLOTS.fullday.labelFr : SLOTS.fullday.labelEn}
-                          <span className="text-gray-500 ml-1 text-xs">({fr ? SLOTS.fullday.timeFr : SLOTS.fullday.timeEn})</span>
-                        </span>
-                        <span className="font-bold text-brand-red text-base">{formatPrice(space.priceFullDay)}</span>
-                      </div>
+                      {([
+                        { label: fr ? SLOTS.morning.labelFr : SLOTS.morning.labelEn, time: fr ? SLOTS.morning.timeFr : SLOTS.morning.timeEn, price: formatPrice(space.priceHalfDay), highlight: false },
+                        { label: fr ? SLOTS.afternoon.labelFr : SLOTS.afternoon.labelEn, time: fr ? SLOTS.afternoon.timeFr : SLOTS.afternoon.timeEn, price: formatPrice(space.priceHalfDay), highlight: false },
+                        { label: fr ? SLOTS.fullday.labelFr : SLOTS.fullday.labelEn, time: fr ? SLOTS.fullday.timeFr : SLOTS.fullday.timeEn, price: formatPrice(space.priceFullDay), highlight: true },
+                      ]).map((row, i) => (
+                        <div key={i} className="flex justify-between items-start gap-2 text-sm">
+                          <div className="min-w-0">
+                            <p className="text-gray-300 leading-tight">{row.label}</p>
+                            <p className="text-gray-500 text-xs">{row.time}</p>
+                          </div>
+                          <span className={`font-bold flex-shrink-0 ${row.highlight ? 'text-brand-red text-base' : 'text-white'}`}>{row.price}</span>
+                        </div>
+                      ))}
                     </div>
 
                     {/* Session packs */}
-                    <div className="bg-brand-black rounded-sm p-3 mb-4 space-y-1.5">
-                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
+                    <div className="bg-brand-black rounded-sm p-3 mb-4 space-y-2">
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                         {fr ? 'Forfaits' : 'Packs'}
                       </p>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-300">
-                          {fr ? SLOTS.bundle5.labelFr : SLOTS.bundle5.labelEn}
-                          <span className="text-gray-500 ml-1 text-xs">({fr ? SLOTS.bundle5.timeFr : SLOTS.bundle5.timeEn})</span>
-                        </span>
-                        <span className="font-bold text-brand-red">{formatPrice(space.priceBundle5)}</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-300">
-                          {fr ? SLOTS.bundle10.labelFr : SLOTS.bundle10.labelEn}
-                          <span className="text-gray-500 ml-1 text-xs">({fr ? SLOTS.bundle10.timeFr : SLOTS.bundle10.timeEn})</span>
-                        </span>
-                        <span className="font-bold text-brand-red">{formatPrice(space.priceBundle10)}</span>
-                      </div>
+                      {([
+                        { label: fr ? SLOTS.bundle5.labelFr : SLOTS.bundle5.labelEn, sub: fr ? SLOTS.bundle5.timeFr : SLOTS.bundle5.timeEn, price: formatPrice(space.priceBundle5) },
+                        { label: fr ? SLOTS.bundle10.labelFr : SLOTS.bundle10.labelEn, sub: fr ? SLOTS.bundle10.timeFr : SLOTS.bundle10.timeEn, price: formatPrice(space.priceBundle10) },
+                      ]).map((row, i) => (
+                        <div key={i} className="flex justify-between items-start gap-2 text-sm">
+                          <div className="min-w-0">
+                            <p className="text-gray-300 leading-tight">{row.label}</p>
+                            <p className="text-gray-500 text-xs">{row.sub}</p>
+                          </div>
+                          <span className="font-bold text-brand-red flex-shrink-0">{row.price}</span>
+                        </div>
+                      ))}
                     </div>
 
                     <Link

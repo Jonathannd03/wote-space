@@ -19,7 +19,7 @@ export const MOCK_SPACES = [
     priceFullDay: 60,
     priceBundle5: 125,
     priceBundle10: 225,
-    amenities: '["Wi-Fi", "Projecteur/Écran", "Whiteboard", "Café"]',
+    amenities: '["Wi-Fi", "Projecteur/Écran", "Whiteboard"]',
     imageUrl: null,
     available: true,
     createdAt: new Date(),
@@ -38,7 +38,7 @@ export const MOCK_SPACES = [
     priceFullDay: 90,
     priceBundle5: 185,
     priceBundle10: 335,
-    amenities: '["Wi-Fi", "Projecteur/Écran", "Whiteboard", "Video Conferencing", "Café"]',
+    amenities: '["Wi-Fi", "Projecteur/Écran", "Whiteboard", "Video Conferencing"]',
     imageUrl: null,
     available: true,
     createdAt: new Date(),
@@ -57,7 +57,7 @@ export const MOCK_SPACES = [
     priceFullDay: 120,
     priceBundle5: 250,
     priceBundle10: 450,
-    amenities: '["Wi-Fi", "Projecteur/Écran", "Whiteboard", "Video Conferencing", "Café", "Sonorisation"]',
+    amenities: '["Wi-Fi", "Projecteur/Écran", "Whiteboard", "Video Conferencing", "Sonorisation"]',
     imageUrl: null,
     available: true,
     createdAt: new Date(),
@@ -76,7 +76,7 @@ export const MOCK_SPACES = [
     priceFullDay: 160,
     priceBundle5: 330,
     priceBundle10: 600,
-    amenities: '["Wi-Fi Premium", "Projecteur/Écran", "Whiteboard", "Video Conferencing", "Café", "Sonorisation", "Assistance Technique"]',
+    amenities: '["Wi-Fi Premium", "Projecteur/Écran", "Whiteboard", "Video Conferencing", "Sonorisation", "Assistance Technique"]',
     imageUrl: null,
     available: true,
     createdAt: new Date(),
@@ -95,7 +95,7 @@ export const MOCK_SPACES = [
     priceFullDay: 3,
     priceBundle5: 12.5,
     priceBundle10: 22.5,
-    amenities: '["Wi-Fi", "Mobilier & espaces communs", "Café"]',
+    amenities: '["Wi-Fi", "Mobilier & espaces communs"]',
     imageUrl: null,
     available: true,
     createdAt: new Date(),
@@ -115,3 +115,10 @@ export const SLOTS = {
 } as const;
 
 export type SlotKey = keyof typeof SLOTS;
+
+// Coworking-specific extended packages (weekly / monthly)
+// Based on pricing curve: full day $3 → weekly 5d $12 ($2.40/d) → monthly ~20d $40 ($2.00/d)
+export const COWORKING_PACKAGES = {
+  weekly:  { priceFr: '12 $', priceEn: '$12', perDayFr: '2,40 $ / jour', perDayEn: '$2.40 / day', days: 5  },
+  monthly: { priceFr: '40 $', priceEn: '$40', perDayFr: '2,00 $ / jour', perDayEn: '$2.00 / day', days: 20 },
+} as const;

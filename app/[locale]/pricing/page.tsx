@@ -62,7 +62,7 @@ export default async function PricingPage() {
       {/* Hero */}
       <section className="relative py-24 bg-brand-black-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-6xl font-black text-white mb-6">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white mb-6">
             {fr ? "Offres & Tarifs" : "Offers & Pricing"}
           </h1>
           <div className="h-1 w-32 bg-brand-red mb-8 mx-auto" />
@@ -77,7 +77,7 @@ export default async function PricingPage() {
       {/* How it works callout */}
       <section className="py-12 bg-brand-black">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-brand-black-light border-l-4 border-brand-red rounded-sm p-6 flex gap-4">
+          <div className="bg-brand-black-light border-l-4 border-brand-red rounded-sm p-6 flex flex-col sm:flex-row gap-4">
             <div className="flex-shrink-0 mt-0.5">
               <svg
                 className="w-6 h-6 text-brand-red"
@@ -127,7 +127,7 @@ export default async function PricingPage() {
       {/* Meeting Room Setups */}
       <section className="py-20 bg-brand-black-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white mb-4 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 text-center">
             {fr ? "La Salle de Réunion" : "The Meeting Room"}
           </h2>
           <p className="text-center text-gray-400 mb-4">
@@ -437,103 +437,411 @@ export default async function PricingPage() {
       {/* Coworking Space */}
       <section className="py-20 bg-brand-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white mb-4 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 text-center">
             {fr ? "Espace de Coworking" : "Coworking Space"}
           </h2>
-          <p className="text-center text-gray-400 mb-4">
+          <p className="text-center text-gray-400 mb-4 max-w-2xl mx-auto">
             {fr
-              ? "Accès par poste de travail, selon les mêmes créneaux que la salle"
-              : "Per-seat access, using the same fixed time slots as the room"}
+              ? "Un poste de travail partagé à Goma, avec Wi-Fi et accès aux espaces communs. Payez uniquement ce dont vous avez besoin."
+              : "A shared workstation in Goma, with Wi-Fi and access to common areas. Pay only for what you need."}
           </p>
-          <div className="h-1 w-24 bg-brand-red mb-12 mx-auto" />
+          <div className="h-1 w-24 bg-brand-red mb-14 mx-auto" />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {/* Morning */}
-            <div className="bg-brand-black-light border-2 border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6 text-center">
-              <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">
-                {fr ? SLOTS.morning.labelFr : SLOTS.morning.labelEn}
+          {/* À la carte */}
+          <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-5 text-center">
+            {fr ? "Sessions à la carte" : "Pay-as-you-go sessions"}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl mx-auto mb-16">
+            {/* Half-day */}
+            <div className="bg-brand-black-light border border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6">
+              <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">
+                {fr ? "Demi-journée" : "Half-day"}
               </p>
-              <p className="text-3xl font-black text-brand-red mb-1">
+              <p className="text-4xl font-black text-brand-red mb-1">
                 {formatPrice(coworking.priceHalfDay)}
               </p>
-              <p className="text-gray-500 text-xs">
-                {fr ? SLOTS.morning.timeFr : SLOTS.morning.timeEn}
+              <p className="text-gray-500 text-xs mb-4">
+                {fr ? "Matin 8h–12h  ·  ou  ·  Après-midi 13h–17h30" : "Morning 8–12  ·  or  ·  Afternoon 1–5:30 PM"}
               </p>
+              <ul className="space-y-1 text-xs text-gray-400">
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "1 session de 4h à votre rythme" : "1 session of 4h at your pace"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Wi-Fi + mobilier inclus" : "Wi-Fi + furniture included"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Idéal pour un essai ou une journée chargée" : "Ideal for a trial or a busy day"}</li>
+              </ul>
             </div>
 
-            {/* Full day — featured */}
-            <div className="relative bg-brand-black-light border-2 border-brand-red rounded-sm p-6 text-center">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+            {/* Full day */}
+            <div className="relative bg-brand-black-light border-2 border-brand-red rounded-sm p-6">
+              <div className="absolute -top-3 left-6">
                 <span className="bg-brand-red text-white px-3 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider">
-                  {fr ? "Journée" : "Full day"}
+                  {fr ? "Recommandé" : "Recommended"}
                 </span>
               </div>
-              <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">
-                {fr ? SLOTS.fullday.labelFr : SLOTS.fullday.labelEn}
+              <p className="text-gray-400 text-xs uppercase tracking-wider mb-1 mt-1">
+                {fr ? "Journée complète" : "Full day"}
               </p>
-              <p className="text-3xl font-black text-brand-red mb-1">
+              <p className="text-4xl font-black text-brand-red mb-1">
                 {formatPrice(coworking.priceFullDay)}
               </p>
-              <p className="text-gray-500 text-xs">
-                {fr ? SLOTS.fullday.timeFr : SLOTS.fullday.timeEn}
+              <p className="text-gray-500 text-xs mb-4">
+                {fr ? "8h00 – 17h30  ·  9h30 de travail" : "8:00 AM – 5:30 PM  ·  9.5h of work"}
               </p>
-            </div>
-
-            {/* Bundle 5 */}
-            <div className="bg-brand-black-light border-2 border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6 text-center">
-              <p className="text-gray-400 text-xs uppercase tracking-wider mb-2 flex items-center justify-center">
-                {fr ? SLOTS.bundle5.labelFr : SLOTS.bundle5.labelEn}
-                <InfoTooltip
-                  content={tooltips.coworkingBundle}
-                  position="top"
-                />
-              </p>
-              <p className="text-3xl font-black text-brand-red mb-1">
-                {formatPrice(coworking.priceBundle5)}
-              </p>
-              <p className="text-gray-500 text-xs">
-                {fr ? SLOTS.bundle5.timeFr : SLOTS.bundle5.timeEn}
-              </p>
-              <p className="text-gray-600 text-xs mt-1">
-                {formatPrice(coworking.priceBundle5 / 5)} /{" "}
-                {fr ? "séance" : "session"}
-              </p>
-            </div>
-
-            {/* Bundle 10 */}
-            <div className="bg-brand-black-light border-2 border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6 text-center">
-              <p className="text-gray-400 text-xs uppercase tracking-wider mb-2 flex items-center justify-center">
-                {fr ? SLOTS.bundle10.labelFr : SLOTS.bundle10.labelEn}
-                <InfoTooltip
-                  content={tooltips.coworkingBundle}
-                  position="top"
-                />
-              </p>
-              <p className="text-3xl font-black text-brand-red mb-1">
-                {formatPrice(coworking.priceBundle10)}
-              </p>
-              <p className="text-gray-500 text-xs">
-                {fr ? SLOTS.bundle10.timeFr : SLOTS.bundle10.timeEn}
-              </p>
-              <p className="text-gray-600 text-xs mt-1">
-                {formatPrice(coworking.priceBundle10 / 10)} /{" "}
-                {fr ? "séance" : "session"}
-              </p>
+              <ul className="space-y-1 text-xs text-gray-400">
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Accès toute la journée sans interruption" : "Full-day uninterrupted access"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Wi-Fi + mobilier inclus" : "Wi-Fi + furniture included"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Idéal pour télétravailleurs et freelances" : "Ideal for remote workers and freelancers"}</li>
+              </ul>
             </div>
           </div>
 
-          <p className="text-center text-gray-500 text-sm mt-8">
+          {/* Forfaits */}
+          <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-2 text-center">
+            {fr ? "Forfaits — Économisez en vous engageant" : "Packs — Save by committing"}
+          </h3>
+          <p className="text-center text-gray-500 text-sm mb-8">
             {fr
-              ? "* Tarif par poste de travail. Les forfaits sont à utiliser sur rendez-vous."
-              : "* Price per workstation. Packs are used by appointment."}
+              ? "Achetez un bloc de séances à l'avance. Dates à convenir par téléphone selon vos disponibilités."
+              : "Pre-purchase a block of sessions. Dates arranged by phone to fit your schedule."}
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 max-w-6xl mx-auto">
+            {/* Pack 5 */}
+            <div className="bg-brand-black-light border border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6 flex flex-col">
+              <p className="text-brand-red text-xs font-bold uppercase tracking-widest mb-1">Pack 5</p>
+              <p className="text-gray-400 text-xs mb-3">{fr ? "5 séances journées complètes" : "5 full-day sessions"}</p>
+              <p className="text-4xl font-black text-white mb-1">{formatPrice(coworking.priceBundle5)}</p>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="bg-brand-red/20 text-brand-red text-xs px-2 py-0.5 rounded-sm font-semibold border border-brand-red/30">
+                  {fr ? `Économie : ${formatPrice(coworking.priceFullDay * 5 - coworking.priceBundle5)}` : `Save ${formatPrice(coworking.priceFullDay * 5 - coworking.priceBundle5)}`}
+                </span>
+              </div>
+              <ul className="space-y-1.5 text-xs text-gray-400 flex-1 mb-5">
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? `${formatPrice(coworking.priceBundle5 / 5)} / séance (au lieu de ${formatPrice(coworking.priceFullDay)})` : `${formatPrice(coworking.priceBundle5 / 5)} / session (vs ${formatPrice(coworking.priceFullDay)})`}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "5 journées complètes 8h–17h30" : "5 full days 8AM–5:30PM"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Dates flexibles sur 3 mois" : "Flexible dates over 3 months"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Idéal pour une utilisation régulière mensuelle" : "Ideal for regular monthly use"}</li>
+              </ul>
+              <Link href={`/${locale}/contact`} className="block text-center border border-brand-red text-brand-red py-2.5 rounded-sm text-xs font-bold uppercase tracking-wider hover:bg-brand-red hover:text-white transition-colors">
+                {fr ? "Nous contacter" : "Contact us"}
+              </Link>
+            </div>
+
+            {/* Pack 10 */}
+            <div className="bg-brand-black-light border border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6 flex flex-col">
+              <p className="text-brand-red text-xs font-bold uppercase tracking-widest mb-1">Pack 10</p>
+              <p className="text-gray-400 text-xs mb-3">{fr ? "10 séances journées complètes" : "10 full-day sessions"}</p>
+              <p className="text-4xl font-black text-white mb-1">{formatPrice(coworking.priceBundle10)}</p>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="bg-brand-red/20 text-brand-red text-xs px-2 py-0.5 rounded-sm font-semibold border border-brand-red/30">
+                  {fr ? `Économie : ${formatPrice(coworking.priceFullDay * 10 - coworking.priceBundle10)}` : `Save ${formatPrice(coworking.priceFullDay * 10 - coworking.priceBundle10)}`}
+                </span>
+              </div>
+              <ul className="space-y-1.5 text-xs text-gray-400 flex-1 mb-5">
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? `${formatPrice(coworking.priceBundle10 / 10)} / séance (au lieu de ${formatPrice(coworking.priceFullDay)})` : `${formatPrice(coworking.priceBundle10 / 10)} / session (vs ${formatPrice(coworking.priceFullDay)})`}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "10 journées complètes 8h–17h30" : "10 full days 8AM–5:30PM"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Dates flexibles sur 6 mois" : "Flexible dates over 6 months"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Idéal pour freelances et consultants réguliers" : "Ideal for freelancers and regular consultants"}</li>
+              </ul>
+              <Link href={`/${locale}/contact`} className="block text-center border border-brand-red text-brand-red py-2.5 rounded-sm text-xs font-bold uppercase tracking-wider hover:bg-brand-red hover:text-white transition-colors">
+                {fr ? "Nous contacter" : "Contact us"}
+              </Link>
+            </div>
+
+            {/* Forfait Semaine */}
+            <div className="bg-brand-black-light border border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6 flex flex-col">
+              <p className="text-brand-red text-xs font-bold uppercase tracking-widest mb-1">{fr ? "Forfait Semaine" : "Weekly Pass"}</p>
+              <p className="text-gray-400 text-xs mb-3">{fr ? "5 jours consécutifs (lun–ven)" : "5 consecutive days (Mon–Fri)"}</p>
+              <p className="text-4xl font-black text-white mb-1">$12</p>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="bg-brand-red/20 text-brand-red text-xs px-2 py-0.5 rounded-sm font-semibold border border-brand-red/30">
+                  {fr ? "2,40 $ / jour" : "$2.40 / day"}
+                </span>
+              </div>
+              <ul className="space-y-1.5 text-xs text-gray-400 flex-1 mb-5">
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Accès journalier sur une semaine entière" : "Daily access for one full work week"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Semaine au choix, à convenir par téléphone" : "Week of your choice, arranged by phone"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Wi-Fi + espaces communs inclus" : "Wi-Fi + common areas included"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Idéal pour missions courtes ou visiteurs" : "Ideal for short missions or visiting workers"}</li>
+              </ul>
+              <Link href={`/${locale}/contact`} className="block text-center border border-brand-red text-brand-red py-2.5 rounded-sm text-xs font-bold uppercase tracking-wider hover:bg-brand-red hover:text-white transition-colors">
+                {fr ? "Nous contacter" : "Contact us"}
+              </Link>
+            </div>
+
+            {/* Forfait Mensuel — featured */}
+            <div className="relative bg-brand-black-light border-2 border-brand-red rounded-sm p-6 flex flex-col">
+              <div className="absolute -top-3 left-6">
+                <span className="bg-brand-red text-white px-3 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider">
+                  {fr ? "Meilleure valeur" : "Best value"}
+                </span>
+              </div>
+              <p className="text-brand-red text-xs font-bold uppercase tracking-widest mb-1 mt-2">{fr ? "Forfait Mensuel" : "Monthly Pass"}</p>
+              <p className="text-gray-400 text-xs mb-3">{fr ? "~20 jours ouvrables (1 mois)" : "~20 working days (1 month)"}</p>
+              <p className="text-4xl font-black text-white mb-1">$40</p>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="bg-brand-red/20 text-brand-red text-xs px-2 py-0.5 rounded-sm font-semibold border border-brand-red/30">
+                  {fr ? "2,00 $ / jour" : "$2.00 / day"}
+                </span>
+              </div>
+              <ul className="space-y-1.5 text-xs text-gray-400 flex-1 mb-5">
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Accès illimité sur un mois calendaire" : "Unlimited access for one calendar month"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Entrées/sorties libres chaque jour ouvrable" : "Come and go freely on any working day"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Wi-Fi + espaces communs inclus" : "Wi-Fi + common areas included"}</li>
+                <li className="flex gap-2"><span className="text-brand-red">›</span>{fr ? "Idéal pour télétravailleurs, étudiants, ONGs locales" : "Ideal for remote workers, students, local NGOs"}</li>
+              </ul>
+              <Link href={`/${locale}/contact`} className="block text-center bg-brand-red text-white py-2.5 rounded-sm text-xs font-bold uppercase tracking-wider hover:bg-brand-red-dark transition-colors">
+                {fr ? "Nous contacter" : "Contact us"}
+              </Link>
+            </div>
+          </div>
+
+          <p className="text-center text-gray-600 text-xs mt-8">
+            {fr
+              ? "* Tous les forfaits sont activés après confirmation téléphonique. Non remboursables mais séances reportables."
+              : "* All packs are activated after phone confirmation. Non-refundable but sessions can be rescheduled."}
           </p>
         </div>
       </section>
 
-      {/* Technical Add-ons */}
+      {/* Special Packs */}
       <section className="py-20 bg-brand-black-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white mb-4 text-center flex items-center justify-center">
+          <div className="text-center mb-14">
+            <p className="text-brand-red text-xs font-bold uppercase tracking-widest mb-3">
+              {fr ? "Offres Spéciales" : "Special Packs"}
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              {fr ? "Packs Spéciaux" : "Special Packs"}
+            </h2>
+            <div className="h-1 w-24 bg-brand-red mb-6 mx-auto" />
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              {fr
+                ? "Des forfaits tout compris pensés pour des usages spécifiques — formation, conférence, ONG, communauté, école. Tout ce dont vous avez besoin dans un seul prix."
+                : "All-inclusive packages designed for specific use cases — training, conference, NGO, community, school. Everything you need in a single price."}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {/* Pack Étudiants / Écoles */}
+            <div className="bg-brand-black rounded-sm border-2 border-brand-black-light hover:border-brand-red transition-all p-7 flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                </svg>
+                <p className="text-brand-red text-xs font-bold uppercase tracking-widest">
+                  {fr ? "Pack Étudiants / Écoles" : "Students / Schools Pack"}
+                </p>
+              </div>
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="text-5xl font-black text-white">$10</span>
+                <span className="text-gray-400 text-sm">/ {fr ? "heure" : "hour"}</span>
+              </div>
+              <p className="text-gray-500 text-xs mb-5">
+                {fr ? "25–40 personnes · Minimum 2h" : "25–40 people · Minimum 2h booking"}
+              </p>
+              <p className="text-gray-400 text-sm leading-relaxed mb-5">
+                {fr
+                  ? "Accès à tarif réduit pour les groupes académiques : ateliers, travaux pratiques, sessions de révision ou visites scolaires. Demi-journée à $20, journée complète à $40."
+                  : "Reduced-rate access for academic groups: workshops, practical sessions, revision classes or school visits. Half-day $20, full day $40."}
+              </p>
+              <div className="bg-brand-black-light rounded-sm p-4 mb-5">
+                <p className="text-gray-500 text-xs uppercase tracking-wider mb-2 font-semibold">{fr ? "Inclus" : "Included"}</p>
+                <ul className="space-y-1.5">
+                  {[fr ? "Salle configurée (25–40 pers.)" : "Configured room (25–40 people)", fr ? "Projecteur ou écran" : "Projector or screen", "Wi-Fi"].map((f, i) => (
+                    <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
+                      <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-brand-black-light rounded-sm p-3 mb-5 text-xs text-gray-500">
+                <span className="text-brand-red font-semibold">{fr ? "Condition : " : "Condition: "}</span>
+                {fr ? "Lettre d'institution scolaire ou universitaire requise." : "School or university letter required."}
+              </div>
+              <Link href={`/${locale}/contact`} className="mt-auto block text-center border border-brand-red text-brand-red py-3 rounded-sm font-bold uppercase tracking-wider hover:bg-brand-red hover:text-white transition-colors text-sm">
+                {fr ? "Nous contacter" : "Contact us"}
+              </Link>
+            </div>
+
+            {/* Pack Communauté */}
+            <div className="bg-brand-black rounded-sm border-2 border-brand-black-light hover:border-brand-red transition-all p-7 flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <p className="text-brand-red text-xs font-bold uppercase tracking-widest">
+                  {fr ? "Pack Communauté" : "Community Pack"}
+                </p>
+              </div>
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="text-5xl font-black text-white">$150</span>
+                <span className="text-gray-400 text-sm">/ {fr ? "mois" : "month"}</span>
+              </div>
+              <p className="text-gray-500 text-xs mb-5">
+                {fr ? "26–40 personnes · ~4 réunions/mois" : "26–40 people · ~4 meetings/month"}
+              </p>
+              <p className="text-gray-400 text-sm leading-relaxed mb-5">
+                {fr
+                  ? "Idéal pour les groupes communautaires qui se réunissent régulièrement — assemblées hebdomadaires, comités de quartier, clubs et associations locales. Revient à $37,50 par réunion."
+                  : "Ideal for community groups that meet regularly — weekly assemblies, neighbourhood committees, local clubs and associations. Works out to $37.50 per meeting."}
+              </p>
+              <div className="bg-brand-black-light rounded-sm p-4 mb-5">
+                <p className="text-gray-500 text-xs uppercase tracking-wider mb-2 font-semibold">{fr ? "Inclus" : "Included"}</p>
+                <ul className="space-y-1.5">
+                  {[fr ? "Salle configurée (26–40 pers.)" : "Configured room (26–40 people)", fr ? "Projecteur ou écran" : "Projector or screen", "Wi-Fi", fr ? "4 séances demi-journée / mois" : "4 half-day sessions / month", fr ? "Planification des dates par téléphone" : "Date scheduling by phone"].map((f, i) => (
+                    <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
+                      <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <Link href={`/${locale}/contact`} className="mt-auto block text-center border border-brand-red text-brand-red py-3 rounded-sm font-bold uppercase tracking-wider hover:bg-brand-red hover:text-white transition-colors text-sm">
+                {fr ? "Nous contacter" : "Contact us"}
+              </Link>
+            </div>
+
+            {/* Pack Réunion ONG */}
+            <div className="bg-brand-black rounded-sm border-2 border-brand-black-light hover:border-brand-red transition-all p-7 flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <p className="text-brand-red text-xs font-bold uppercase tracking-widest">
+                  {fr ? "Pack Réunion ONG" : "NGO Meeting Pack"}
+                </p>
+              </div>
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="text-5xl font-black text-white">$200</span>
+                <span className="text-gray-400 text-sm">/ {fr ? "mois" : "month"}</span>
+              </div>
+              <p className="text-gray-500 text-xs mb-5">
+                {fr ? "26–40 personnes · Jusqu'à 6 réunions/mois" : "26–40 people · Up to 6 meetings/month"}
+              </p>
+              <p className="text-gray-400 text-sm leading-relaxed mb-5">
+                {fr
+                  ? "Conçu pour les ONG et organisations humanitaires basées à Goma avec des besoins de coordination récurrents. Accès prioritaire, planification flexible, facturation mensuelle. Revient à ~$33 par réunion."
+                  : "Designed for NGOs and humanitarian organisations based in Goma with recurring coordination needs. Priority access, flexible scheduling, monthly invoicing. Works out to ~$33 per meeting."}
+              </p>
+              <div className="bg-brand-black-light rounded-sm p-4 mb-5">
+                <p className="text-gray-500 text-xs uppercase tracking-wider mb-2 font-semibold">{fr ? "Inclus" : "Included"}</p>
+                <ul className="space-y-1.5">
+                  {[fr ? "Salle configurée (26–40 pers.)" : "Configured room (26–40 people)", fr ? "Projecteur ou écran" : "Projector or screen", "Wi-Fi", fr ? "Jusqu'à 6 séances demi-journée / mois" : "Up to 6 half-day sessions / month", fr ? "Accès prioritaire au calendrier" : "Priority calendar access", fr ? "Facturation mensuelle centralisée" : "Centralised monthly invoicing"].map((f, i) => (
+                    <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
+                      <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-brand-black-light rounded-sm p-3 mb-5 text-xs text-gray-500">
+                <span className="text-brand-red font-semibold">{fr ? "Condition : " : "Condition: "}</span>
+                {fr ? "Justificatif d'enregistrement ONG requis." : "NGO registration document required."}
+              </div>
+              <Link href={`/${locale}/contact`} className="mt-auto block text-center border border-brand-red text-brand-red py-3 rounded-sm font-bold uppercase tracking-wider hover:bg-brand-red hover:text-white transition-colors text-sm">
+                {fr ? "Nous contacter" : "Contact us"}
+              </Link>
+            </div>
+
+            {/* Pack Formation */}
+            <div className="bg-brand-black rounded-sm border-2 border-brand-black-light hover:border-brand-red transition-all p-7 flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p className="text-brand-red text-xs font-bold uppercase tracking-widest">
+                  {fr ? "Pack Formation" : "Training Pack"}
+                </p>
+              </div>
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="text-5xl font-black text-white">$130</span>
+                <span className="text-gray-400 text-sm">/ {fr ? "jour" : "day"}</span>
+              </div>
+              <p className="text-gray-500 text-xs mb-5">
+                {fr ? "26–40 personnes · Journée complète (8h–17h30)" : "26–40 people · Full day (8AM–5:30PM)"}
+              </p>
+              <p className="text-gray-400 text-sm leading-relaxed mb-5">
+                {fr
+                  ? "Tout ce qu'il faut pour une journée de formation professionnelle clé en main — salle, son, connectivité et documentation photo. Économisez vs. réservation à la carte."
+                  : "Everything needed for a professional training day, turnkey — room, sound, connectivity and photo documentation. Save vs. booking à la carte."}
+              </p>
+              <div className="bg-brand-black-light rounded-sm p-4 mb-5">
+                <p className="text-gray-500 text-xs uppercase tracking-wider mb-2 font-semibold">{fr ? "Inclus" : "Included"}</p>
+                <ul className="space-y-1.5">
+                  {[fr ? "Salle journée complète (26–40 pers.)" : "Full-day room (26–40 people)", fr ? "Projecteur + sonorisation (micro & enceintes)" : "Projector + sound system (mic & speakers)", fr ? "Wi-Fi premium dédié" : "Dedicated premium Wi-Fi", fr ? "Photographie (2 heures incluses)" : "Photography (2 hours included)"].map((f, i) => (
+                    <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
+                      <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-brand-black-light rounded-sm p-3 mb-5 text-xs text-gray-500">
+                <span className="text-brand-red font-semibold">{fr ? "Idéal pour : " : "Ideal for: "}</span>
+                {fr ? "Centres de formation, équipes RH d'ONG, renforcement de capacités." : "Training centres, NGO HR teams, capacity building programmes."}
+              </div>
+              <Link href={`/${locale}/booking`} className="mt-auto block text-center border border-brand-red text-brand-red py-3 rounded-sm font-bold uppercase tracking-wider hover:bg-brand-red hover:text-white transition-colors text-sm">
+                {fr ? "Réserver" : "Book Now"}
+              </Link>
+            </div>
+
+            {/* Pack Conférence Pro — featured */}
+            <div className="relative bg-brand-black rounded-sm border-2 border-brand-red p-7 flex flex-col">
+              <div className="absolute -top-3 left-6">
+                <span className="bg-brand-red text-white px-3 py-0.5 rounded-sm text-xs font-bold uppercase tracking-wider">
+                  {fr ? "Recommandé" : "Recommended"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 mb-4 mt-2">
+                <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+                <p className="text-brand-red text-xs font-bold uppercase tracking-widest">
+                  {fr ? "Pack Conférence Pro" : "Pro Conference Pack"}
+                </p>
+              </div>
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="text-5xl font-black text-white">$180</span>
+                <span className="text-gray-400 text-sm">/ {fr ? "jour" : "day"}</span>
+              </div>
+              <p className="text-gray-500 text-xs mb-5">
+                {fr ? "41–60 personnes · Journée complète (8h–17h30)" : "41–60 people · Full day (8AM–5:30PM)"}
+              </p>
+              <p className="text-gray-400 text-sm leading-relaxed mb-5">
+                {fr
+                  ? "Notre offre la plus complète pour les grandes conférences professionnelles, lancements, sommets ou événements annuels à Goma. Assistance technique sur place incluse pour la tranquillité d'esprit."
+                  : "Our most complete offer for large professional conferences, launches, summits or annual events in Goma. On-site technical assistance included for peace of mind."}
+              </p>
+              <div className="bg-brand-black-light rounded-sm p-4 mb-5">
+                <p className="text-gray-500 text-xs uppercase tracking-wider mb-2 font-semibold">{fr ? "Inclus" : "Included"}</p>
+                <ul className="space-y-1.5">
+                  {[fr ? "Salle journée complète (41–60 pers.)" : "Full-day room (41–60 people)", fr ? "Projecteur + sonorisation complète" : "Projector + full sound system", fr ? "Wi-Fi premium dédié" : "Dedicated premium Wi-Fi", fr ? "Photographie complète (toute la journée)" : "Full-day photography coverage", fr ? "Assistance technique sur place" : "On-site technical assistance"].map((f, i) => (
+                    <li key={i} className="flex items-center gap-2 text-xs text-gray-300">
+                      <svg className="w-4 h-4 text-brand-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-brand-black-light rounded-sm p-3 mb-5 text-xs text-gray-500">
+                <span className="text-brand-red font-semibold">{fr ? "Idéal pour : " : "Ideal for: "}</span>
+                {fr ? "Agences ONU, ambassades, grandes entreprises, événements institutionnels." : "UN agencies, embassies, large companies, institutional events."}
+              </div>
+              <Link href={`/${locale}/booking`} className="mt-auto block text-center bg-brand-red text-white py-3 rounded-sm font-bold uppercase tracking-wider hover:bg-brand-red-dark transition-colors text-sm">
+                {fr ? "Réserver" : "Book Now"}
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Technical Add-ons */}
+      <section className="py-20 bg-brand-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 text-center flex items-center justify-center">
             {fr ? "Options Techniques" : "Technical Add-ons"}
             <InfoTooltip content={tooltips.addon} position="top" />
           </h2>
@@ -638,7 +946,7 @@ export default async function PricingPage() {
       {/* CTA */}
       <section className="py-20 bg-brand-black-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
             {fr
               ? "Besoin d'une solution personnalisée ?"
               : "Need a custom solution?"}

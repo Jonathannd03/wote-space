@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -6,6 +7,18 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'Wote Space - Espace Humanitaire à Goma',
+  description: 'Un espace de coordination humanitaire au service des organisations, associations et acteurs communautaires à Goma, RDC.',
+  icons: {
+    icon: [
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    shortcut: '/icon.png',
+    apple: '/icon.png',
+  },
+};
 
 export default async function LocaleLayout({
   children,
@@ -25,6 +38,11 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
+      <head>
+        <link rel="icon" href="/icon.png" type="image/png" />
+        <link rel="shortcut icon" href="/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/icon.png" />
+      </head>
       <body className={inter.className}>
         <NextIntlClientProvider messages={messages}>
           <div className="flex flex-col min-h-screen">

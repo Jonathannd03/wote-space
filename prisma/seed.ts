@@ -22,7 +22,7 @@ async function main() {
       capacity: 10,
       pricePerHour: 10,
       pricePerDay: 60,
-      amenities: JSON.stringify(['Wi-Fi', 'Projecteur/Écran', 'Whiteboard', 'Café']),
+      amenities: JSON.stringify(['Wi-Fi', 'Projecteur/Écran', 'Whiteboard']),
       available: true,
     },
     {
@@ -35,7 +35,7 @@ async function main() {
       capacity: 25,
       pricePerHour: 15,
       pricePerDay: 90,
-      amenities: JSON.stringify(['Wi-Fi', 'Projecteur/Écran', 'Whiteboard', 'Video Conferencing', 'Café']),
+      amenities: JSON.stringify(['Wi-Fi', 'Projecteur/Écran', 'Whiteboard', 'Video Conferencing']),
       available: true,
     },
     {
@@ -48,7 +48,7 @@ async function main() {
       capacity: 40,
       pricePerHour: 20,
       pricePerDay: 120,
-      amenities: JSON.stringify(['Wi-Fi', 'Projecteur/Écran', 'Whiteboard', 'Video Conferencing', 'Café', 'Sonorisation']),
+      amenities: JSON.stringify(['Wi-Fi', 'Projecteur/Écran', 'Whiteboard', 'Video Conferencing', 'Sonorisation']),
       available: true,
     },
     {
@@ -61,7 +61,7 @@ async function main() {
       capacity: 60,
       pricePerHour: 25,
       pricePerDay: 160,
-      amenities: JSON.stringify(['Wi-Fi Premium', 'Projecteur/Écran', 'Whiteboard', 'Video Conferencing', 'Café', 'Sonorisation', 'Assistance Technique']),
+      amenities: JSON.stringify(['Wi-Fi Premium', 'Projecteur/Écran', 'Whiteboard', 'Video Conferencing', 'Sonorisation', 'Assistance Technique']),
       available: true,
     },
     {
@@ -74,7 +74,7 @@ async function main() {
       capacity: 1,
       pricePerHour: 0.5,
       pricePerDay: 3,
-      amenities: JSON.stringify(['Wi-Fi', 'Mobilier & espaces communs', 'Café']),
+      amenities: JSON.stringify(['Wi-Fi', 'Mobilier & espaces communs']),
       available: true,
     },
   ];
