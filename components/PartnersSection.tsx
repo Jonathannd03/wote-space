@@ -24,6 +24,10 @@ const organisations = [
     name: 'Centre for Development and Enterprises',
     logo: '/partners/Centre for development and entreprises.jpg',
   },
+  {
+    name: 'Centre de formation humanitaire ONG ITC',
+    logo: '/partners/Centre de formation humanitaire ONG ITC.jpg',
+  },
 ];
 
 interface PartnersSectionProps {
@@ -59,7 +63,7 @@ export default function PartnersSection({ locale }: PartnersSectionProps) {
         </motion.div>
 
         {/* Logos grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {organisations.map((org, index) => (
             <motion.div
               key={org.name}
