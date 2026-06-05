@@ -107,7 +107,7 @@ export function getEventName(eventId: string, locale: 'en' | 'fr'): string {
       en: 'Digital Marketing Training',
       fr: 'Formation en Marketing Digital',
     },
-    'journee-internationale-du-vivre-ensemble-16-mai-2026': {
+    'journee-internationale-du-vivre-ensemble-16-05-2026': {
       en: 'International Day of Living Together in Peace',
       fr: 'Journée Internationale du Vivre Ensemble en Paix',
     },
@@ -154,7 +154,7 @@ export function getEventDescription(eventId: string, locale: 'en' | 'fr'): strin
       en: 'Wote Space welcomed David Bolton, visual artist and content creator based in Goma, specialist in hyperrealistic drawing and storytelling. Over three days (April 28–30, 2026), he led a Digital Marketing & Boosting training where he shared his content creation techniques, boosting tips and a concrete action plan to help participants grow their online visibility.',
       fr: 'Wote Space a accueilli David Bolton, artiste visuel et créateur de contenu basé à Goma, spécialiste du dessin hyperréaliste et du storytelling. Pour cette formation en Marketing Digital & Boosting organisée du 28 au 30 avril 2026, il a partagé ses techniques de création de contenu, ses astuces de boosting et un plan d\'action concret pour propulser la visibilité en ligne des participants.',
     },
-    'journee-internationale-du-vivre-ensemble-16-mai-2026': {
+    'journee-internationale-du-vivre-ensemble-16-05-2026': {
       en: 'On the International Day of Living Together in Peace, Wote Space brought together community actors, organisations and citizens to celebrate diversity, dialogue and peaceful coexistence. The event featured exchanges on the values of solidarity and mutual respect as foundations for lasting peace in the Great Lakes region.',
       fr: 'À l\'occasion de la Journée Internationale du Vivre Ensemble en Paix, Wote Space a rassemblé des acteurs communautaires, des organisations et des citoyens pour célébrer la diversité, le dialogue et la coexistence pacifique. L\'événement a été marqué par des échanges sur les valeurs de solidarité et de respect mutuel comme fondements d\'une paix durable dans la région des Grands Lacs.',
     },
@@ -203,7 +203,7 @@ export function getEventShortDescription(eventId: string, locale: 'en' | 'fr'): 
       en: 'A Digital Marketing & Boosting training led by David Bolton, visual artist and content creator based in Goma, sharing practical techniques to boost online visibility. April 28–30, 2026.',
       fr: 'Une formation en Marketing Digital & Boosting animée par David Bolton, artiste visuel et créateur de contenu basé à Goma, partageant des techniques pratiques pour propulser la visibilité en ligne. 28–30 avril 2026.',
     },
-    'journee-internationale-du-vivre-ensemble-16-mai-2026': {
+    'journee-internationale-du-vivre-ensemble-16-05-2026': {
       en: 'A gathering celebrating diversity, dialogue and peaceful coexistence on the International Day of Living Together in Peace, with exchanges on solidarity and mutual respect.',
       fr: 'Un rassemblement célébrant la diversité, le dialogue et la coexistence pacifique à l\'occasion de la Journée Internationale du Vivre Ensemble, avec des échanges sur la solidarité et le respect mutuel.',
     },
