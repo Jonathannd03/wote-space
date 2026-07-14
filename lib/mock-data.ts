@@ -91,10 +91,10 @@ export const MOCK_SPACES = [
     descriptionEn: 'Shared co-working space with daily access',
     descriptionFr: 'Espace de coworking partagé avec accès journalier',
     capacity: 1,
-    priceHalfDay: 1.5,
-    priceFullDay: 3,
-    priceBundle5: 12.5,
-    priceBundle10: 22.5,
+    priceHalfDay: 2.5,
+    priceFullDay: 5,
+    priceBundle5: 20,
+    priceBundle10: 35,
     amenities: '["Wi-Fi", "Mobilier & espaces communs"]',
     imageUrl: null,
     available: true,
@@ -117,8 +117,8 @@ export const SLOTS = {
 export type SlotKey = keyof typeof SLOTS;
 
 // Coworking-specific extended packages (weekly / monthly)
-// Based on pricing curve: full day $3 → weekly 5d $12 ($2.40/d) → monthly ~20d $40 ($2.00/d)
+// Based on pricing curve: full day $5 → weekly 5d $20 ($4.00/d) → monthly ~20d $50 ($2.50/d)
 export const COWORKING_PACKAGES = {
-  weekly:  { priceFr: '12 $', priceEn: '$12', perDayFr: '2,40 $ / jour', perDayEn: '$2.40 / day', days: 5  },
-  monthly: { priceFr: '40 $', priceEn: '$40', perDayFr: '2,00 $ / jour', perDayEn: '$2.00 / day', days: 20 },
+  weekly:  { priceFr: '20 $', priceEn: '$20', perDayFr: '4,00 $ / jour', perDayEn: '$4.00 / day', days: 5  },
+  monthly: { priceFr: '50 $', priceEn: '$50', perDayFr: '2,50 $ / jour', perDayEn: '$2.50 / day', days: 20 },
 } as const;

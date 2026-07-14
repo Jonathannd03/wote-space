@@ -73,7 +73,7 @@ async function main() {
       descriptionFr: 'Espace de coworking partagé avec accès journalier',
       capacity: 1,
       pricePerHour: 0.5,
-      pricePerDay: 3,
+      pricePerDay: 5,
       amenities: JSON.stringify(['Wi-Fi', 'Mobilier & espaces communs']),
       available: true,
     },

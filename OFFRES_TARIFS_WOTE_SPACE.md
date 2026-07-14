@@ -3,7 +3,7 @@
 ## I. Espace de Coworking
 
 ### 1. Pass Journalier
-**Prix : 3 $**
+**Prix : 5 $**
 
 ✔ Accès à l’espace de coworking partagé  
 ✔ Wi-Fi  

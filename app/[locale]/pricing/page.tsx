@@ -547,10 +547,10 @@ export default async function PricingPage() {
             <div className="bg-brand-black-light border border-brand-black-light hover:border-brand-red transition-all rounded-sm p-6 flex flex-col">
               <p className="text-brand-red text-xs font-bold uppercase tracking-widest mb-1">{fr ? "Forfait Semaine" : "Weekly Pass"}</p>
               <p className="text-gray-400 text-xs mb-3">{fr ? "5 jours consécutifs (lun–ven)" : "5 consecutive days (Mon–Fri)"}</p>
-              <p className="text-4xl font-black text-white mb-1">$12</p>
+              <p className="text-4xl font-black text-white mb-1">$20</p>
               <div className="flex items-center gap-2 mb-4">
                 <span className="bg-brand-red/20 text-brand-red text-xs px-2 py-0.5 rounded-sm font-semibold border border-brand-red/30">
-                  {fr ? "2,40 $ / jour" : "$2.40 / day"}
+                  {fr ? "4,00 $ / jour" : "$4.00 / day"}
                 </span>
               </div>
               <ul className="space-y-1.5 text-xs text-gray-400 flex-1 mb-5">
@@ -573,10 +573,10 @@ export default async function PricingPage() {
               </div>
               <p className="text-brand-red text-xs font-bold uppercase tracking-widest mb-1 mt-2">{fr ? "Forfait Mensuel" : "Monthly Pass"}</p>
               <p className="text-gray-400 text-xs mb-3">{fr ? "~20 jours ouvrables (1 mois)" : "~20 working days (1 month)"}</p>
-              <p className="text-4xl font-black text-white mb-1">$40</p>
+              <p className="text-4xl font-black text-white mb-1">$50</p>
               <div className="flex items-center gap-2 mb-4">
                 <span className="bg-brand-red/20 text-brand-red text-xs px-2 py-0.5 rounded-sm font-semibold border border-brand-red/30">
-                  {fr ? "2,00 $ / jour" : "$2.00 / day"}
+                  {fr ? "2,50 $ / jour" : "$2.50 / day"}
                 </span>
               </div>
               <ul className="space-y-1.5 text-xs text-gray-400 flex-1 mb-5">
