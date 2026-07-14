@@ -87,7 +87,7 @@ export default function HeroSection({
                   <span className="text-gray-400 text-sm">
                     {locale === 'fr' ? 'Coworking individuel dès' : 'Individual coworking from'}
                   </span>
-                  <span className="text-4xl font-black text-white">3$</span>
+                  <span className="text-4xl font-black text-white">5$</span>
                   <span className="text-gray-400">
                     {locale === 'fr' ? '/ jour' : '/ day'}
                   </span>
