@@ -25,10 +25,6 @@ const organisations = [
     logo: '/partners/Centre for development and entreprises.jpg',
   },
   {
-    name: 'Centre de formation humanitaire ONG ITC',
-    logo: '/partners/Centre de formation humanitaire ONG ITC.jpg',
-  },
-  {
     name: 'Mixes From Africa',
     logo: '/partners/294516757_423127039830058_7206967330386121846_n (1).jpg.jpeg',
   },
