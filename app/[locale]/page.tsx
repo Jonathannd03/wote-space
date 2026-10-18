@@ -5,12 +5,14 @@ import EventsCarousel from '@/components/EventsCarousel';
 import PartnersSection from '@/components/PartnersSection';
 import NewsSection from '@/components/NewsSection';
 import { getEvents, getEventShortDescription } from '@/lib/events';
+import { getPartners } from '@/lib/admin-data';
 
 export default function HomePage() {
   const t = useTranslations('home');
   const tEvents = useTranslations('events');
   const locale = useLocale();
   const events = getEvents();
+  const partners = getPartners();
 
   const features = [
     {
@@ -95,7 +97,7 @@ export default function HomePage() {
       )}
 
       {/* Partners Section */}
-      <PartnersSection locale={locale} />
+      <PartnersSection locale={locale} organisations={partners} />
 
       {/* News Section */}
       <NewsSection

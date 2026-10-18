@@ -1,0 +1,62 @@
+[
+  {
+    "id": "mock-1",
+    "name": "Setup S",
+    "nameEn": "Setup S (1–10 people)",
+    "nameFr": "Configuration S (1–10 personnes)",
+    "capacity": 10,
+    "priceHalfDay": 30,
+    "priceFullDay": 60,
+    "priceBundle5": 125,
+    "priceBundle10": 225,
+    "amenities": ["Wi-Fi", "Projecteur/Écran", "Whiteboard"]
+  },
+  {
+    "id": "mock-2",
+    "name": "Setup M",
+    "nameEn": "Setup M (11–25 people)",
+    "nameFr": "Configuration M (11–25 personnes)",
+    "capacity": 25,
+    "priceHalfDay": 45,
+    "priceFullDay": 90,
+    "priceBundle5": 185,
+    "priceBundle10": 335,
+    "amenities": ["Wi-Fi", "Projecteur/Écran", "Whiteboard", "Video Conferencing"]
+  },
+  {
+    "id": "mock-3",
+    "name": "Setup L",
+    "nameEn": "Setup L (26–40 people)",
+    "nameFr": "Configuration L (26–40 personnes)",
+    "capacity": 40,
+    "priceHalfDay": 60,
+    "priceFullDay": 120,
+    "priceBundle5": 250,
+    "priceBundle10": 450,
+    "amenities": ["Wi-Fi", "Projecteur/Écran", "Whiteboard", "Video Conferencing"]
+  },
+  {
+    "id": "mock-4",
+    "name": "Setup XL",
+    "nameEn": "Setup XL (41–60 people)",
+    "nameFr": "Configuration XL (41–60 personnes)",
+    "capacity": 60,
+    "priceHalfDay": 80,
+    "priceFullDay": 160,
+    "priceBundle5": 330,
+    "priceBundle10": 600,
+    "amenities": ["Wi-Fi Premium", "Projecteur/Écran", "Whiteboard", "Video Conferencing", "Assistance Technique"]
+  },
+  {
+    "id": "mock-5",
+    "name": "Co-working Space",
+    "nameEn": "Co-working Space",
+    "nameFr": "Espace de Coworking",
+    "capacity": 1,
+    "priceHalfDay": 2.5,
+    "priceFullDay": 5,
+    "priceBundle5": 20,
+    "priceBundle10": 35,
+    "amenities": ["Wi-Fi", "Mobilier & espaces communs"]
+  }
+]
