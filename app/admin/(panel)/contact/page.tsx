@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 
 interface ContactInfo {
   phone: string;
@@ -10,8 +9,8 @@ interface ContactInfo {
   addressEn: string;
 }
 
-const inputCls = 'w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm';
-const labelCls = 'block text-sm font-medium text-gray-700 mb-1.5';
+const inputCls = 'w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#dc2626] focus:ring-1 focus:ring-[#dc2626] text-sm transition-colors';
+const labelCls = 'block text-[11px] font-bold uppercase tracking-wider text-[#666] mb-1.5';
 
 const fields: { label: string; key: keyof ContactInfo; id: string; type?: string; rows?: number }[] = [
   { label: 'Phone number', key: 'phone', id: 'contact-phone', type: 'tel' },
@@ -50,20 +49,19 @@ export default function AdminContactPage() {
   const isError = (s: string) => s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
 
   return (
-    <main id="main-content" className="max-w-2xl mx-auto px-6 py-10">
+    <main id="main-content" className="px-8 py-8 max-w-2xl">
+      {/* Page header */}
       <div className="mb-8">
-        <Link href="/admin" className="text-gray-600 hover:text-gray-900 text-sm mb-2 inline-flex items-center gap-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded">
-          ← Dashboard
-        </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Contact Info</h1>
-        <p className="text-gray-500 text-sm mt-1">Shown on the contact page and in the footer</p>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-1">Info</p>
+        <h1 className="text-2xl font-black text-gray-900">Contact Info</h1>
+        <div className="h-0.5 w-10 bg-[#dc2626] mt-2" />
       </div>
 
       {status && (
         <div
           role="alert"
           aria-live="polite"
-          className={`mb-6 px-4 py-3 rounded-md text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}
+          className={`mb-6 px-4 py-3 rounded-sm text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}
         >
           {status}
         </div>
@@ -72,7 +70,7 @@ export default function AdminContactPage() {
       {loading ? (
         <p role="status" className="text-gray-400 text-center py-12 text-sm">Loading…</p>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 space-y-5">
+        <div className="bg-white border border-gray-200 rounded-sm p-6 space-y-5">
           {fields.map(({ label, key, id, type, rows }) => (
             <div key={key}>
               <label htmlFor={id} className={labelCls}>{label}</label>
@@ -99,7 +97,7 @@ export default function AdminContactPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-200 disabled:text-gray-500 text-white py-2.5 rounded-md font-semibold text-sm transition-colors mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            className="w-full bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-100 disabled:text-gray-400 text-white py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2"
           >
             {saving ? 'Saving…' : 'Save Changes'}
           </button>

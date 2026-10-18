@@ -24,7 +24,7 @@ export default function AdminLoginPage() {
         router.push('/admin');
         router.refresh();
       } else {
-        setError('Incorrect password. Please try again.');
+        setError('Incorrect password.');
       }
     } catch {
       setError('Connection error. Please try again.');
@@ -34,18 +34,24 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main id="main-content" className="min-h-screen flex items-center justify-center px-4 bg-gray-50">
+    <main id="main-content" className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="flex justify-center mb-8">
-          <Image src="/Wotespace-logo-01.png" alt="Wote Space" width={160} height={64} priority style={{ height: 'auto' }} />
-        </div>
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
-          <h1 className="text-xl font-bold text-gray-900 mb-1">Admin Access</h1>
-          <p className="text-gray-500 text-sm mb-6">Enter your password to manage the website.</p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Logo */}
+        <div className="flex justify-center mb-10">
+          <Image src="/Wotespace-logo-01.png" alt="Wote Space" width={140} height={56} priority style={{ height: 'auto' }} />
+        </div>
+
+        {/* Card */}
+        <div className="bg-[#111111] border border-[#1e1e1e]">
+          <div className="px-8 pt-8 pb-2 border-b border-[#1e1e1e]">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-2">Admin Access</p>
+            <h1 className="text-xl font-black text-white">Sign in</h1>
+          </div>
+
+          <form onSubmit={handleSubmit} className="px-8 py-7 space-y-5">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="password" className="block text-[11px] font-bold uppercase tracking-wider text-[#555] mb-2">
                 Password
               </label>
               <input
@@ -56,13 +62,13 @@ export default function AdminLoginPage() {
                 autoFocus
                 aria-describedby={error ? 'login-error' : undefined}
                 aria-invalid={!!error}
-                className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
-                placeholder="Enter password"
+                className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#dc2626] focus:ring-1 focus:ring-[#dc2626] transition-colors"
+                placeholder="Enter your password"
               />
             </div>
 
             {error && (
-              <p id="login-error" role="alert" className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-md px-3 py-2">
+              <p id="login-error" role="alert" className="text-[#dc2626] text-xs border border-[#dc2626]/30 bg-[#dc2626]/10 px-3 py-2">
                 {error}
               </p>
             )}
@@ -70,12 +76,16 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading || !password}
-              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-200 disabled:text-gray-500 text-white py-2.5 rounded-md font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+              className="w-full bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-[#1e1e1e] disabled:text-[#444] text-white py-3 text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2 focus-visible:ring-offset-[#111]"
             >
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
         </div>
+
+        <p className="text-center text-[#333] text-xs mt-6 uppercase tracking-widest">
+          Wote Space · Goma, DRC
+        </p>
       </div>
     </main>
   );
