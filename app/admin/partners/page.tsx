@@ -10,6 +10,9 @@ interface Partner {
   logo: string;
 }
 
+const inputCls = 'w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm';
+const labelCls = 'block text-sm font-medium text-gray-700 mb-1.5';
+
 export default function AdminPartnersPage() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,80 +66,87 @@ export default function AdminPartnersPage() {
     }
   };
 
+  const isError = (s: string) => s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
+
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-start justify-between mb-8">
         <div>
-          <Link href="/admin" className="text-gray-500 hover:text-white text-sm mb-2 inline-block">← Dashboard</Link>
-          <h1 className="text-2xl font-bold text-white">Partners</h1>
+          <Link href="/admin" className="text-gray-400 hover:text-gray-700 text-sm mb-2 inline-flex items-center gap-1 transition-colors">
+            ← Dashboard
+          </Link>
+          <h1 className="text-2xl font-bold text-gray-900">Partners</h1>
+          <p className="text-gray-500 text-sm mt-1">Partner organisations shown on the website.</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-[#dc2626] hover:bg-[#b91c1c] text-white px-5 py-2 rounded-sm font-semibold text-sm transition-colors"
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-semibold text-sm transition-colors"
         >
           {showForm ? 'Cancel' : '+ Add Partner'}
         </button>
       </div>
 
       {status && (
-        <div className={`mb-6 px-4 py-3 rounded-sm text-sm ${status.includes('Error') || status.includes('error') ? 'bg-red-900/30 text-red-400 border border-red-800' : 'bg-green-900/30 text-green-400 border border-green-800'}`}>
+        <div className={`mb-6 px-4 py-3 rounded-md text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
           {status}
         </div>
       )}
 
       {showForm && (
-        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm p-6 mb-8">
-          <h2 className="text-lg font-semibold text-white mb-5">Add New Partner</h2>
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
+          <h2 className="text-base font-semibold text-gray-900 mb-5">Add New Partner</h2>
           <form onSubmit={handleAdd} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-300 mb-1">Organisation Name *</label>
+              <label className={labelCls}>Organisation Name <span className="text-red-500">*</span></label>
               <input
                 value={name}
                 onChange={e => setName(e.target.value)}
                 required
-                className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-sm text-white focus:outline-none focus:border-[#dc2626] text-sm"
+                className={inputCls}
                 placeholder="e.g. UNHCR Goma"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-300 mb-1">Logo Image</label>
+              <label className={labelCls}>Logo Image</label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={e => setFile(e.target.files?.[0] || null)}
-                className="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-sm file:cursor-pointer hover:file:bg-[#b91c1c]"
+                className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-red-600 file:text-white file:text-sm file:font-medium file:cursor-pointer hover:file:bg-red-700"
               />
-              {file && <p className="text-xs text-gray-500 mt-1">{file.name}</p>}
+              {file && <p className="text-xs text-gray-400 mt-1">{file.name}</p>}
             </div>
-            <button type="submit" disabled={saving || !name} className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-[#2a2a2a] disabled:text-gray-500 text-white px-6 py-2 rounded-sm font-semibold text-sm transition-colors">
-              {saving ? 'Adding...' : 'Add Partner'}
-            </button>
+            <div className="pt-1">
+              <button type="submit" disabled={saving || !name} className="bg-red-600 hover:bg-red-700 disabled:bg-gray-100 disabled:text-gray-400 text-white px-5 py-2 rounded-md font-semibold text-sm transition-colors">
+                {saving ? 'Adding…' : 'Add Partner'}
+              </button>
+            </div>
           </form>
         </div>
       )}
 
       {loading ? (
-        <p className="text-gray-500 text-center py-12">Loading...</p>
+        <p className="text-gray-400 text-center py-12 text-sm">Loading…</p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {partners.length === 0 && (
-            <p className="text-gray-500 col-span-3 text-center py-12">No partners yet.</p>
+            <p className="text-gray-400 col-span-3 text-center py-12 text-sm">No partners yet.</p>
           )}
           {partners.map(partner => (
-            <div key={partner.id} className="group bg-[#1a1a1a] border border-[#2a2a2a] hover:border-[#3a3a3a] rounded-sm p-4 flex flex-col items-center gap-3">
+            <div key={partner.id} className="group bg-white border border-gray-200 hover:border-gray-300 rounded-lg p-4 flex flex-col items-center gap-3 transition-all">
               {partner.logo ? (
-                <div className="relative w-full h-20 bg-[#0a0a0a] rounded-sm overflow-hidden">
+                <div className="relative w-full h-20 bg-gray-50 rounded-md overflow-hidden border border-gray-100">
                   <Image src={partner.logo} alt={partner.name} fill className="object-contain p-2" sizes="200px" />
                 </div>
               ) : (
-                <div className="w-full h-20 bg-[#0a0a0a] rounded-sm flex items-center justify-center">
-                  <span className="text-gray-600 text-2xl">🏢</span>
+                <div className="w-full h-20 bg-gray-50 rounded-md border border-gray-100 flex items-center justify-center">
+                  <span className="text-gray-300 text-2xl">🏢</span>
                 </div>
               )}
-              <p className="text-white text-sm text-center font-medium leading-tight">{partner.name}</p>
+              <p className="text-gray-800 text-sm text-center font-medium leading-tight">{partner.name}</p>
               <button
                 onClick={() => handleDelete(partner.id, partner.name)}
-                className="text-xs text-gray-600 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                className="text-xs text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
               >
                 Remove
               </button>

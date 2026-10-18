@@ -17,6 +17,9 @@ export interface DbEvent {
   images: string[];
 }
 
+const inputCls = 'w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm';
+const labelCls = 'block text-sm font-medium text-gray-700 mb-1.5';
+
 export default function EventsClient({ events: initial }: { events: DbEvent[] }) {
   const router = useRouter();
   const [events, setEvents] = useState(initial);
@@ -88,108 +91,117 @@ export default function EventsClient({ events: initial }: { events: DbEvent[] })
     }
   };
 
+  const isError = (s: string) => s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
+
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-start justify-between mb-8">
         <div>
-          <Link href="/admin" className="text-gray-500 hover:text-white text-sm mb-2 inline-block">← Dashboard</Link>
-          <h1 className="text-2xl font-bold text-white">Events & Gallery</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage events added via this panel. Static events (pre-launch) are managed through the codebase.</p>
+          <Link href="/admin" className="text-gray-400 hover:text-gray-700 text-sm mb-2 inline-flex items-center gap-1 transition-colors">
+            ← Dashboard
+          </Link>
+          <h1 className="text-2xl font-bold text-gray-900">Events & Gallery</h1>
+          <p className="text-gray-500 text-sm mt-1">Create events and manage their photo galleries.</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-[#dc2626] hover:bg-[#b91c1c] text-white px-5 py-2 rounded-sm font-semibold text-sm transition-colors"
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-semibold text-sm transition-colors"
         >
           {showForm ? 'Cancel' : '+ New Event'}
         </button>
       </div>
 
       {status && (
-        <div className={`mb-6 px-4 py-3 rounded-sm text-sm ${status.includes('Error') || status.includes('error') ? 'bg-red-900/30 text-red-400 border border-red-800' : 'bg-green-900/30 text-green-400 border border-green-800'}`}>
+        <div className={`mb-6 px-4 py-3 rounded-md text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
           {status}
         </div>
       )}
 
       {showForm && (
-        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm p-6 mb-8">
-          <h2 className="text-lg font-semibold text-white mb-5">Create New Event</h2>
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
+          <h2 className="text-base font-semibold text-gray-900 mb-5">Create New Event</h2>
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Name (French) *</label>
-                <input name="nameFr" required className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-sm text-white focus:outline-none focus:border-[#dc2626] text-sm" placeholder="e.g. Formation en leadership" />
+                <label className={labelCls}>Name (French) <span className="text-red-500">*</span></label>
+                <input name="nameFr" required className={inputCls} placeholder="e.g. Formation en leadership" />
               </div>
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Name (English)</label>
-                <input name="nameEn" className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-sm text-white focus:outline-none focus:border-[#dc2626] text-sm" placeholder="e.g. Leadership Training" />
+                <label className={labelCls}>Name (English)</label>
+                <input name="nameEn" className={inputCls} placeholder="e.g. Leadership Training" />
               </div>
             </div>
-            <div>
-              <label className="block text-sm text-gray-300 mb-1">Date *</label>
-              <input name="date" type="date" required className="px-3 py-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-sm text-white focus:outline-none focus:border-[#dc2626] text-sm" />
+            <div className="max-w-xs">
+              <label className={labelCls}>Date <span className="text-red-500">*</span></label>
+              <input name="date" type="date" required className={inputCls} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Description (French)</label>
-                <textarea name="descriptionFr" rows={3} className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-sm text-white focus:outline-none focus:border-[#dc2626] text-sm" placeholder="Brief description of the event..." />
+                <label className={labelCls}>Description (French)</label>
+                <textarea name="descriptionFr" rows={3} className={inputCls + ' resize-none'} placeholder="Brief description of the event…" />
               </div>
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Description (English)</label>
-                <textarea name="descriptionEn" rows={3} className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-sm text-white focus:outline-none focus:border-[#dc2626] text-sm" placeholder="Brief description of the event..." />
+                <label className={labelCls}>Description (English)</label>
+                <textarea name="descriptionEn" rows={3} className={inputCls + ' resize-none'} placeholder="Brief description of the event…" />
               </div>
             </div>
             <div>
-              <label className="block text-sm text-gray-300 mb-1">Photos</label>
-              <input name="images" type="file" multiple accept="image/*" className="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-sm file:cursor-pointer hover:file:bg-[#b91c1c]" />
-              <p className="text-xs text-gray-500 mt-1">You can add more photos later</p>
+              <label className={labelCls}>Photos</label>
+              <input
+                name="images"
+                type="file"
+                multiple
+                accept="image/*"
+                className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-red-600 file:text-white file:text-sm file:font-medium file:cursor-pointer hover:file:bg-red-700"
+              />
+              <p className="text-xs text-gray-400 mt-1">You can add more photos later</p>
             </div>
-            <button type="submit" disabled={saving} className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-[#2a2a2a] disabled:text-gray-500 text-white px-6 py-2 rounded-sm font-semibold text-sm transition-colors">
-              {saving ? 'Creating...' : 'Create Event'}
-            </button>
+            <div className="pt-1">
+              <button type="submit" disabled={saving} className="bg-red-600 hover:bg-red-700 disabled:bg-gray-100 disabled:text-gray-400 text-white px-5 py-2 rounded-md font-semibold text-sm transition-colors">
+                {saving ? 'Creating…' : 'Create Event'}
+              </button>
+            </div>
           </form>
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {events.length === 0 && (
-          <p className="text-gray-500 text-center py-12">No events yet. Create your first one above.</p>
+          <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
+            <p className="text-gray-400 text-sm">No events yet. Create your first one above.</p>
+          </div>
         )}
         {events.map(event => {
-          const date = new Date(event.date);
-          const displayDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+          const displayDate = new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
           const coverImage = event.images[0] ?? null;
 
           return (
-            <div key={event.id} className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm overflow-hidden">
-              <div className="p-5 flex items-center gap-4">
-                {coverImage && (
-                  <div className="relative w-16 h-16 flex-shrink-0 rounded-sm overflow-hidden bg-[#0a0a0a]">
-                    <Image
-                      src={coverImage}
-                      alt={event.nameFr}
-                      fill
-                      className="object-cover"
-                      sizes="64px"
-                    />
+            <div key={event.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div className="p-4 flex items-center gap-4">
+                {coverImage ? (
+                  <div className="relative w-14 h-14 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
+                    <Image src={coverImage} alt={event.nameFr} fill className="object-cover" sizes="56px" />
                   </div>
+                ) : (
+                  <div className="w-14 h-14 flex-shrink-0 rounded-md bg-gray-100 flex items-center justify-center text-gray-300 text-xl">🖼️</div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-white truncate">{event.nameFr}</h3>
+                  <h3 className="font-semibold text-gray-900 truncate">{event.nameFr}</h3>
                   {event.nameEn && event.nameEn !== event.nameFr && (
                     <p className="text-gray-400 text-xs truncate">{event.nameEn}</p>
                   )}
-                  <p className="text-gray-500 text-sm">{displayDate} · {event.images.length} photo{event.images.length !== 1 ? 's' : ''}</p>
+                  <p className="text-gray-400 text-sm mt-0.5">{displayDate} · {event.images.length} photo{event.images.length !== 1 ? 's' : ''}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <button
                     onClick={() => setAddingPhotosTo(addingPhotosTo === event.id ? null : event.id)}
-                    className="text-xs px-3 py-1.5 border border-[#2a2a2a] hover:border-[#dc2626] text-gray-300 hover:text-white rounded-sm transition-colors"
+                    className="text-xs px-3 py-1.5 border border-gray-200 hover:border-red-400 text-gray-600 hover:text-red-600 rounded-md transition-colors"
                   >
                     + Photos
                   </button>
                   <button
                     onClick={() => handleDelete(event.id, event.nameFr)}
-                    className="text-xs px-3 py-1.5 border border-[#2a2a2a] hover:border-red-800 text-gray-500 hover:text-red-400 rounded-sm transition-colors"
+                    className="text-xs px-3 py-1.5 border border-gray-200 hover:border-red-300 text-gray-400 hover:text-red-600 rounded-md transition-colors"
                   >
                     Delete
                   </button>
@@ -197,11 +209,18 @@ export default function EventsClient({ events: initial }: { events: DbEvent[] })
               </div>
 
               {addingPhotosTo === event.id && (
-                <div className="border-t border-[#2a2a2a] px-5 py-4 bg-[#0f0f0f]">
-                  <form onSubmit={e => handleAddPhotos(e, event.id)} className="flex items-center gap4">
-                    <input name="images" type="file" multiple accept="image/*" required className="flex-1 text-sm text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:cursor-pointer" />
-                    <button type="submit" disabled={saving} className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-[#2a2a2a] text-white px-4 py-1.5 rounded-sm text-xs font-semibold transition-colors flex-shrink-0">
-                      {saving ? 'Uploading...' : 'Upload'}
+                <div className="border-t border-gray-100 px-4 py-3 bg-gray-50">
+                  <form onSubmit={e => handleAddPhotos(e, event.id)} className="flex items-center gap-3">
+                    <input
+                      name="images"
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      required
+                      className="flex-1 text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-red-600 file:text-white file:text-xs file:font-medium file:cursor-pointer hover:file:bg-red-700"
+                    />
+                    <button type="submit" disabled={saving} className="bg-red-600 hover:bg-red-700 disabled:bg-gray-100 text-white px-4 py-1.5 rounded-md text-xs font-semibold transition-colors flex-shrink-0">
+                      {saving ? 'Uploading…' : 'Upload'}
                     </button>
                   </form>
                 </div>
