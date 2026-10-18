@@ -34,11 +34,15 @@ export async function POST(request: Request) {
   const imageUrls: string[] = [];
   for (const file of files) {
     if (file.size === 0) continue;
-    const ext = file.name.split('.').pop() || 'jpg';
-    const slug = nameFr.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-    const filename = `events/${slug}/${Date.now()}-${imageUrls.length}.${ext}`;
-    const blob = await put(filename, file, { access: 'public' });
-    imageUrls.push(blob.url);
+    try {
+      const ext = file.name.split('.').pop() || 'jpg';
+      const slug = nameFr.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+      const filename = `events/${slug}/${Date.now()}-${imageUrls.length}.${ext}`;
+      const blob = await put(filename, file, { access: 'public' });
+      imageUrls.push(blob.url);
+    } catch (err) {
+      console.warn('[events] Blob upload failed — skipping image:', (err as Error).message);
+    }
   }
 
   const id = await createDbEvent({

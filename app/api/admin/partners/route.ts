@@ -18,10 +18,14 @@ export async function POST(request: Request) {
 
   let logoUrl = '';
   if (file && file.size > 0) {
-    const ext = file.name.split('.').pop() || 'png';
-    const filename = `partners/${Date.now()}-${name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.${ext}`;
-    const blob = await put(filename, file, { access: 'public' });
-    logoUrl = blob.url;
+    try {
+      const ext = file.name.split('.').pop() || 'png';
+      const filename = `partners/${Date.now()}-${name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.${ext}`;
+      const blob = await put(filename, file, { access: 'public' });
+      logoUrl = blob.url;
+    } catch (err) {
+      console.warn('[partners] Blob upload failed — adding partner without logo:', (err as Error).message);
+    }
   }
 
   await addPartner(name, logoUrl);
