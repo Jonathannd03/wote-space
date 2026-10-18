@@ -1,16 +1,17 @@
 import { getLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { MOCK_SPACES, SLOTS } from '@/lib/mock-data';
+import { SLOTS } from '@/lib/mock-data';
+import { getPricing } from '@/lib/admin-data';
 import { formatPrice } from '@/lib/utils';
 import InfoTooltip from '@/components/InfoTooltip';
 
 export default async function PricingPage() {
-  const locale = await getLocale();
+  const [locale, spaces] = await Promise.all([getLocale(), getPricing()]);
   const fr = locale === 'fr';
 
   // Room setups (all except coworking)
-  const roomSetups = MOCK_SPACES.filter((s) => s.capacity > 1);
-  const coworking = MOCK_SPACES.find((s) => s.capacity === 1)!;
+  const roomSetups = spaces.filter((s) => s.capacity > 1);
+  const coworking = spaces.find((s) => s.capacity === 1)!;
 
   // Tooltip content
   const tooltips = {

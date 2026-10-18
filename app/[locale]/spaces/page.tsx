@@ -3,14 +3,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 import SpacesGallery from '@/components/SpacesGallery';
-import { MOCK_SPACES, SLOTS } from '@/lib/mock-data';
+import { SLOTS } from '@/lib/mock-data';
+import { getPricing } from '@/lib/admin-data';
 
 export default async function SpacesPage() {
-  const t = await getTranslations('spaces');
-  const locale = await getLocale();
+  const [t, locale, allSpaces] = await Promise.all([
+    getTranslations('spaces'),
+    getLocale(),
+    getPricing(),
+  ]);
   const fr = locale === 'fr';
 
-  const spaces = MOCK_SPACES.filter(space => space.available).sort((a, b) => a.capacity - b.capacity);
+  const spaces = allSpaces.sort((a, b) => a.capacity - b.capacity);
 
   const premisesImages = [
     '/premises/IMG_2776.jpg',
@@ -51,7 +55,7 @@ export default async function SpacesPage() {
         {/* Spaces Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {spaces.map((space, index) => {
-            const amenities = JSON.parse(space.amenities) as string[];
+            const amenities = space.amenities;
             const spaceName = fr ? space.nameFr : space.nameEn;
             const spaceDescription = fr ? space.descriptionFr : space.descriptionEn;
 
