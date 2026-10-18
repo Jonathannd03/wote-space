@@ -44,41 +44,43 @@ export default async function AdminDashboard() {
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Image src="/Wotespace-logo-01.png" alt="Wote Space" width={110} height={44} />
-            <span className="text-gray-400 text-sm border-l border-gray-200 pl-4">Admin</span>
+            <span className="text-gray-500 text-sm border-l border-gray-200 pl-4">Admin</span>
           </div>
           <LogoutButton />
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-10">
+      <main id="main-content" className="max-w-5xl mx-auto px-6 py-10">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-500 text-sm mt-1">Manage your website content from here.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {sections.map(section => (
-            <Link
-              key={section.href}
-              href={section.href}
-              className="group bg-white border border-gray-200 hover:border-red-500 hover:shadow-sm rounded-lg p-6 transition-all duration-150"
-            >
-              <div className="flex items-start gap-4">
-                <span className="text-2xl">{section.icon}</span>
-                <div className="flex-1">
-                  <h2 className="text-base font-semibold text-gray-900 group-hover:text-red-600 transition-colors mb-0.5">
-                    {section.label}
-                  </h2>
-                  <p className="text-gray-500 text-sm mb-3">{section.description}</p>
-                  <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-                    {section.count}
-                  </span>
+        <nav aria-label="Admin sections">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {sections.map(section => (
+              <Link
+                key={section.href}
+                href={section.href}
+                className="group bg-white border border-gray-200 hover:border-red-500 hover:shadow-sm rounded-lg p-6 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+              >
+                <div className="flex items-start gap-4">
+                  <span className="text-2xl" aria-hidden="true">{section.icon}</span>
+                  <div className="flex-1">
+                    <h2 className="text-base font-semibold text-gray-900 group-hover:text-red-600 transition-colors mb-0.5">
+                      {section.label}
+                    </h2>
+                    <p className="text-gray-500 text-sm mb-3">{section.description}</p>
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                      {section.count}
+                    </span>
+                  </div>
+                  <span className="text-gray-400 group-hover:text-red-500 transition-colors text-lg mt-0.5" aria-hidden="true">→</span>
                 </div>
-                <span className="text-gray-300 group-hover:text-red-500 transition-colors text-lg mt-0.5">→</span>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        </nav>
 
         <div className="mt-6 bg-blue-50 border border-blue-100 rounded-lg p-5">
           <p className="text-blue-700 text-sm">

@@ -69,10 +69,10 @@ export default function AdminPartnersPage() {
   const isError = (s: string) => s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
+    <main id="main-content" className="max-w-5xl mx-auto px-6 py-10">
       <div className="flex items-start justify-between mb-8">
         <div>
-          <Link href="/admin" className="text-gray-400 hover:text-gray-700 text-sm mb-2 inline-flex items-center gap-1 transition-colors">
+          <Link href="/admin" className="text-gray-600 hover:text-gray-900 text-sm mb-2 inline-flex items-center gap-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded">
             ← Dashboard
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Partners</h1>
@@ -80,14 +80,19 @@ export default function AdminPartnersPage() {
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-semibold text-sm transition-colors"
+          aria-expanded={showForm}
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
         >
           {showForm ? 'Cancel' : '+ Add Partner'}
         </button>
       </div>
 
       {status && (
-        <div className={`mb-6 px-4 py-3 rounded-md text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
+        <div
+          role="alert"
+          aria-live="polite"
+          className={`mb-6 px-4 py-3 rounded-md text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}
+        >
           {status}
         </div>
       )}
@@ -97,27 +102,37 @@ export default function AdminPartnersPage() {
           <h2 className="text-base font-semibold text-gray-900 mb-5">Add New Partner</h2>
           <form onSubmit={handleAdd} className="space-y-4">
             <div>
-              <label className={labelCls}>Organisation Name <span className="text-red-500">*</span></label>
+              <label htmlFor="partnerName" className={labelCls}>
+                Organisation Name <span aria-hidden="true" className="text-red-500">*</span>
+                <span className="sr-only">(required)</span>
+              </label>
               <input
+                id="partnerName"
                 value={name}
                 onChange={e => setName(e.target.value)}
                 required
+                aria-required="true"
                 className={inputCls}
                 placeholder="e.g. UNHCR Goma"
               />
             </div>
             <div>
-              <label className={labelCls}>Logo Image</label>
+              <label htmlFor="partnerLogo" className={labelCls}>Logo Image</label>
               <input
+                id="partnerLogo"
                 type="file"
                 accept="image/*"
                 onChange={e => setFile(e.target.files?.[0] || null)}
-                className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-red-600 file:text-white file:text-sm file:font-medium file:cursor-pointer hover:file:bg-red-700"
+                className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-red-600 file:text-white file:text-sm file:font-medium file:cursor-pointer hover:file:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded"
               />
               {file && <p className="text-xs text-gray-400 mt-1">{file.name}</p>}
             </div>
             <div className="pt-1">
-              <button type="submit" disabled={saving || !name} className="bg-red-600 hover:bg-red-700 disabled:bg-gray-100 disabled:text-gray-400 text-white px-5 py-2 rounded-md font-semibold text-sm transition-colors">
+              <button
+                type="submit"
+                disabled={saving || !name}
+                className="bg-red-600 hover:bg-red-700 disabled:bg-gray-200 disabled:text-gray-500 text-white px-5 py-2 rounded-md font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+              >
                 {saving ? 'Adding…' : 'Add Partner'}
               </button>
             </div>
@@ -126,27 +141,28 @@ export default function AdminPartnersPage() {
       )}
 
       {loading ? (
-        <p className="text-gray-400 text-center py-12 text-sm">Loading…</p>
+        <p role="status" className="text-gray-400 text-center py-12 text-sm">Loading…</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4" role="list" aria-label="Partners">
           {partners.length === 0 && (
             <p className="text-gray-400 col-span-3 text-center py-12 text-sm">No partners yet.</p>
           )}
           {partners.map(partner => (
-            <div key={partner.id} className="group bg-white border border-gray-200 hover:border-gray-300 rounded-lg p-4 flex flex-col items-center gap-3 transition-all">
+            <div key={partner.id} role="listitem" className="group bg-white border border-gray-200 hover:border-gray-300 rounded-lg p-4 flex flex-col items-center gap-3 transition-all">
               {partner.logo ? (
                 <div className="relative w-full h-20 bg-gray-50 rounded-md overflow-hidden border border-gray-100">
                   <Image src={partner.logo} alt={partner.name} fill className="object-contain p-2" sizes="200px" />
                 </div>
               ) : (
-                <div className="w-full h-20 bg-gray-50 rounded-md border border-gray-100 flex items-center justify-center">
+                <div className="w-full h-20 bg-gray-50 rounded-md border border-gray-100 flex items-center justify-center" aria-hidden="true">
                   <span className="text-gray-300 text-2xl">🏢</span>
                 </div>
               )}
               <p className="text-gray-800 text-sm text-center font-medium leading-tight">{partner.name}</p>
               <button
                 onClick={() => handleDelete(partner.id, partner.name)}
-                className="text-xs text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                aria-label={`Remove ${partner.name}`}
+                className="text-xs text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded"
               >
                 Remove
               </button>
@@ -154,6 +170,6 @@ export default function AdminPartnersPage() {
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 }
