@@ -7,7 +7,11 @@ const intlMiddleware = createMiddleware({
   localePrefix: 'always',
 });
 
-const SECRET = process.env.ADMIN_SECRET || 'wote-space-admin-secret-change-me';
+const ADMIN_SECRET = process.env.ADMIN_SECRET;
+if (!ADMIN_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('ADMIN_SECRET must be set in production');
+}
+const SECRET = ADMIN_SECRET || 'wote-space-admin-secret-change-me';
 const COOKIE_NAME = 'admin_session';
 
 async function verifyToken(token: string): Promise<boolean> {
