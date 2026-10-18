@@ -4,16 +4,19 @@ import HeroSection from '@/components/HeroSection';
 import EventsCarousel from '@/components/EventsCarousel';
 import PartnersSection from '@/components/PartnersSection';
 import NewsSection from '@/components/NewsSection';
-import { getPartners, getAllPublicEvents } from '@/lib/admin-data';
+import { getPartners, getAllPublicEvents, getPricing } from '@/lib/admin-data';
 
 export default async function HomePage() {
-  const [t, tEvents, locale, partners, events] = await Promise.all([
+  const [t, tEvents, locale, partners, events, pricing] = await Promise.all([
     getTranslations('home'),
     getTranslations('events'),
     getLocale(),
     getPartners(),
     getAllPublicEvents(),
+    getPricing(),
   ]);
+
+  const coworkingPrice = pricing.find(s => s.capacity === 1)?.priceFullDay ?? null;
 
   const features = [
     {
@@ -47,6 +50,7 @@ export default async function HomePage() {
         ctaText={t('hero.cta')}
         secondaryCtaText={locale === 'fr' ? 'Découvrir nos espaces' : 'Discover our spaces'}
         locale={locale}
+        coworkingPrice={coworkingPrice}
       />
 
       {/* Features Section */}
