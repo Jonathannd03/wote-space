@@ -140,6 +140,62 @@ export async function getEventDescriptions(): Promise<Record<string, EventDescri
   );
 }
 
+// ── Public events (DB as single source of truth) ─────────────────────────────
+
+export interface PublicEvent {
+  id: string;
+  name: string;
+  nameFr: string;
+  nameEn: string;
+  date: string;
+  displayDate: string;
+  images: string[];
+  totalImages: number;
+  shortDescFr: string;
+  shortDescEn: string;
+  descriptionFr: string;
+  descriptionEn: string;
+}
+
+function toPublicEvent(r: {
+  id: string; nameFr: string; nameEn: string; date: Date;
+  shortDescFr: string; shortDescEn: string;
+  descriptionFr: string; descriptionEn: string;
+  images: { url: string; order: number }[];
+}): PublicEvent {
+  const images = r.images.map(i => i.url);
+  return {
+    id: r.id,
+    name: r.nameFr,
+    nameFr: r.nameFr,
+    nameEn: r.nameEn,
+    date: r.date.toISOString(),
+    displayDate: r.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    images,
+    totalImages: images.length,
+    shortDescFr: r.shortDescFr,
+    shortDescEn: r.shortDescEn,
+    descriptionFr: r.descriptionFr,
+    descriptionEn: r.descriptionEn,
+  };
+}
+
+export async function getAllPublicEvents(): Promise<PublicEvent[]> {
+  const rows = await prisma.eventEntry.findMany({
+    include: { images: { orderBy: { order: 'asc' } } },
+    orderBy: { date: 'desc' },
+  });
+  return rows.map(toPublicEvent);
+}
+
+export async function getPublicEventById(id: string): Promise<PublicEvent | null> {
+  const row = await prisma.eventEntry.findUnique({
+    where: { id },
+    include: { images: { orderBy: { order: 'asc' } } },
+  });
+  return row ? toPublicEvent(row) : null;
+}
+
 // ── DB Events (admin-created, stored in Neon + Blob) ─────────────────────────
 
 export interface DbEvent {

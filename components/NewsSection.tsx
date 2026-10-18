@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Event } from '@/lib/events';
+import { PublicEvent } from '@/lib/admin-data';
 
 interface NewsItem {
   date: string;
@@ -26,7 +26,7 @@ function formatDisplayDate(isoDate: string, locale: string): string {
 
 interface NewsSectionProps {
   locale: string;
-  events?: Event[];
+  events?: PublicEvent[];
   eventShortDescriptions?: Record<string, string>;
 }
 

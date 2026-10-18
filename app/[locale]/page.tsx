@@ -4,17 +4,16 @@ import HeroSection from '@/components/HeroSection';
 import EventsCarousel from '@/components/EventsCarousel';
 import PartnersSection from '@/components/PartnersSection';
 import NewsSection from '@/components/NewsSection';
-import { getEvents, getEventShortDescription } from '@/lib/events';
-import { getPartners } from '@/lib/admin-data';
+import { getPartners, getAllPublicEvents } from '@/lib/admin-data';
 
 export default async function HomePage() {
-  const [t, tEvents, locale, partners] = await Promise.all([
+  const [t, tEvents, locale, partners, events] = await Promise.all([
     getTranslations('home'),
     getTranslations('events'),
     getLocale(),
     getPartners(),
+    getAllPublicEvents(),
   ]);
-  const events = getEvents();
 
   const features = [
     {
@@ -90,7 +89,7 @@ export default async function HomePage() {
             <EventsCarousel
               events={events.map(event => ({
                 ...event,
-                shortDescription: getEventShortDescription(event.id, locale as 'en' | 'fr')
+                shortDescription: locale === 'fr' ? event.shortDescFr : event.shortDescEn,
               }))}
               locale={locale}
             />
@@ -106,7 +105,7 @@ export default async function HomePage() {
         locale={locale}
         events={events}
         eventShortDescriptions={Object.fromEntries(
-          events.map(event => [event.id, getEventShortDescription(event.id, locale as 'en' | 'fr')])
+          events.map(event => [event.id, locale === 'fr' ? event.shortDescFr : event.shortDescEn])
         )}
       />
 
