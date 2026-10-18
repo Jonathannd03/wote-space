@@ -1,5 +1,11 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.ADMIN_SECRET || !process.env.ADMIN_PASSWORD) {
+    throw new Error('ADMIN_SECRET and ADMIN_PASSWORD must be set in production');
+  }
+}
+
 const SECRET = process.env.ADMIN_SECRET || 'wote-space-admin-secret-change-me';
 const PASSWORD = process.env.ADMIN_PASSWORD || 'wote-admin-2026';
 export const COOKIE_NAME = 'admin_session';

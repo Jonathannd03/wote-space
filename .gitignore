@@ -37,3 +37,6 @@ next-env.d.ts
 prisma/*.db
 prisma/*.db-journal
 .env*
+
+# stale data files (DB is source of truth)
+data/

@@ -1,32 +1,29 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-interface EventEntry {
-  folder: string;
-  name: string;
-  year: number;
-  month: number;
-  day: number;
-  imageCount: number;
-  imageFiles: string[];
+interface DbEvent {
+  id: string;
+  nameFr: string;
+  nameEn: string;
+  date: string;
+  descriptionFr: string;
+  descriptionEn: string;
+  shortDescFr: string;
+  shortDescEn: string;
+  images: string[];
 }
 
-interface AdminEventsPageProps {
-  events: EventEntry[];
-}
-
-function EventsClient({ events: initial }: AdminEventsPageProps) {
+function EventsClient({ events: initial }: { events: DbEvent[] }) {
   const router = useRouter();
   const [events, setEvents] = useState(initial);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState('');
   const [addingPhotosTo, setAddingPhotosTo] = useState<string | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,10 +35,11 @@ function EventsClient({ events: initial }: AdminEventsPageProps) {
       if (res.ok) {
         setStatus('Event created successfully!');
         setShowForm(false);
-        formRef.current?.reset();
+        (e.target as HTMLFormElement).reset();
         router.refresh();
       } else {
-        setStatus('Error creating event. Please try again.');
+        const data = await res.json().catch(() => ({}));
+        setStatus(data.error || 'Error creating event. Please try again.');
       }
     } catch {
       setStatus('Connection error.');
@@ -50,13 +48,13 @@ function EventsClient({ events: initial }: AdminEventsPageProps) {
     }
   };
 
-  const handleAddPhotos = async (e: React.FormEvent<HTMLFormElement>, folder: string) => {
+  const handleAddPhotos = async (e: React.FormEvent<HTMLFormElement>, id: string) => {
     e.preventDefault();
     setSaving(true);
     setStatus('');
     const formData = new FormData(e.currentTarget);
     try {
-      const res = await fetch(`/api/admin/events/${encodeURIComponent(folder)}/images`, {
+      const res = await fetch(`/api/admin/events/${encodeURIComponent(id)}/images`, {
         method: 'POST',
         body: formData,
       });
@@ -75,16 +73,20 @@ function EventsClient({ events: initial }: AdminEventsPageProps) {
     }
   };
 
-  const handleDelete = async (folder: string, name: string) => {
+  const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Delete event "${name}" and all its photos? This cannot be undone.`)) return;
-    const res = await fetch(`/api/admin/events/${encodeURIComponent(folder)}`, { method: 'DELETE' });
-    if (res.ok) {
-      setEvents(prev => prev.filter(e => e.folder !== folder));
-      setStatus('Event deleted.');
+    try {
+      const res = await fetch(`/api/admin/events/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      if (res.ok) {
+        setEvents(prev => prev.filter(e => e.id !== id));
+        setStatus('Event deleted.');
+      } else {
+        setStatus('Error deleting event.');
+      }
+    } catch {
+      setStatus('Connection error.');
     }
   };
-
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
@@ -92,6 +94,7 @@ function EventsClient({ events: initial }: AdminEventsPageProps) {
         <div>
           <Link href="/admin" className="text-gray-500 hover:text-white text-sm mb-2 inline-block">← Dashboard</Link>
           <h1 className="text-2xl font-bold text-white">Events & Gallery</h1>
+          <p className="text-gray-500 text-sm mt-1">Manage events added via this panel. Static events (pre-launch) are managed through the codebase.</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -110,7 +113,7 @@ function EventsClient({ events: initial }: AdminEventsPageProps) {
       {showForm && (
         <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm p-6 mb-8">
           <h2 className="text-lg font-semibold text-white mb-5">Create New Event</h2>
-          <form ref={formRef} onSubmit={handleCreate} className="space-y-4">
+          <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-gray-300 mb-1">Name (French) *</label>
@@ -127,11 +130,11 @@ function EventsClient({ events: initial }: AdminEventsPageProps) {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Short description (French)</label>
+                <label className="block text-sm text-gray-300 mb-1">Description (French)</label>
                 <textarea name="descriptionFr" rows={3} className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-sm text-white focus:outline-none focus:border-[#dc2626] text-sm" placeholder="Brief description of the event..." />
               </div>
               <div>
-                <label className="block text-sm text-gray-300 mb-1">Short description (English)</label>
+                <label className="block text-sm text-gray-300 mb-1">Description (English)</label>
                 <textarea name="descriptionEn" rows={3} className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#2a2a2a] rounded-sm text-white focus:outline-none focus:border-[#dc2626] text-sm" placeholder="Brief description of the event..." />
               </div>
             </div>
@@ -151,61 +154,70 @@ function EventsClient({ events: initial }: AdminEventsPageProps) {
         {events.length === 0 && (
           <p className="text-gray-500 text-center py-12">No events yet. Create your first one above.</p>
         )}
-        {events.map(event => (
-          <div key={event.folder} className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm overflow-hidden">
-            <div className="p-5 flex items-center gap-4">
-              {event.imageFiles[0] && (
-                <div className="relative w-16 h-16 flex-shrink-0 rounded-sm overflow-hidden bg-[#0a0a0a]">
-                  <Image
-                    src={`/events/${event.folder}/${event.imageFiles[0]}`}
-                    alt={event.name}
-                    fill
-                    className="object-cover"
-                    sizes="64px"
-                  />
+        {events.map(event => {
+          const date = new Date(event.date);
+          const displayDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+          const coverImage = event.images[0] ?? null;
+
+          return (
+            <div key={event.id} className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm overflow-hidden">
+              <div className="p-5 flex items-center gap-4">
+                {coverImage && (
+                  <div className="relative w-16 h-16 flex-shrink-0 rounded-sm overflow-hidden bg-[#0a0a0a]">
+                    <Image
+                      src={coverImage}
+                      alt={event.nameFr}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-white truncate">{event.nameFr}</h3>
+                  {event.nameEn && event.nameEn !== event.nameFr && (
+                    <p className="text-gray-400 text-xs truncate">{event.nameEn}</p>
+                  )}
+                  <p className="text-gray-500 text-sm">{displayDate} · {event.images.length} photo{event.images.length !== 1 ? 's' : ''}</p>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => setAddingPhotosTo(addingPhotosTo === event.id ? null : event.id)}
+                    className="text-xs px-3 py-1.5 border border-[#2a2a2a] hover:border-[#dc2626] text-gray-300 hover:text-white rounded-sm transition-colors"
+                  >
+                    + Photos
+                  </button>
+                  <button
+                    onClick={() => handleDelete(event.id, event.nameFr)}
+                    className="text-xs px-3 py-1.5 border border-[#2a2a2a] hover:border-red-800 text-gray-500 hover:text-red-400 rounded-sm transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+
+              {addingPhotosTo === event.id && (
+                <div className="border-t border-[#2a2a2a] px-5 py-4 bg-[#0f0f0f]">
+                  <form onSubmit={e => handleAddPhotos(e, event.id)} className="flex items-center gap-4">
+                    <input name="images" type="file" multiple accept="image/*" required className="flex-1 text-sm text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:cursor-pointer" />
+                    <button type="submit" disabled={saving} className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-[#2a2a2a] text-white px-4 py-1.5 rounded-sm text-xs font-semibold transition-colors flex-shrink-0">
+                      {saving ? 'Uploading...' : 'Upload'}
+                    </button>
+                  </form>
                 </div>
               )}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-white capitalize truncate">{event.name}</h3>
-                <p className="text-gray-500 text-sm">{months[event.month - 1]} {event.day}, {event.year} · {event.imageCount} photo{event.imageCount !== 1 ? 's' : ''}</p>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button
-                  onClick={() => setAddingPhotosTo(addingPhotosTo === event.folder ? null : event.folder)}
-                  className="text-xs px-3 py-1.5 border border-[#2a2a2a] hover:border-[#dc2626] text-gray-300 hover:text-white rounded-sm transition-colors"
-                >
-                  + Photos
-                </button>
-                <button
-                  onClick={() => handleDelete(event.folder, event.name)}
-                  className="text-xs px-3 py-1.5 border border-[#2a2a2a] hover:border-red-800 text-gray-500 hover:text-red-400 rounded-sm transition-colors"
-                >
-                  Delete
-                </button>
-              </div>
             </div>
-
-            {addingPhotosTo === event.folder && (
-              <div className="border-t border-[#2a2a2a] px-5 py-4 bg-[#0f0f0f]">
-                <form onSubmit={e => handleAddPhotos(e, event.folder)} className="flex items-center gap-4">
-                  <input name="images" type="file" multiple accept="image/*" required className="flex-1 text-sm text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:cursor-pointer" />
-                  <button type="submit" disabled={saving} className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-[#2a2a2a] text-white px-4 py-1.5 rounded-sm text-xs font-semibold transition-colors flex-shrink-0">
-                    {saving ? 'Uploading...' : 'Upload'}
-                  </button>
-                </form>
-              </div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 }
 
-// Server component wrapper
-import eventsManifest from '@/public/events-manifest.json';
+// Server component wrapper — fetches DB events
+import { getDbEvents } from '@/lib/admin-data';
 
-export default function AdminEventsPage() {
-  const manifest = eventsManifest as { events: EventEntry[] };
-  return <EventsClient events={manifest.events} />;
+export default async function AdminEventsPage() {
+  const events = await getDbEvents();
+  return <EventsClient events={events} />;
 }

@@ -10,16 +10,20 @@ const intlMiddleware = createMiddleware({
 const SECRET = process.env.ADMIN_SECRET || 'wote-space-admin-secret-change-me';
 const COOKIE_NAME = 'admin_session';
 
-async function getExpectedToken(): Promise<string> {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw', encoder.encode(SECRET),
-    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
-  );
-  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode('admin-session'));
-  return Array.from(new Uint8Array(sig))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
+async function verifyToken(token: string): Promise<boolean> {
+  try {
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw', encoder.encode(SECRET),
+      { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']
+    );
+    const tokenBytes = Uint8Array.from(
+      token.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
+    );
+    return await crypto.subtle.verify('HMAC', key, tokenBytes, encoder.encode('admin-session'));
+  } catch {
+    return false;
+  }
 }
 
 export async function middleware(request: NextRequest) {
@@ -36,8 +40,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 
-    const expected = await getExpectedToken();
-    if (sessionCookie !== expected) {
+    if (!(await verifyToken(sessionCookie))) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 

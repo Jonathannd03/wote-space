@@ -6,12 +6,16 @@ const attempts = new Map<string, { count: number; resetAt: number }>();
 const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000;
 
-function getIp(request: Request): string {
-  return (request.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim();
+function getIp(request: Request): string | null {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return request.headers.get('x-real-ip');
 }
 
 export async function POST(request: Request) {
   const ip = getIp(request);
+  if (!ip) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
   const now = Date.now();
   const entry = attempts.get(ip);
 
