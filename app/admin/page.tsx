@@ -43,7 +43,9 @@ export default async function AdminDashboard() {
       <header className="border-b border-[#1a1a1a] bg-[#0a0a0a] sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Image src="/Wotespace-logo-01.png" alt="Wote Space" width={120} height={48} />
+            <div className="bg-white rounded px-2 py-1">
+              <Image src="/Wotespace-logo-01.png" alt="Wote Space" width={120} height={48} />
+            </div>
             <span className="text-gray-500 text-sm border-l border-[#2a2a2a] pl-4">Admin</span>
           </div>
           <LogoutButton />
