@@ -34,44 +34,49 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <main id="main-content" className="min-h-screen flex items-center justify-center px-4 bg-gray-50">
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-8">
-          <div className="bg-white rounded px-3 py-2">
-            <Image src="/Wotespace-logo-01.png" alt="Wote Space" width={160} height={64} />
-          </div>
+          <Image src="/Wotespace-logo-01.png" alt="Wote Space" width={160} height={64} />
         </div>
-        <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm p-8">
-          <h1 className="text-xl font-bold text-white mb-2">Admin Access</h1>
-          <p className="text-gray-400 text-sm mb-6">Enter your password to manage the website.</p>
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
+          <h1 className="text-xl font-bold text-gray-900 mb-1">Admin Access</h1>
+          <p className="text-gray-500 text-sm mb-6">Enter your password to manage the website.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-300 mb-2">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
+                Password
+              </label>
               <input
+                id="password"
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 autoFocus
-                className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#2a2a2a] rounded-sm text-white focus:outline-none focus:border-[#dc2626]"
+                aria-describedby={error ? 'login-error' : undefined}
+                aria-invalid={!!error}
+                className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm"
                 placeholder="Enter password"
               />
             </div>
 
             {error && (
-              <p className="text-[#dc2626] text-sm">{error}</p>
+              <p id="login-error" role="alert" className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-md px-3 py-2">
+                {error}
+              </p>
             )}
 
             <button
               type="submit"
               disabled={loading || !password}
-              className="w-full bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-[#2a2a2a] disabled:text-gray-500 text-white py-3 rounded-sm font-semibold transition-colors"
+              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-200 disabled:text-gray-500 text-white py-2.5 rounded-md font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
