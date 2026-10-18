@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getEventById, getEvents, getEventDescription, getEventName } from '@/lib/events';
+import { getAllPublicEvents, getPublicEventById } from '@/lib/admin-data';
 import EventGallery from '@/components/EventGallery';
 
 interface EventPageProps {
@@ -12,36 +12,32 @@ interface EventPageProps {
 }
 
 export async function generateStaticParams() {
-  const events = getEvents();
+  const events = await getAllPublicEvents();
   const locales = ['en', 'fr'];
-
   const params: { locale: string; id: string }[] = [];
-
   for (const locale of locales) {
     for (const event of events) {
-      params.push({
-        locale,
-        id: event.id,
-      });
+      params.push({ locale, id: event.id });
     }
   }
-
   return params;
 }
+
+export const dynamic = 'force-dynamic';
 
 export default async function EventPage({ params }: EventPageProps) {
   const { id, locale } = await params;
   const t = await getTranslations('events');
   const tCommon = await getTranslations('common');
 
-  const event = getEventById(id);
+  const event = await getPublicEventById(id);
 
   if (!event) {
     notFound();
   }
 
-  const description = getEventDescription(id, locale as 'en' | 'fr');
-  const eventName = getEventName(id, locale as 'en' | 'fr');
+  const description = locale === 'fr' ? event.descriptionFr : event.descriptionEn;
+  const eventName = locale === 'fr' ? event.nameFr : event.nameEn;
 
   return (
     <div className="bg-brand-black min-h-screen">

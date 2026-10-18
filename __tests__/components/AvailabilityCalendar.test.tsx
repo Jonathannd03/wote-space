@@ -102,7 +102,7 @@ describe('AvailabilityCalendar', () => {
     // Find a day button (any button with just a number)
     const dayButtons = screen.getAllByRole('button').filter(button => {
       const text = button.textContent;
-      return text && /^\d+$/.test(text) && !button.disabled;
+      return text && /^\d+$/.test(text) && !(button as HTMLButtonElement).disabled;
     });
 
     if (dayButtons.length > 0) {
@@ -183,7 +183,7 @@ describe('AvailabilityCalendar', () => {
 
     // Booked dates should be disabled and have special styling
     const dayButtons = screen.getAllByRole('button').filter(button =>
-      button.textContent === '15' && button.disabled
+      button.textContent === '15' && (button as HTMLButtonElement).disabled
     );
 
     expect(dayButtons.length).toBeGreaterThan(0);

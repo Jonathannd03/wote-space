@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type { Event } from '@/lib/events';
+import type { PublicEvent } from '@/lib/admin-data';
 
-interface EventWithDescription extends Event {
+interface EventWithDescription extends PublicEvent {
   shortDescription: string;
 }
 

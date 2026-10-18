@@ -41,7 +41,7 @@ import {
   deleteDbEvent,
 } from '@/lib/admin-data';
 
-const mock = prisma as {
+const mock = prisma as unknown as {
   partner: Record<string, jest.Mock>;
   contactInfo: Record<string, jest.Mock>;
   space: Record<string, jest.Mock>;

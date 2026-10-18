@@ -1,14 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getDbEvents } from '@/lib/admin-data';
-import { getPartners } from '@/lib/admin-data';
+import { getDbEvents, getPartners } from '@/lib/admin-data';
 import LogoutButton from './LogoutButton';
-import eventsManifest from '@/public/events-manifest.json';
 
 export default async function AdminDashboard() {
   const [dbEvents, partners] = await Promise.all([getDbEvents(), getPartners()]);
-  const staticEventCount = (eventsManifest as { events: unknown[] }).events.length;
-  const totalEvents = staticEventCount + dbEvents.length;
+  const totalEvents = dbEvents.length;
 
   const sections = [
     {
