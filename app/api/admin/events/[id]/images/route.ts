@@ -25,10 +25,18 @@ export async function POST(
   const urls: string[] = [];
   for (const file of files) {
     if (file.size === 0) continue;
-    const ext = file.name.split('.').pop() || 'jpg';
-    const filename = `events/${id}/${Date.now()}-${urls.length}.${ext}`;
-    const blob = await put(filename, file, { access: 'public' });
-    urls.push(blob.url);
+    try {
+      const ext = file.name.split('.').pop() || 'jpg';
+      const filename = `events/${id}/${Date.now()}-${urls.length}.${ext}`;
+      const blob = await put(filename, file, { access: 'public' });
+      urls.push(blob.url);
+    } catch (err) {
+      console.warn('[events/images] Blob upload failed — skipping image:', (err as Error).message);
+    }
+  }
+
+  if (urls.length === 0 && files.filter(f => f.size > 0).length > 0) {
+    return NextResponse.json({ error: 'Image upload unavailable in this environment. Deploy to Vercel to upload photos.' }, { status: 503 });
   }
 
   await addImagesToEvent(id, urls);
