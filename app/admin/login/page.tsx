@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
     <main id="main-content" className="min-h-screen flex items-center justify-center px-4 bg-gray-50">
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-8">
-          <Image src="/Wotespace-logo-01.png" alt="Wote Space" width={160} height={64} />
+          <Image src="/Wotespace-logo-01.png" alt="Wote Space" width={160} height={64} priority style={{ height: 'auto' }} />
         </div>
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
           <h1 className="text-xl font-bold text-gray-900 mb-1">Admin Access</h1>
