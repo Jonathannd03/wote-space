@@ -3,38 +3,18 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-const organisations = [
-  {
-    name: 'WAHDI – Women in Action for Human Dignity',
-    logo: '/partners/wahdi women in Action for Human Dignity.png',
-  },
-  {
-    name: 'Tumaini Jipya',
-    logo: '/partners/TumainiJipya-02.png',
-  },
-  {
-    name: 'Waza & Act',
-    logo: '/partners/waza-and-act.png',
-  },
-  {
-    name: 'Skills Wote',
-    logo: '/partners/skills wote.png',
-  },
-  {
-    name: 'Centre for Development and Enterprises',
-    logo: '/partners/Centre for development and entreprises.jpg',
-  },
-  {
-    name: 'Mixes From Africa',
-    logo: '/partners/294516757_423127039830058_7206967330386121846_n (1).jpg.jpeg',
-  },
-];
+interface Organisation {
+  id: string;
+  name: string;
+  logo: string;
+}
 
 interface PartnersSectionProps {
   locale: string;
+  organisations: Organisation[];
 }
 
-export default function PartnersSection({ locale }: PartnersSectionProps) {
+export default function PartnersSection({ locale, organisations }: PartnersSectionProps) {
   const title =
     locale === 'fr'
       ? 'Ils nous font confiance'

@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { Inter } from 'next/font/google';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import { getContactInfo } from '@/lib/admin-data';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -35,6 +36,7 @@ export default async function LocaleLayout({
   }
 
   const messages = await getMessages();
+  const contactInfo = await getContactInfo();
 
   return (
     <html lang={locale}>
@@ -48,7 +50,7 @@ export default async function LocaleLayout({
           <div className="flex flex-col min-h-screen">
             <Navigation />
             <main className="flex-grow">{children}</main>
-            <Footer />
+            <Footer contactInfo={contactInfo} />
           </div>
         </NextIntlClientProvider>
       </body>

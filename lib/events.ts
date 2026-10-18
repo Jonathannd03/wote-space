@@ -70,9 +70,6 @@ export function getEventById(id: string): Event | null {
   return events.find(event => event.id === id) || null;
 }
 
-/**
- * Get internationalized event names (can be expanded with a JSON file later)
- */
 export function getEventName(eventId: string, locale: 'en' | 'fr'): string {
   const names: Record<string, { en: string; fr: string }> = {
     "opening-ceremony-25-01-2026": {
@@ -116,11 +113,7 @@ export function getEventName(eventId: string, locale: 'en' | 'fr'): string {
   return names[eventId]?.[locale] || eventId.replace(/-/g, ' ');
 }
 
-/**
- * Get event descriptions (can be expanded with a JSON file later)
- */
 export function getEventDescription(eventId: string, locale: 'en' | 'fr'): string {
-  // Default descriptions - can be moved to a JSON file or database later
   const descriptions: Record<string, { en: string; fr: string }> = {
     "opening-ceremony-25-01-2026": {
       en: "We celebrated the grand opening of Wote Space, marking the launch of a humanitarian coordination space in the heart of Goma. Organisations, associations and community actors gathered to discover the space and share their vision for collective action.",
@@ -165,11 +158,7 @@ export function getEventDescription(eventId: string, locale: 'en' | 'fr'): strin
     : 'A memorable event that took place at Wote Space.');
 }
 
-/**
- * Get short event description for cards (can be expanded with a JSON file later)
- */
 export function getEventShortDescription(eventId: string, locale: 'en' | 'fr'): string {
-  // Short descriptions for event cards
   const shortDescriptions: Record<string, { en: string; fr: string }> = {
     "opening-ceremony-25-01-2026": {
       en: "The launch of Wote Space as a humanitarian coordination hub in Goma, bringing together organisations and community actors.",

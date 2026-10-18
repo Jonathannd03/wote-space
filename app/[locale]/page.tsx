@@ -1,15 +1,19 @@
-import { useTranslations, useLocale } from 'next-intl';
+import { getTranslations, getLocale } from 'next-intl/server';
 import Link from 'next/link';
 import HeroSection from '@/components/HeroSection';
 import EventsCarousel from '@/components/EventsCarousel';
 import PartnersSection from '@/components/PartnersSection';
 import NewsSection from '@/components/NewsSection';
 import { getEvents, getEventShortDescription } from '@/lib/events';
+import { getPartners } from '@/lib/admin-data';
 
-export default function HomePage() {
-  const t = useTranslations('home');
-  const tEvents = useTranslations('events');
-  const locale = useLocale();
+export default async function HomePage() {
+  const [t, tEvents, locale, partners] = await Promise.all([
+    getTranslations('home'),
+    getTranslations('events'),
+    getLocale(),
+    getPartners(),
+  ]);
   const events = getEvents();
 
   const features = [
@@ -95,7 +99,7 @@ export default function HomePage() {
       )}
 
       {/* Partners Section */}
-      <PartnersSection locale={locale} />
+      <PartnersSection locale={locale} organisations={partners} />
 
       {/* News Section */}
       <NewsSection

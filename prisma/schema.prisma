@@ -1,70 +1,103 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
-// Represents different configurations/setups of the same physical room
-// Each "Space" is actually a setup configuration (e.g., Setup S, Setup M, Setup L, Setup XL)
-// allowing the single room to be booked with different capacities and amenities
 model Space {
-  id          String    @id @default(cuid())
-  name        String
-  nameEn      String    @map("name_en")
-  nameFr      String    @map("name_fr")
-  description String
-  descriptionEn String  @map("description_en")
-  descriptionFr String  @map("description_fr")
-  capacity    Int
-  pricePerHour Decimal  @map("price_per_hour")
-  pricePerDay  Decimal  @map("price_per_day")
-  amenities   String    // JSON string of amenities
-  imageUrl    String?   @map("image_url")
-  available   Boolean   @default(true)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-
-  bookings    Booking[]
+  id            String    @id @default(cuid())
+  name          String
+  nameEn        String    @map("name_en")
+  nameFr        String    @map("name_fr")
+  description   String
+  descriptionEn String    @map("description_en")
+  descriptionFr String    @map("description_fr")
+  capacity      Int
+  pricePerHour  Decimal   @map("price_per_hour")
+  pricePerDay   Decimal   @map("price_per_day")
+  priceHalfDay  Decimal   @default(0) @map("price_half_day")
+  priceBundle5  Decimal   @default(0) @map("price_bundle_5")
+  priceBundle10 Decimal   @default(0) @map("price_bundle_10")
+  amenities     String
+  imageUrl      String?   @map("image_url")
+  available     Boolean   @default(true)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  bookings      Booking[]
 
   @@map("spaces")
 }
 
 model Booking {
-  id              String   @id @default(cuid())
-  referenceId     String   @unique @map("reference_id")
-  spaceId         String   @map("space_id")
-  space           Space    @relation(fields: [spaceId], references: [id])
-
-  // Customer information
-  firstName       String   @map("first_name")
-  lastName        String   @map("last_name")
-  email           String
-  phone           String?
-  company         String?
-
-  // Booking details
-  startDate       DateTime @map("start_date")
-  endDate         DateTime @map("end_date")
-  numberOfPeople  Int      @map("number_of_people")
-  totalPrice      Decimal  @map("total_price")
-
-  // Status
-  status          BookingStatus @default(PENDING)
-  notes           String?
-
-  // Timestamps
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  id             String        @id @default(cuid())
+  referenceId    String        @unique @map("reference_id")
+  spaceId        String        @map("space_id")
+  space          Space         @relation(fields: [spaceId], references: [id])
+  firstName      String        @map("first_name")
+  lastName       String        @map("last_name")
+  email          String
+  phone          String?
+  company        String?
+  startDate      DateTime      @map("start_date")
+  endDate        DateTime      @map("end_date")
+  numberOfPeople Int           @map("number_of_people")
+  totalPrice     Decimal       @map("total_price")
+  status         BookingStatus @default(PENDING)
+  notes          String?
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
 
   @@index([spaceId])
   @@index([startDate, endDate])
   @@map("bookings")
+}
+
+model Partner {
+  id        String   @id @default(cuid())
+  name      String
+  logoUrl   String   @map("logo_url")
+  order     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("partners")
+}
+
+model ContactInfo {
+  key   String @id
+  value String
+
+  @@map("contact_info")
+}
+
+model EventEntry {
+  id               String       @id @default(cuid())
+  nameFr           String       @map("name_fr")
+  nameEn           String       @map("name_en")
+  date             DateTime
+  descriptionFr    String       @default("") @map("description_fr")
+  descriptionEn    String       @default("") @map("description_en")
+  shortDescFr      String       @default("") @map("short_desc_fr")
+  shortDescEn      String       @default("") @map("short_desc_en")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  images           EventImage[]
+
+  @@map("event_entries")
+}
+
+model EventImage {
+  id        String     @id @default(cuid())
+  eventId   String     @map("event_id")
+  event     EventEntry @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  url       String
+  order     Int        @default(0)
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  @@index([eventId])
+  @@map("event_images")
 }
 
 enum BookingStatus {
