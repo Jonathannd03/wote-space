@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAdminLang } from '../AdminLangProvider';
 
 export interface DbEvent {
   id: string;
@@ -31,11 +32,16 @@ function RequiredMark() {
 
 export default function EventsClient({ events: initial }: { events: DbEvent[] }) {
   const router = useRouter();
+  const { t, lang } = useAdminLang();
+  const tr = t.events;
+
   const [events, setEvents] = useState(initial);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState('');
   const [addingPhotosTo, setAddingPhotosTo] = useState<string | null>(null);
+
+  const isError = (s: string) => s.toLowerCase().includes('erreur') || s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,16 +51,16 @@ export default function EventsClient({ events: initial }: { events: DbEvent[] })
     try {
       const res = await fetch('/api/admin/events', { method: 'POST', body: formData });
       if (res.ok) {
-        setStatus('Event created successfully!');
+        setStatus(tr.successCreate);
         setShowForm(false);
         (e.target as HTMLFormElement).reset();
         router.refresh();
       } else {
         const data = await res.json().catch(() => ({}));
-        setStatus(data.error || 'Error creating event. Please try again.');
+        setStatus(data.error || tr.errorCreate);
       }
     } catch {
-      setStatus('Connection error.');
+      setStatus(tr.errorConnection);
     } finally {
       setSaving(false);
     }
@@ -66,49 +72,43 @@ export default function EventsClient({ events: initial }: { events: DbEvent[] })
     setStatus('');
     const formData = new FormData(e.currentTarget);
     try {
-      const res = await fetch(`/api/admin/events/${encodeURIComponent(id)}/images`, {
-        method: 'POST',
-        body: formData,
-      });
+      const res = await fetch(`/api/admin/events/${encodeURIComponent(id)}/images`, { method: 'POST', body: formData });
       if (res.ok) {
         const data = await res.json();
-        setStatus(`${data.added} photo(s) added!`);
+        setStatus(`${data.added} photo(s) ajoutée(s) !`);
         setAddingPhotosTo(null);
         router.refresh();
       } else {
-        setStatus('Error uploading photos.');
+        setStatus(tr.errorUpload);
       }
     } catch {
-      setStatus('Connection error.');
+      setStatus(tr.errorConnection);
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Delete event "${name}" and all its photos? This cannot be undone.`)) return;
+    if (!confirm(`${lang === 'fr' ? `Supprimer l'événement « ${name} » et toutes ses photos ? Cette action est irréversible.` : `Delete event "${name}" and all its photos? This cannot be undone.`}`)) return;
     try {
       const res = await fetch(`/api/admin/events/${encodeURIComponent(id)}`, { method: 'DELETE' });
       if (res.ok) {
         setEvents(prev => prev.filter(e => e.id !== id));
-        setStatus('Event deleted.');
+        setStatus(tr.successDelete);
       } else {
-        setStatus('Error deleting event.');
+        setStatus(tr.errorDelete);
       }
     } catch {
-      setStatus('Connection error.');
+      setStatus(tr.errorConnection);
     }
   };
 
-  const isError = (s: string) => s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
-
   return (
     <main id="main-content" className="px-8 py-8">
-      {/* Page header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-1">Gallery</p>
-          <h1 className="text-2xl font-black text-gray-900">Events & Gallery</h1>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-1">{tr.eyebrow}</p>
+          <h1 className="text-2xl font-black text-gray-900">{tr.title}</h1>
           <div className="h-0.5 w-10 bg-[#dc2626] mt-2" />
         </div>
         <button
@@ -116,85 +116,66 @@ export default function EventsClient({ events: initial }: { events: DbEvent[] })
           aria-expanded={showForm}
           className="bg-[#dc2626] hover:bg-[#b91c1c] text-white px-4 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2"
         >
-          {showForm ? 'Cancel' : '+ New Event'}
+          {showForm ? tr.cancel : tr.addButton}
         </button>
       </div>
 
       {status && (
-        <div
-          role="alert"
-          aria-live="polite"
-          className={`mb-6 px-4 py-3 rounded-sm text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}
-        >
+        <div role="alert" aria-live="polite" className={`mb-6 px-4 py-3 rounded-sm text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
           {status}
         </div>
       )}
 
       {showForm && (
         <div className="bg-white border border-gray-200 rounded-sm p-6 mb-6">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-4">Create Event</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-4">{tr.formTitle}</p>
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="nameFr" className={labelCls}>
-                  Name (French)<RequiredMark />
-                </label>
+                <label htmlFor="nameFr" className={labelCls}>{tr.nameFr}<RequiredMark /></label>
                 <input id="nameFr" name="nameFr" required aria-required="true" className={inputCls} placeholder="e.g. Formation en leadership" />
               </div>
               <div>
-                <label htmlFor="nameEn" className={labelCls}>Name (English)</label>
+                <label htmlFor="nameEn" className={labelCls}>{tr.nameEn}</label>
                 <input id="nameEn" name="nameEn" className={inputCls} placeholder="e.g. Leadership Training" />
               </div>
             </div>
             <div className="max-w-xs">
-              <label htmlFor="eventDate" className={labelCls}>
-                Date<RequiredMark />
-              </label>
+              <label htmlFor="eventDate" className={labelCls}>{tr.date}<RequiredMark /></label>
               <input id="eventDate" name="date" type="date" required aria-required="true" className={inputCls} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="descriptionFr" className={labelCls}>Description (French)</label>
-                <textarea id="descriptionFr" name="descriptionFr" rows={3} className={inputCls + ' resize-none'} placeholder="Brief description of the event…" />
+                <label htmlFor="descriptionFr" className={labelCls}>{tr.descFr}</label>
+                <textarea id="descriptionFr" name="descriptionFr" rows={3} className={inputCls + ' resize-none'} />
               </div>
               <div>
-                <label htmlFor="descriptionEn" className={labelCls}>Description (English)</label>
-                <textarea id="descriptionEn" name="descriptionEn" rows={3} className={inputCls + ' resize-none'} placeholder="Brief description of the event…" />
+                <label htmlFor="descriptionEn" className={labelCls}>{tr.descEn}</label>
+                <textarea id="descriptionEn" name="descriptionEn" rows={3} className={inputCls + ' resize-none'} />
               </div>
             </div>
             <div>
-              <label htmlFor="eventImages" className={labelCls}>Photos</label>
-              <input
-                id="eventImages"
-                name="images"
-                type="file"
-                multiple
-                accept="image/*"
-                className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:font-bold file:uppercase file:tracking-widest file:cursor-pointer hover:file:bg-[#b91c1c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] rounded-sm"
-              />
-              <p className="text-xs text-gray-400 mt-1">You can add more photos later</p>
+              <label htmlFor="eventImages" className={labelCls}>{tr.photos}</label>
+              <input id="eventImages" name="images" type="file" multiple accept="image/*" className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:font-bold file:uppercase file:tracking-widest file:cursor-pointer hover:file:bg-[#b91c1c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] rounded-sm" />
+              <p className="text-xs text-gray-400 mt-1">{tr.photosHint}</p>
             </div>
             <div className="pt-1">
-              <button
-                type="submit"
-                disabled={saving}
-                className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-100 disabled:text-gray-400 text-white px-5 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2"
-              >
-                {saving ? 'Creating…' : 'Create Event'}
+              <button type="submit" disabled={saving} className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-100 disabled:text-gray-400 text-white px-5 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2">
+                {saving ? tr.creating : tr.createButton}
               </button>
             </div>
           </form>
         </div>
       )}
 
-      <div className="space-y-2" role="list" aria-label="Events">
+      <div className="space-y-2" role="list" aria-label={tr.title}>
         {events.length === 0 && (
           <div className="bg-white border border-gray-200 rounded-sm p-12 text-center">
-            <p className="text-gray-400 text-sm">No events yet. Create your first one above.</p>
+            <p className="text-gray-400 text-sm">{tr.empty}</p>
           </div>
         )}
         {events.map(event => {
-          const displayDate = new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+          const displayDate = new Date(event.date).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' });
           const coverImage = event.images[0] ?? null;
 
           return (
@@ -215,32 +196,30 @@ export default function EventsClient({ events: initial }: { events: DbEvent[] })
                 </Link>
                 <div className="flex-1 min-w-0">
                   <Link href={`/admin/events/${event.id}`} className="group focus-visible:outline-none">
-                  <h3 className="font-bold text-gray-900 text-sm truncate group-hover:text-[#dc2626] transition-colors">{event.nameFr}</h3>
-                  {event.nameEn && event.nameEn !== event.nameFr && (
-                    <p className="text-gray-400 text-xs truncate">{event.nameEn}</p>
-                  )}
-                  <p className="text-gray-500 text-xs mt-0.5">
-                    {displayDate}
-                    <span className="text-gray-300 mx-1.5">·</span>
-                    {event.images.length} photo{event.images.length !== 1 ? 's' : ''}
-                  </p>
+                    <h3 className="font-bold text-gray-900 text-sm truncate group-hover:text-[#dc2626] transition-colors">{event.nameFr}</h3>
+                    {event.nameEn && event.nameEn !== event.nameFr && (
+                      <p className="text-gray-400 text-xs truncate">{event.nameEn}</p>
+                    )}
+                    <p className="text-gray-500 text-xs mt-0.5">
+                      {displayDate}<span className="text-gray-300 mx-1.5">·</span>{tr.photo(event.images.length)}
+                    </p>
                   </Link>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <button
                     onClick={() => setAddingPhotosTo(addingPhotosTo === event.id ? null : event.id)}
-                    aria-label={`Add photos to ${event.nameFr}`}
+                    aria-label={`${tr.addPhotos} — ${event.nameFr}`}
                     aria-expanded={addingPhotosTo === event.id}
                     className="text-xs font-bold uppercase tracking-wider px-3 py-2 border border-gray-200 hover:border-[#dc2626] text-gray-500 hover:text-[#dc2626] rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2"
                   >
-                    + Photos
+                    {tr.addPhotos}
                   </button>
                   <button
                     onClick={() => handleDelete(event.id, event.nameFr)}
-                    aria-label={`Delete event ${event.nameFr}`}
+                    aria-label={`${tr.deleteButton} — ${event.nameFr}`}
                     className="text-xs font-bold uppercase tracking-wider px-3 py-2 border border-gray-200 hover:border-red-300 text-gray-400 hover:text-red-600 rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2"
                   >
-                    Delete
+                    {tr.deleteButton}
                   </button>
                 </div>
               </div>
@@ -249,23 +228,11 @@ export default function EventsClient({ events: initial }: { events: DbEvent[] })
                 <div className="border-t border-gray-100 px-4 py-3 bg-gray-50">
                   <form onSubmit={e => handleAddPhotos(e, event.id)} className="flex items-center gap-3">
                     <label htmlFor={`photos-${event.id}`} className="sr-only">
-                      Select photos for {event.nameFr}
+                      {tr.photos} — {event.nameFr}
                     </label>
-                    <input
-                      id={`photos-${event.id}`}
-                      name="images"
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      required
-                      className="flex-1 text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:font-bold file:uppercase file:tracking-wider file:cursor-pointer hover:file:bg-[#b91c1c]"
-                    />
-                    <button
-                      type="submit"
-                      disabled={saving}
-                      className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-200 text-white px-4 py-1.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2"
-                    >
-                      {saving ? 'Uploading…' : 'Upload'}
+                    <input id={`photos-${event.id}`} name="images" type="file" multiple accept="image/*" required className="flex-1 text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:font-bold file:uppercase file:tracking-wider file:cursor-pointer hover:file:bg-[#b91c1c]" />
+                    <button type="submit" disabled={saving} className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-200 text-white px-4 py-1.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2">
+                      {saving ? tr.uploading : tr.uploadButton}
                     </button>
                   </form>
                 </div>

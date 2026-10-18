@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useAdminLang } from '../AdminLangProvider';
 
 interface Partner {
   id: string;
@@ -13,6 +14,9 @@ const inputCls = 'w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-s
 const labelCls = 'block text-[11px] font-bold uppercase tracking-wider text-[#666] mb-1.5';
 
 export default function AdminPartnersPage() {
+  const { t } = useAdminLang();
+  const tr = t.partners;
+
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -24,6 +28,8 @@ export default function AdminPartnersPage() {
   useEffect(() => {
     fetch('/api/admin/partners').then(r => r.json()).then(setPartners).finally(() => setLoading(false));
   }, []);
+
+  const isError = (s: string) => s.toLowerCase().includes('erreur') || s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,19 +47,19 @@ export default function AdminPartnersPage() {
         setName('');
         setFile(null);
         setShowForm(false);
-        setStatus('Partner added!');
+        setStatus(tr.successAdd);
       } else {
-        setStatus('Error adding partner.');
+        setStatus(tr.errorAdd);
       }
     } catch {
-      setStatus('Connection error.');
+      setStatus(tr.errorConnection);
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (id: string, partnerName: string) => {
-    if (!confirm(`Remove "${partnerName}" from the partners list?`)) return;
+    if (!confirm(`"${partnerName}" ?`)) return;
     const res = await fetch('/api/admin/partners', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -61,19 +67,16 @@ export default function AdminPartnersPage() {
     });
     if (res.ok) {
       setPartners(prev => prev.filter(p => p.id !== id));
-      setStatus('Partner removed.');
+      setStatus(tr.successRemove);
     }
   };
 
-  const isError = (s: string) => s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
-
   return (
     <main id="main-content" className="px-8 py-8">
-      {/* Page header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-1">Organisations</p>
-          <h1 className="text-2xl font-black text-gray-900">Partners</h1>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-1">{tr.eyebrow}</p>
+          <h1 className="text-2xl font-black text-gray-900">{tr.title}</h1>
           <div className="h-0.5 w-10 bg-[#dc2626] mt-2" />
         </div>
         <button
@@ -81,58 +84,36 @@ export default function AdminPartnersPage() {
           aria-expanded={showForm}
           className="bg-[#dc2626] hover:bg-[#b91c1c] text-white px-4 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2"
         >
-          {showForm ? 'Cancel' : '+ Add Partner'}
+          {showForm ? tr.cancel : tr.addButton}
         </button>
       </div>
 
       {status && (
-        <div
-          role="alert"
-          aria-live="polite"
-          className={`mb-6 px-4 py-3 rounded-sm text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}
-        >
+        <div role="alert" aria-live="polite" className={`mb-6 px-4 py-3 rounded-sm text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
           {status}
         </div>
       )}
 
       {showForm && (
         <div className="bg-white border border-gray-200 rounded-sm p-6 mb-6">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-4">New Partner</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-4">{tr.formTitle}</p>
           <form onSubmit={handleAdd} className="space-y-4">
             <div>
               <label htmlFor="partnerName" className={labelCls}>
-                Organisation Name{' '}
+                {tr.nameLabel}{' '}
                 <span aria-hidden="true" className="text-[#dc2626]">*</span>
                 <span className="sr-only">(required)</span>
               </label>
-              <input
-                id="partnerName"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                required
-                aria-required="true"
-                className={inputCls}
-                placeholder="e.g. UNHCR Goma"
-              />
+              <input id="partnerName" value={name} onChange={e => setName(e.target.value)} required aria-required="true" className={inputCls} placeholder="e.g. UNHCR Goma" />
             </div>
             <div>
-              <label htmlFor="partnerLogo" className={labelCls}>Logo Image</label>
-              <input
-                id="partnerLogo"
-                type="file"
-                accept="image/*"
-                onChange={e => setFile(e.target.files?.[0] || null)}
-                className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:font-bold file:uppercase file:tracking-widest file:cursor-pointer hover:file:bg-[#b91c1c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] rounded-sm"
-              />
+              <label htmlFor="partnerLogo" className={labelCls}>{tr.logoLabel}</label>
+              <input id="partnerLogo" type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)} className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:font-bold file:uppercase file:tracking-widest file:cursor-pointer hover:file:bg-[#b91c1c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] rounded-sm" />
               {file && <p className="text-xs text-gray-400 mt-1">{file.name}</p>}
             </div>
             <div className="pt-1">
-              <button
-                type="submit"
-                disabled={saving || !name}
-                className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-100 disabled:text-gray-400 text-white px-5 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2"
-              >
-                {saving ? 'Adding…' : 'Add Partner'}
+              <button type="submit" disabled={saving || !name} className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-100 disabled:text-gray-400 text-white px-5 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2">
+                {saving ? tr.adding : tr.submitButton}
               </button>
             </div>
           </form>
@@ -140,11 +121,11 @@ export default function AdminPartnersPage() {
       )}
 
       {loading ? (
-        <p role="status" className="text-gray-400 text-center py-12 text-sm">Loading…</p>
+        <p role="status" className="text-gray-400 text-center py-12 text-sm">{tr.loading}</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3" role="list" aria-label="Partners">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3" role="list" aria-label={tr.title}>
           {partners.length === 0 && (
-            <p className="text-gray-400 col-span-3 text-center py-12 text-sm">No partners yet.</p>
+            <p className="text-gray-400 col-span-5 text-center py-12 text-sm">{tr.empty}</p>
           )}
           {partners.map(partner => (
             <div key={partner.id} role="listitem" className="group bg-white border border-gray-200 hover:border-[#dc2626] rounded-sm p-4 flex flex-col items-center gap-3 transition-all">
@@ -162,10 +143,10 @@ export default function AdminPartnersPage() {
               <p className="text-gray-800 text-sm text-center font-medium leading-tight">{partner.name}</p>
               <button
                 onClick={() => handleDelete(partner.id, partner.name)}
-                aria-label={`Remove ${partner.name}`}
+                aria-label={`${tr.removeButton} ${partner.name}`}
                 className="text-[11px] font-bold uppercase tracking-wider text-gray-400 hover:text-[#dc2626] transition-colors opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] rounded-sm"
               >
-                Remove
+                {tr.removeButton}
               </button>
             </div>
           ))}

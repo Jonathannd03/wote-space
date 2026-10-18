@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAdminLang } from '../AdminLangProvider';
 
 interface SpacePrice {
   id: string;
@@ -15,14 +16,17 @@ interface SpacePrice {
   amenities: string[];
 }
 
-const priceFields: { label: string; field: keyof SpacePrice }[] = [
-  { label: 'Half-day', field: 'priceHalfDay' },
-  { label: 'Full day', field: 'priceFullDay' },
-  { label: 'Pack 5 sessions', field: 'priceBundle5' },
-  { label: 'Pack 10 sessions', field: 'priceBundle10' },
-];
-
 export default function AdminPricingPage() {
+  const { t } = useAdminLang();
+  const tr = t.pricing;
+
+  const priceFields: { label: string; field: keyof SpacePrice }[] = [
+    { label: tr.halfDay, field: 'priceHalfDay' },
+    { label: tr.fullDay, field: 'priceFullDay' },
+    { label: tr.bundle5, field: 'priceBundle5' },
+    { label: tr.bundle10, field: 'priceBundle10' },
+  ];
+
   const [spaces, setSpaces] = useState<SpacePrice[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -47,23 +51,22 @@ export default function AdminPricingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(spaces),
       });
-      setStatus(res.ok ? 'Prices saved!' : 'Error saving prices.');
+      setStatus(res.ok ? tr.successSave : tr.errorSave);
     } catch {
-      setStatus('Connection error.');
+      setStatus(tr.errorConnection);
     } finally {
       setSaving(false);
     }
   };
 
-  const isError = (s: string) => s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
+  const isError = (s: string) => s.toLowerCase().includes('erreur') || s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
 
   return (
     <main id="main-content" className="px-8 py-8">
-      {/* Page header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-1">USD</p>
-          <h1 className="text-2xl font-black text-gray-900">Pricing</h1>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-1">{tr.eyebrow}</p>
+          <h1 className="text-2xl font-black text-gray-900">{tr.title}</h1>
           <div className="h-0.5 w-10 bg-[#dc2626] mt-2" />
         </div>
         <button
@@ -71,22 +74,18 @@ export default function AdminPricingPage() {
           disabled={saving || loading}
           className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-100 disabled:text-gray-400 text-white px-4 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2"
         >
-          {saving ? 'Saving…' : 'Save Changes'}
+          {saving ? tr.saving : tr.saveButton}
         </button>
       </div>
 
       {status && (
-        <div
-          role="alert"
-          aria-live="polite"
-          className={`mb-6 px-4 py-3 rounded-sm text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}
-        >
+        <div role="alert" aria-live="polite" className={`mb-6 px-4 py-3 rounded-sm text-sm border ${isError(status) ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
           {status}
         </div>
       )}
 
       {loading ? (
-        <p role="status" className="text-gray-400 text-center py-12 text-sm">Loading…</p>
+        <p role="status" className="text-gray-400 text-center py-12 text-sm">{tr.loading}</p>
       ) : (
         <div className="space-y-3">
           {spaces.map(space => (
@@ -94,7 +93,7 @@ export default function AdminPricingPage() {
               <div className="flex items-center gap-3 mb-5">
                 <h2 className="text-sm font-black text-gray-900">{space.nameEn}</h2>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-100 px-2 py-0.5 rounded-sm">
-                  up to {space.capacity} people
+                  {tr.upTo} {space.capacity} {tr.people}
                 </span>
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -114,7 +113,7 @@ export default function AdminPricingPage() {
                           step="0.5"
                           value={space[field] as number}
                           onChange={e => update(space.id, field, e.target.value)}
-                          aria-label={`${space.nameEn} ${label} price in USD`}
+                          aria-label={`${space.nameEn} ${label} (USD)`}
                           className="w-full pl-7 pr-3 py-2.5 bg-white border border-gray-300 rounded-sm text-gray-900 focus:outline-none focus:border-[#dc2626] focus:ring-1 focus:ring-[#dc2626] text-sm transition-colors"
                         />
                       </div>
