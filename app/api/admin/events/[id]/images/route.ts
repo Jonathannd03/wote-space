@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
-import { addImagesToEvent } from '@/lib/admin-data';
+import { addImagesToEvent, deleteEventImage } from '@/lib/admin-data';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -41,4 +41,20 @@ export async function POST(
 
   await addImagesToEvent(id, urls);
   return NextResponse.json({ ok: true, added: urls.length });
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  await params;
+  try {
+    const { imageId } = await request.json();
+    if (!imageId) return NextResponse.json({ error: 'imageId required' }, { status: 400 });
+    await deleteEventImage(imageId);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

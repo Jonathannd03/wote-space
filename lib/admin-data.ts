@@ -267,3 +267,38 @@ export async function addImagesToEvent(eventId: string, urls: string[]): Promise
 export async function deleteDbEvent(id: string): Promise<void> {
   await prisma.eventEntry.delete({ where: { id } });
 }
+
+export interface DbEventDetail {
+  id: string;
+  nameFr: string;
+  nameEn: string;
+  date: string;
+  descriptionFr: string;
+  descriptionEn: string;
+  shortDescFr: string;
+  shortDescEn: string;
+  images: { id: string; url: string; order: number }[];
+}
+
+export async function getDbEventById(id: string): Promise<DbEventDetail | null> {
+  const row = await prisma.eventEntry.findUnique({
+    where: { id },
+    include: { images: { orderBy: { order: 'asc' } } },
+  });
+  if (!row) return null;
+  return {
+    id: row.id,
+    nameFr: row.nameFr,
+    nameEn: row.nameEn,
+    date: row.date.toISOString(),
+    descriptionFr: row.descriptionFr,
+    descriptionEn: row.descriptionEn,
+    shortDescFr: row.shortDescFr,
+    shortDescEn: row.shortDescEn,
+    images: row.images.map(i => ({ id: i.id, url: i.url, order: i.order })),
+  };
+}
+
+export async function deleteEventImage(imageId: string): Promise<void> {
+  await prisma.eventImage.delete({ where: { id: imageId } });
+}
