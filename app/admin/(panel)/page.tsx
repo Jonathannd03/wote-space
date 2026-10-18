@@ -59,7 +59,7 @@ export default async function AdminDashboard() {
   };
 
   return (
-    <main id="main-content" className="px-8 py-8 max-w-3xl">
+    <main id="main-content" className="px-8 py-8">
       <div className="mb-8">
         <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-1">Overview</p>
         <h1 className="text-2xl font-black text-gray-900">Dashboard</h1>
@@ -67,7 +67,7 @@ export default async function AdminDashboard() {
       </div>
 
       <nav aria-label="Admin sections">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
           {sections.map(section => (
             <Link
               key={section.href}

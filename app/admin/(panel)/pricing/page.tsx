@@ -58,7 +58,7 @@ export default function AdminPricingPage() {
   const isError = (s: string) => s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
 
   return (
-    <main id="main-content" className="px-8 py-8 max-w-4xl">
+    <main id="main-content" className="px-8 py-8">
       {/* Page header */}
       <div className="flex items-start justify-between mb-8">
         <div>
@@ -97,7 +97,7 @@ export default function AdminPricingPage() {
                   up to {space.capacity} people
                 </span>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {priceFields.map(({ label, field }) => {
                   const inputId = `${space.id}-${field}`;
                   return (

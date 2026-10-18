@@ -49,7 +49,7 @@ export default function AdminContactPage() {
   const isError = (s: string) => s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
 
   return (
-    <main id="main-content" className="px-8 py-8 max-w-2xl">
+    <main id="main-content" className="px-8 py-8">
       {/* Page header */}
       <div className="mb-8">
         <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-1">Info</p>

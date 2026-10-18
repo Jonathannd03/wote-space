@@ -68,7 +68,7 @@ export default function AdminPartnersPage() {
   const isError = (s: string) => s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
 
   return (
-    <main id="main-content" className="px-8 py-8 max-w-4xl">
+    <main id="main-content" className="px-8 py-8">
       {/* Page header */}
       <div className="flex items-start justify-between mb-8">
         <div>
@@ -142,7 +142,7 @@ export default function AdminPartnersPage() {
       {loading ? (
         <p role="status" className="text-gray-400 text-center py-12 text-sm">Loading…</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3" role="list" aria-label="Partners">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3" role="list" aria-label="Partners">
           {partners.length === 0 && (
             <p className="text-gray-400 col-span-3 text-center py-12 text-sm">No partners yet.</p>
           )}
