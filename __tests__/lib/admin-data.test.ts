@@ -191,7 +191,7 @@ describe('savePricing', () => {
   it('updates each space with new prices', async () => {
     mock.space.update.mockResolvedValue({});
     await savePricing([
-      { id: 's1', name: 'Setup S', nameEn: '', nameFr: '', capacity: 10,
+      { id: 's1', name: 'Setup S', nameEn: '', nameFr: '', descriptionEn: '', descriptionFr: '', capacity: 10,
         priceHalfDay: 35, priceFullDay: 65, priceBundle5: 130, priceBundle10: 230, amenities: [] },
     ]);
     expect(mock.space.update).toHaveBeenCalledWith({

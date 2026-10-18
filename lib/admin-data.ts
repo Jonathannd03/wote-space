@@ -69,6 +69,8 @@ export interface SpacePrice {
   name: string;
   nameEn: string;
   nameFr: string;
+  descriptionEn: string;
+  descriptionFr: string;
   capacity: number;
   priceHalfDay: number;
   priceFullDay: number;
@@ -87,6 +89,8 @@ export async function getPricing(): Promise<SpacePrice[]> {
     name: s.name,
     nameEn: s.nameEn,
     nameFr: s.nameFr,
+    descriptionEn: s.descriptionEn,
+    descriptionFr: s.descriptionFr,
     capacity: s.capacity,
     priceHalfDay: Number(s.priceHalfDay),
     priceFullDay: Number(s.pricePerDay),
