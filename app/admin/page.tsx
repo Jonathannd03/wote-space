@@ -1,19 +1,21 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getEvents } from '@/lib/events';
+import { getDbEvents } from '@/lib/admin-data';
 import { getPartners } from '@/lib/admin-data';
 import LogoutButton from './LogoutButton';
+import eventsManifest from '@/public/events-manifest.json';
 
-export default function AdminDashboard() {
-  const events = getEvents();
-  const partners = getPartners();
+export default async function AdminDashboard() {
+  const [dbEvents, partners] = await Promise.all([getDbEvents(), getPartners()]);
+  const staticEventCount = (eventsManifest as { events: unknown[] }).events.length;
+  const totalEvents = staticEventCount + dbEvents.length;
 
   const sections = [
     {
       href: '/admin/events',
       label: 'Events & Gallery',
       description: 'Add event photos, create new events, edit descriptions',
-      count: `${events.length} events`,
+      count: `${totalEvents} events`,
       icon: '🖼️',
     },
     {
@@ -41,7 +43,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
       <header className="border-b border-[#1a1a1a] bg-[#0a0a0a] sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -85,8 +86,8 @@ export default function AdminDashboard() {
         <div className="mt-10 bg-[#1a1a1a] border border-[#2a2a2a] rounded-sm p-6">
           <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Quick tip</h2>
           <p className="text-gray-300 text-sm">
-            After adding a new event or photos, the website updates immediately — no rebuild needed.
-            Changes to partners, pricing and contact info are also live right away.
+            Changes to partners, pricing and contact info are live immediately.
+            New events appear on the website right after you create them.
           </p>
         </div>
       </main>

@@ -1,5 +1,4 @@
 import eventsManifest from '@/public/events-manifest.json';
-import { getEventDescriptions } from '@/lib/admin-data';
 
 export interface Event {
   id: string; // slug-friendly version of the folder name
@@ -71,14 +70,7 @@ export function getEventById(id: string): Event | null {
   return events.find(event => event.id === id) || null;
 }
 
-/**
- * Get internationalized event names — reads from data/event-descriptions.json first, falls back to hardcoded
- */
 export function getEventName(eventId: string, locale: 'en' | 'fr'): string {
-  const dynamic = getEventDescriptions();
-  if (dynamic[eventId]) {
-    return locale === 'en' ? dynamic[eventId].nameEn : dynamic[eventId].nameFr;
-  }
   const names: Record<string, { en: string; fr: string }> = {
     "opening-ceremony-25-01-2026": {
       en: "Opening Ceremony",
@@ -121,14 +113,7 @@ export function getEventName(eventId: string, locale: 'en' | 'fr'): string {
   return names[eventId]?.[locale] || eventId.replace(/-/g, ' ');
 }
 
-/**
- * Get event descriptions — reads from data/event-descriptions.json first, falls back to hardcoded
- */
 export function getEventDescription(eventId: string, locale: 'en' | 'fr'): string {
-  const dynamic = getEventDescriptions();
-  if (dynamic[eventId]) {
-    return locale === 'en' ? dynamic[eventId].descriptionEn : dynamic[eventId].descriptionFr;
-  }
   const descriptions: Record<string, { en: string; fr: string }> = {
     "opening-ceremony-25-01-2026": {
       en: "We celebrated the grand opening of Wote Space, marking the launch of a humanitarian coordination space in the heart of Goma. Organisations, associations and community actors gathered to discover the space and share their vision for collective action.",
@@ -173,14 +158,7 @@ export function getEventDescription(eventId: string, locale: 'en' | 'fr'): strin
     : 'A memorable event that took place at Wote Space.');
 }
 
-/**
- * Get short event description for cards — reads from data/event-descriptions.json first
- */
 export function getEventShortDescription(eventId: string, locale: 'en' | 'fr'): string {
-  const dynamic = getEventDescriptions();
-  if (dynamic[eventId]) {
-    return locale === 'en' ? dynamic[eventId].shortDescriptionEn : dynamic[eventId].shortDescriptionFr;
-  }
   const shortDescriptions: Record<string, { en: string; fr: string }> = {
     "opening-ceremony-25-01-2026": {
       en: "The launch of Wote Space as a humanitarian coordination hub in Goma, bringing together organisations and community actors.",

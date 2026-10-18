@@ -1,21 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-
-const DATA_DIR = path.join(process.cwd(), 'data');
-
-function readJSON<T>(filename: string, fallback: T): T {
-  try {
-    const content = fs.readFileSync(path.join(DATA_DIR, filename), 'utf8');
-    return JSON.parse(content) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJSON(filename: string, data: unknown): void {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(path.join(DATA_DIR, filename), JSON.stringify(data, null, 2), 'utf8');
-}
+import { prisma } from '@/lib/prisma';
 
 // ── Partners ──────────────────────────────────────────────────────────────────
 
@@ -25,12 +8,18 @@ export interface Partner {
   logo: string;
 }
 
-export function getPartners(): Partner[] {
-  return readJSON<Partner[]>('partners.json', []);
+export async function getPartners(): Promise<Partner[]> {
+  const rows = await prisma.partner.findMany({ orderBy: { order: 'asc' } });
+  return rows.map(r => ({ id: r.id, name: r.name, logo: r.logoUrl }));
 }
 
-export function savePartners(partners: Partner[]): void {
-  writeJSON('partners.json', partners);
+export async function addPartner(name: string, logoUrl: string): Promise<void> {
+  const count = await prisma.partner.count();
+  await prisma.partner.create({ data: { name, logoUrl, order: count } });
+}
+
+export async function deletePartner(id: string): Promise<void> {
+  await prisma.partner.delete({ where: { id } });
 }
 
 // ── Contact ───────────────────────────────────────────────────────────────────
@@ -49,12 +38,28 @@ const DEFAULT_CONTACT: ContactInfo = {
   addressEn: '112, Boulevard Julien Paluku, Karisimbi\nMurara Neighborhood, Goma - North Kivu, DRC',
 };
 
-export function getContactInfo(): ContactInfo {
-  return readJSON<ContactInfo>('contact.json', DEFAULT_CONTACT);
+export async function getContactInfo(): Promise<ContactInfo> {
+  const rows = await prisma.contactInfo.findMany();
+  if (rows.length === 0) return DEFAULT_CONTACT;
+  const map = Object.fromEntries(rows.map(r => [r.key, r.value]));
+  return {
+    phone: map.phone ?? DEFAULT_CONTACT.phone,
+    email: map.email ?? DEFAULT_CONTACT.email,
+    addressFr: map.addressFr ?? DEFAULT_CONTACT.addressFr,
+    addressEn: map.addressEn ?? DEFAULT_CONTACT.addressEn,
+  };
 }
 
-export function saveContactInfo(info: ContactInfo): void {
-  writeJSON('contact.json', info);
+export async function saveContactInfo(info: ContactInfo): Promise<void> {
+  await Promise.all(
+    Object.entries(info).map(([key, value]) =>
+      prisma.contactInfo.upsert({
+        where: { key },
+        create: { key, value },
+        update: { value },
+      })
+    )
+  );
 }
 
 // ── Pricing ───────────────────────────────────────────────────────────────────
@@ -72,12 +77,39 @@ export interface SpacePrice {
   amenities: string[];
 }
 
-export function getPricing(): SpacePrice[] {
-  return readJSON<SpacePrice[]>('pricing.json', []);
+export async function getPricing(): Promise<SpacePrice[]> {
+  const spaces = await prisma.space.findMany({
+    where: { available: true },
+    orderBy: { capacity: 'asc' },
+  });
+  return spaces.map(s => ({
+    id: s.id,
+    name: s.name,
+    nameEn: s.nameEn,
+    nameFr: s.nameFr,
+    capacity: s.capacity,
+    priceHalfDay: Number(s.priceHalfDay),
+    priceFullDay: Number(s.pricePerDay),
+    priceBundle5: Number(s.priceBundle5),
+    priceBundle10: Number(s.priceBundle10),
+    amenities: JSON.parse(s.amenities) as string[],
+  }));
 }
 
-export function savePricing(pricing: SpacePrice[]): void {
-  writeJSON('pricing.json', pricing);
+export async function savePricing(pricing: SpacePrice[]): Promise<void> {
+  await Promise.all(
+    pricing.map(p =>
+      prisma.space.update({
+        where: { id: p.id },
+        data: {
+          priceHalfDay: p.priceHalfDay,
+          pricePerDay: p.priceFullDay,
+          priceBundle5: p.priceBundle5,
+          priceBundle10: p.priceBundle10,
+        },
+      })
+    )
+  );
 }
 
 // ── Event descriptions ────────────────────────────────────────────────────────
@@ -91,10 +123,87 @@ export interface EventDescription {
   shortDescriptionFr: string;
 }
 
-export function getEventDescriptions(): Record<string, EventDescription> {
-  return readJSON<Record<string, EventDescription>>('event-descriptions.json', {});
+export async function getEventDescriptions(): Promise<Record<string, EventDescription>> {
+  const rows = await prisma.eventEntry.findMany();
+  return Object.fromEntries(
+    rows.map(r => [
+      r.id,
+      {
+        nameEn: r.nameEn,
+        nameFr: r.nameFr,
+        descriptionEn: r.descriptionEn,
+        descriptionFr: r.descriptionFr,
+        shortDescriptionEn: r.shortDescEn,
+        shortDescriptionFr: r.shortDescFr,
+      },
+    ])
+  );
 }
 
-export function saveEventDescriptions(data: Record<string, EventDescription>): void {
-  writeJSON('event-descriptions.json', data);
+// ── DB Events (admin-created, stored in Neon + Blob) ─────────────────────────
+
+export interface DbEvent {
+  id: string;
+  nameFr: string;
+  nameEn: string;
+  date: string;
+  descriptionFr: string;
+  descriptionEn: string;
+  shortDescFr: string;
+  shortDescEn: string;
+  images: string[];
+}
+
+export async function getDbEvents(): Promise<DbEvent[]> {
+  const rows = await prisma.eventEntry.findMany({
+    include: { images: { orderBy: { order: 'asc' } } },
+    orderBy: { date: 'desc' },
+  });
+  return rows.map(r => ({
+    id: r.id,
+    nameFr: r.nameFr,
+    nameEn: r.nameEn,
+    date: r.date.toISOString(),
+    descriptionFr: r.descriptionFr,
+    descriptionEn: r.descriptionEn,
+    shortDescFr: r.shortDescFr,
+    shortDescEn: r.shortDescEn,
+    images: r.images.map(i => i.url),
+  }));
+}
+
+export async function createDbEvent(data: {
+  nameFr: string;
+  nameEn: string;
+  date: Date;
+  descriptionFr: string;
+  descriptionEn: string;
+  imageUrls: string[];
+}): Promise<string> {
+  const event = await prisma.eventEntry.create({
+    data: {
+      nameFr: data.nameFr,
+      nameEn: data.nameEn,
+      date: data.date,
+      descriptionFr: data.descriptionFr,
+      descriptionEn: data.descriptionEn,
+      shortDescFr: data.descriptionFr.slice(0, 200),
+      shortDescEn: data.descriptionEn.slice(0, 200),
+      images: {
+        create: data.imageUrls.map((url, i) => ({ url, order: i })),
+      },
+    },
+  });
+  return event.id;
+}
+
+export async function addImagesToEvent(eventId: string, urls: string[]): Promise<void> {
+  const count = await prisma.eventImage.count({ where: { eventId } });
+  await prisma.eventImage.createMany({
+    data: urls.map((url, i) => ({ eventId, url, order: count + i })),
+  });
+}
+
+export async function deleteDbEvent(id: string): Promise<void> {
+  await prisma.eventEntry.delete({ where: { id } });
 }

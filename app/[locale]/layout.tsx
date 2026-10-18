@@ -36,7 +36,7 @@ export default async function LocaleLayout({
   }
 
   const messages = await getMessages();
-  const contactInfo = getContactInfo();
+  const contactInfo = await getContactInfo();
 
   return (
     <html lang={locale}>
