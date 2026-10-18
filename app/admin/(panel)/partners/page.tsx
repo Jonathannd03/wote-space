@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useAdminLang } from '../AdminLangProvider';
+import FileInput from '../FileInput';
 
 interface Partner {
   id: string;
@@ -23,7 +24,6 @@ export default function AdminPartnersPage() {
   const [status, setStatus] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
-  const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
     fetch('/api/admin/partners').then(r => r.json()).then(setPartners).finally(() => setLoading(false));
@@ -31,21 +31,18 @@ export default function AdminPartnersPage() {
 
   const isError = (s: string) => s.toLowerCase().includes('erreur') || s.toLowerCase().includes('error') || s.toLowerCase().includes('connection');
 
-  const handleAdd = async (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name) return;
     setSaving(true);
     setStatus('');
-    const formData = new FormData();
-    formData.append('name', name);
-    if (file) formData.append('logo', file);
+    const formData = new FormData(e.currentTarget);
     try {
       const res = await fetch('/api/admin/partners', { method: 'POST', body: formData });
       if (res.ok) {
         const updated = await fetch('/api/admin/partners').then(r => r.json());
         setPartners(updated);
         setName('');
-        setFile(null);
         setShowForm(false);
         setStatus(tr.successAdd);
       } else {
@@ -108,8 +105,7 @@ export default function AdminPartnersPage() {
             </div>
             <div>
               <label htmlFor="partnerLogo" className={labelCls}>{tr.logoLabel}</label>
-              <input id="partnerLogo" type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)} className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:font-bold file:uppercase file:tracking-widest file:cursor-pointer hover:file:bg-[#b91c1c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] rounded-sm" />
-              {file && <p className="text-xs text-gray-400 mt-1">{file.name}</p>}
+              <FileInput id="partnerLogo" name="logo" accept="image/*" />
             </div>
             <div className="pt-1">
               <button type="submit" disabled={saving || !name} className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-100 disabled:text-gray-400 text-white px-5 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2">

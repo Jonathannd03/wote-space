@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAdminLang } from '../AdminLangProvider';
+import FileInput from '../FileInput';
 
 export interface DbEvent {
   id: string;
@@ -156,7 +157,7 @@ export default function EventsClient({ events: initial }: { events: DbEvent[] })
             </div>
             <div>
               <label htmlFor="eventImages" className={labelCls}>{tr.photos}</label>
-              <input id="eventImages" name="images" type="file" multiple accept="image/*" className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:font-bold file:uppercase file:tracking-widest file:cursor-pointer hover:file:bg-[#b91c1c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] rounded-sm" />
+              <FileInput id="eventImages" name="images" multiple accept="image/*" />
               <p className="text-xs text-gray-400 mt-1">{tr.photosHint}</p>
             </div>
             <div className="pt-1">
@@ -227,11 +228,10 @@ export default function EventsClient({ events: initial }: { events: DbEvent[] })
               {addingPhotosTo === event.id && (
                 <div className="border-t border-gray-100 px-4 py-3 bg-gray-50">
                   <form onSubmit={e => handleAddPhotos(e, event.id)} className="flex items-center gap-3">
-                    <label htmlFor={`photos-${event.id}`} className="sr-only">
-                      {tr.photos} — {event.nameFr}
-                    </label>
-                    <input id={`photos-${event.id}`} name="images" type="file" multiple accept="image/*" required className="flex-1 text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:font-bold file:uppercase file:tracking-wider file:cursor-pointer hover:file:bg-[#b91c1c]" />
-                    <button type="submit" disabled={saving} className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-200 text-white px-4 py-1.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2">
+                    <div className="flex-1 min-w-0">
+                      <FileInput id={`photos-${event.id}`} name="images" multiple accept="image/*" required />
+                    </div>
+                    <button type="submit" disabled={saving} className="flex-shrink-0 bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-200 text-white px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2">
                       {saving ? tr.uploading : tr.uploadButton}
                     </button>
                   </form>

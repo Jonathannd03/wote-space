@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { DbEventDetail } from '@/lib/admin-data';
 import { useAdminLang } from '../../AdminLangProvider';
+import FileInput from '../../FileInput';
 
 const inputCls = 'w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#dc2626] focus:ring-1 focus:ring-[#dc2626] text-sm transition-colors';
 const labelCls = 'block text-[11px] font-bold uppercase tracking-wider text-[#666] mb-1.5';
@@ -178,8 +179,7 @@ export default function EventDetailClient({ event: initial }: { event: DbEventDe
           <div className="bg-white border border-gray-200 rounded-sm p-5">
             <p className="text-[10px] uppercase tracking-[0.2em] text-[#dc2626] font-bold mb-4">{tr.addPhotosTitle}</p>
             <form onSubmit={handleAddPhotos} className="space-y-3">
-              <label htmlFor="upload-images" className="sr-only">{tr.addPhotosTitle}</label>
-              <input id="upload-images" name="images" type="file" multiple accept="image/*" required className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-sm file:border-0 file:bg-[#dc2626] file:text-white file:text-xs file:font-bold file:uppercase file:tracking-widest file:cursor-pointer hover:file:bg-[#b91c1c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] rounded-sm" />
+              <FileInput id="upload-images" name="images" multiple accept="image/*" required />
               <button type="submit" disabled={uploading} className="w-full bg-[#dc2626] hover:bg-[#b91c1c] disabled:bg-gray-100 disabled:text-gray-400 text-white py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc2626] focus-visible:ring-offset-2">
                 {uploading ? tr.uploading : tr.uploadButton}
               </button>
